@@ -77,8 +77,6 @@
 
 ### 我的尝试
 
-> 从题目中我们可以知道
-
 ```python
 import requests
 
