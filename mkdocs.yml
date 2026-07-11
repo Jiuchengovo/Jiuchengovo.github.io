@@ -47,7 +47,7 @@ extra_javascript:
 nav:
   - 首页: index.md
   - Web Lab 1: Web_Lab1.md
-  - Lab 0 (综合): Crypto Lab 0.md
+  - Lab 0: Crypto Lab 0.md
 
 plugins:
   - search
