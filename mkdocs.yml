@@ -40,5 +40,14 @@ markdown_extensions:
   - pymdownx.arithmatex:
       generic: true
 
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+nav:
+  - 首页: index.md
+  - Web Lab 1: Web_Lab1.md
+  - Lab 0 (综合): Crypto Lab 0.md
+
 plugins:
   - search
