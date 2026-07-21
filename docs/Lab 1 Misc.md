@@ -7,7 +7,7 @@
     - 观察文件可以发现有一些空行，用 `cat -A` 命令可以查看（`cat -A` 会在段尾加 `$`，Tab 会显示为 `^I`）
     - 说明本题在正常的 Lua 计算器代码末尾，用空格和 Tab 拼出了 flag 的二进制编码（空格代表 0，Tab 代表 1）
 
-    ![](image-16.png)
+    ![](misc-image-16.png)
 
 2. 脚本撰写
     - 用二进制模式“rb”读取，可以用来保留所有原始字节
@@ -15,7 +15,7 @@
     - 表示为二进制再转成十进制，用ASCII码转化就可以得到具体的flag了
     - 具体的代码实现可以看 py 代码里的注释
 
-    ![](image-17.png)
+    ![](misc-image-17.png)
 
 ## Task 2 — Fixpoint
 
@@ -33,18 +33,18 @@
     - 示例：`Nsl → 78 115 108 → 01001110 01110011 01101100 → 010011 100111 001101 101100 → 19 39 13 44 → NslS`（箭头就是映射！）
     - 最后插入题目提示 `FiXed p01nT` 即可
 
-    ![](image-18.png)
+    ![](misc-image-18.png)
 
 ## Task 3 — Slow Login
 
 1. 自动化攻击脚本（从端口依次递增判断）
 
-    ![](image-19.png)
+    ![](misc-image-19.png)
 
 2. 正常 & 异常的请求
 
-    ![](image-20.png)
-    ![](image-21.png)
+    ![](misc-image-20.png)
+    ![](misc-image-21.png)
 
     - 基于时间的盲注 SQL 注入（Web lab 1 有做过）：
 
@@ -55,7 +55,7 @@
     - 过滤器设置：`http and frame.time_delta > 0.7` 会显示延迟超过 0.7 秒的 HTTP 包（SLEEP 触发的请求），说明条件被满足
     - 如果 `http and frame.time_delta < 0.7` 则说明条件未被满足
 
-    ![](image-22.png)
+    ![](misc-image-22.png)
 
 3. 请求分析
     - 随便点开一个包，URL 解码后得到：
@@ -69,7 +69,7 @@
 
 > 这道题的代码自己实在写不出来，借助了 AI（大部分） 我太菜了 TwT
 
-![](image-23.png)
+![](misc-image-23.png)
 
 ## Task 4 — Live and Let Die
 
@@ -94,15 +94,15 @@
 
 1. 将 pcap 文件放进 Wireshark，发现全都是 ICMP，打开 Internet Control Message Protocol 首选项
 
-    ![](image-24.png)
+    ![](misc-image-24.png)
 
 2. 可以发现部分 TTL 是异常的（不是 63 或 64），使用 `icmp.type == 8 and ip.ttl != 64` 过滤出携带信息的 TTL
 
-    ![](image-25.png)
+    ![](misc-image-25.png)
 
 3. 对 TTL 数值进行 ASCII 转码即可得到最终的 flag！
 
-    ![](image-26.png)
+    ![](misc-image-26.png)
 
 > 依旧用 AI 协助完成了本题代码…… 但是其实这道题直接自己硬看也不是很困难 ww
 
