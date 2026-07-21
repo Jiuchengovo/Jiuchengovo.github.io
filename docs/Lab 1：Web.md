@@ -162,9 +162,13 @@ extra_path = normalized_path(request.form.get("path"))
 copy(string $source, string $dest): bool
 ```
 - 两个参数，都是字符串。把 $source 文件的内容复制到 $dest，成功返回 true，失败返回false。
+
 - 源可以是相对路径，绝对路径，路径穿越`../flag`，远程URL
+
 - 写 -- 把读到的内容写到这个路径（路径必须存在！copy不能创建目录）
 
 解题流程👇
 
 `?file=/flag` -> `/backup/flag`
+
+> 本来这里应该有bonus但是简单题的题解都看不懂 好复杂😢
