@@ -5,7 +5,9 @@
 
 
 **在php里写下`system("echo hello")`的时候发生了什么？**
+
 1. php发出请求，将后面的字符串交给shell，shell克隆出一个新进程（Fork）并将其变成一个真正的shell解释器（exec）
+
 2. shell开始解释并执行
     - Lexer：将这个短句分成两个部分“echo”和“hello”
     - Parser：判断哪些是命令，哪些是参数
@@ -13,12 +15,14 @@
         - 变量扩展（Variable Expansion）**$ 符号**。例如执行echo $USER时会换成user名字，例如用户名是root就改成`echo root`。
         - 命令替换扩展（Command Substitution）：识别 \$(...) 或反引号 `...`。Shell 会递归开一个子 Shell 先执行括号内的命令。如 echo \$(whoami) $\rightarrow$ 内部先运行 whoami 得到结果 $\rightarrow$ 替换为 echo root。
         - 通配符扩展：例如`echo *.txt`变为`echo a.txt`
+
 3. Execution（后端执行与重定向阶段）
     - 经过 Expansion 替换完成后，命令正式进入执行期：
     - 重定向拦截（Redirection）：执行器如果在线路中发现了 > 或 >> 符号，会立刻改变输出方向。它不通知屏幕，而是调用内核在指定路径（如 /var/www/html/）创建或打开目标文件，将后续的输出流直接绑定到该文件上。
     - 命令运行：
         - 如果是内建命令（如 echo, cd）：Shell 自己直接在当前进程内部消化执行。
         - 如果是外部命令（如 cat, ls）：Shell 会再次 fork 一个子进程去硬盘里找到对应的二进制程序来运行。
+        
 4. 下面就是这道题的解题过程👇 用到的就是上面的知识点
 
 
