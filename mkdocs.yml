@@ -51,6 +51,7 @@ nav:
   - "Lab 1: Web": "Lab 1：Web.md"
   - Lab 0: Crypto Lab 0.md
   - Pwn: Pwn.md
+  - "Lab 1: Misc": "Lab 1 Misc.md"
 
 plugins:
   - search
