@@ -48,7 +48,7 @@ extra_javascript:
 nav:
   - 首页: index.md
   - Web Lab 1: Web_Lab1.md
-  - Lab 1: Web: Lab 1：Web.md
+  - "Lab 1: Web": "Lab 1：Web.md"
   - Lab 0: Crypto Lab 0.md
   - Pwn: Pwn.md
 
