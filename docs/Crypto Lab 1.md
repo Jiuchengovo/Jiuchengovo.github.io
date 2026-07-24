@@ -6,15 +6,15 @@
 
 1. 题目给出了一个包含跳舞小人符号的图片，这些符号排列成多行文本的形式。每个"小人"代表一个字母，整体构成一个**单表替换密码**。我们需要找到每个图形的对应关系
 
-2. 先确定小圆圈代表空格（一开始认为是图形的一部分，但如此判断后会出现超过字母数量的符号个数）通过 AI 工具的识别功能将密文改写成大写字母 + 空格的形式 "ABCDEFA GAFHC IDJJ HKKDLG FGKG MJGHNG JOKG FDP AB AFG HQHCRBCGR IHKGFBONG CGHK AFG MBJDSG NAHADBC IFGKG AFG MKBTGNNDBCHJ HNNHNNDC KGGNG FDKGR IDJJ GJDPDCHAG FDP ABPBKKBI NFG IDJJ EB AB AFG IHKGFBONG HCR QGSBPG AFG TDKNA MGKNBC AB RDNSBLGK FDN SBKMNG IDAF H NAKBCE HJDQD AFGNG MBJDSG BTTDSGKN HQNBJOAGJU SHC CBA HKKGNA FGK"
+2. 先确定小圆圈代表空格（一开始认为是图形的一部分，但如此判断后会出现超过字母数量的符号个数）通过 AI 工具的识别功能将密文改写成大写字母 + 空格的形式 `ABCDEFA GAFHC IDJJ HKKDLG FGKG MJGHNG JOKG FDP AB AFG HQHCRBCGR IHKGFBONG CGHK AFG MBJDSG NAHADBC IFGKG AFG MKBTGNNDBCHJ HNNHNNDC KGGNG FDKGR IDJJ GJDPDCHAG FDP ABPBKKBI NFG IDJJ EB AB AFG IHKGFBONG HCR QGSBPG AFG TDKNA MGKNBC AB RDNSBLGK FDN SBKMNG IDAF H NAKBCE HJDQD AFGNG MBJDSG BTTDSGKN HQNBJOAGJU SHC CBA HKKGNA FGK`
 
 ### 密文破译
 
-~~使用外部工具（from CTF wiki）~~
+1. 使用外部工具（from CTF wiki）
 
 ![频率分析工具截图](crypto-lab1-freq.png)
 
-1. 算法原理：
+2. 算法原理：
 
     - 英语打分器：用四个字母组合起来"像不像英文"来给每次映射打分
     - 初始密钥生成：
@@ -35,9 +35,9 @@
         - 新映射分数更高 → 接受
         - 新映射分数更低 → 以概率 $e^{\Delta \text{分数} / T}$ 接受（偶尔允许倒退，为了跳出"假山顶"）
 
-2. flag 生成：
+3. flag 生成：
 
-    - 最终还原的密文：TONIGHT ETHAN WILL ARRIVE HERE PLEASE LURE HIM TO THE ABANDONED WAREHOUSE NEAR THE POLICE STATION WHERE THE PROFESSIONAL ASSASSIN REESE HIRED WILL ELIMINATE HIM TOMORROW SHE WILL GO TO THE WAREHOUSE AND BECOME THE FIRST PERSON TO DISCOVER HIS CORPSE WITH A STRONG ALIBI THESE POLICE OFFICERS ABSOLUTELY CAN NOT ARREST HER
+    - 最终还原的密文：`TONIGHT ETHAN WILL ARRIVE HERE PLEASE LURE HIM TO THE ABANDONED WAREHOUSE NEAR THE POLICE STATION WHERE THE PROFESSIONAL ASSASSIN REESE HIRED WILL ELIMINATE HIM TOMORROW SHE WILL GO TO THE WAREHOUSE AND BECOME THE FIRST PERSON TO DISCOVER HIS CORPSE WITH A STRONG ALIBI THESE POLICE OFFICERS ABSOLUTELY CAN NOT ARREST HER`
     - 利用题目描述的算法得到flag：`AAA{3a79be21d30027fd874e683f58d1bf34}`
 
 ---
@@ -76,11 +76,11 @@
 
 !!! quote "摘自题目简介 — 这道题也确实用的是这个方法"
 
-    1. 猜测密钥长度
+    猜测密钥长度
 
     第一种方法是寻找多次重复的密文，然后计算密文间隔的最大公因数，即为最有可能的密钥长度。此外，也可以爆破密钥长度，计算密文中相隔该长度的字符重合了几次，整体重合次数最多的长度可能就是密钥长度。
 
-    2. 逐位爆破密钥
+    逐位爆破密钥
 
     确定了密钥长度后，可以通过字母频率或者单词频率猜测密钥的其中几位。随后根据已解密的部分猜测单词，继续进行密钥的破解（这个就没有用到了）。
 
@@ -117,9 +117,6 @@
 ---
 
 ## Task 3 OneLineRSA
-
-!!! note "说明"
-    Markdown 的数学语法好难写（
 
 ### 题目理解
 
