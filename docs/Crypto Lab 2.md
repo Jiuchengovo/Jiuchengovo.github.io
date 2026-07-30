@@ -1,395 +1,532 @@
-# Crypto Lab 2 — 完整解题 Writeup
+# Crypto Lab 2
 
-> 共 6 道题：RSA Party（6 合一）、KillerECC、EZcopper、EZDLP、EZHNP、Regev
-
----
-
-## 目录
-
-1. [RSA Party（6 合 1）](#一rsa-party6-合-1)
-2. [KillerECC](#二killerecc)
-3. [EZcopper](#三ezcopper)
-4. [EZDLP](#四ezdlp)
-5. [EZHNP](#五ezhnp)
-6. [Regev](#六regev)
-
----
-
-## 一、RSA Party（6 合 1）
+## Task 1 RSA Party
 
 > Flag: `ZJUCTF{?!Rs@_MA$TEr!?}`
 
-服务器依次给出 6 道 RSA 变种题，解出后得 flag。有 PoW（SHA256 4 字符爆破）。
+### 题目描述
+
+服务器依次给出 6 道 RSA 变种题，每道题需要解出明文 $m$（以十六进制提交），全部通过可以获得flag。也就是说这道题需要掌握常见的 RSA 漏洞及其对应的攻击方式。
+解题前还有一个 4 位字母数字的 PoW，回答正确后可以进入正式题目（SHA256 爆破，无法破译，只能暴力枚举约 62^4 次，大概需要几秒）
+
+### RSA 回顾
+
+#### 密钥生成
+
+1. 随机选取两个大素数 $p$ 和 $q$
+2. 计算模数 $N = p \times q$
+3. 计算欧拉函数 $\varphi(N) = (p-1)(q-1)$
+4. 选取公钥指数 $e$（满足 $1 < e < \varphi(N)$ 且 $\gcd(e, \varphi(N)) = 1$，常用 3、17、65537）
+5. 计算私钥指数 $d \equiv e^{-1} \pmod{\varphi(N)}$（即 $e \cdot d \equiv 1 \pmod{\varphi(N)}$）
+
+**公钥**：$(N, e)$，**私钥**：$(d)$（或 $(p, q, d)$）
+
+#### 加密与解密
+
+$$\begin{aligned}
+\text{加密：}&\quad c \equiv m^e \pmod N \\
+\text{解密：}&\quad m \equiv c^d \pmod N
+\end{aligned}$$
+
+其中 $m$ 是明文整数（$0 \leq m < N$），$c$ 是密文。
 
 ### 1/6: Fermat Factorization
 
-**漏洞**：$p, q$ 很接近。$N = pq = a^2 - b^2$，从 $a = \lceil\sqrt{N}\rceil$ 开始搜索。
+**漏洞**：$p$ 和 $q$ 很接近（差距 ≤ 10000）。
+
+**原理**：$N = pq = \left(\frac{p+q}{2}\right)^2 - \left(\frac{p-q}{2}\right)^2 = a^2 - b^2$
+
+从 $a = \lceil\sqrt{N}\rceil$ 开始，每次 $a \leftarrow a+1$，检查 $a^2 - N$ 是否为完全平方数。由于 $p$ 和 $q$ 的差值很小，循环次数在可接受的范围内，这样我们就完成了攻击。
+
+```python
+def fermat_factor(n):
+    a = isqrt(n)
+    if a * a < n:
+        a += 1
+    while True:
+        b2 = a * a - n
+        b = isqrt(b2)
+        if b * b == b2:
+            return a + b, a - b
+        a += 1
+```
 
 ### 2/6: Pollard p-1
 
-**漏洞**：$p-1$ 平滑。$M = \operatorname{lcm}(1,\dots,B)$，$\gcd(a^M - 1, N) = p$。
+**漏洞**：$p-1$ 的所有质因子都很小，≤ 1000，且每个质因子的幂 ≤ $2^{16}$。
 
-### 3/6: Common Modulus
+**原理**：令 $M = \operatorname{lcm}(1, 2, \dots, B)$，计算 $a^M \bmod N$。由费马小定理，$a^M \equiv 1 \pmod p$，所以 $\gcd(a^M - 1, N) = p$。
 
-**漏洞**：同一 $N$ 用互质 $e_1=3, e_2=17$ 加密。$m = c_1^a \cdot c_2^b \pmod{N}$，其中 $ae_1+be_2=1$。
+**理解**：费马小定理告诉我们 $a^{p-1} \equiv 1 \pmod p$。如果 $p-1$ 只由小质数组成（比如 $p-1 = 2^3 \times 3 \times 5$），那我们找一个足够大的 $M$（囊括所有小质数的幂），$M$ 一定是 $p-1$ 的倍数。此时 $a^M \equiv 1 \pmod p$，即 $p \mid (a^M - 1)$。同时我们还知道 $p \mid N$，所以 $\gcd(a^M - 1, N)$ 能把 $p$ 找出来。
+
+```python
+def pollard_p1(n, bound=100000):
+    a = 2
+    M = 1
+    for p in primes_up_to(bound):
+        power = p
+        while power * p <= bound:
+            power *= p
+        M *= power
+    x = pow(a, M, n)
+    p = gcd(x - 1, n)
+    return p, n // p
+```
+
+
+### 3/6: Common Modulus Attack
+
+> 和 Lab 1 的一道题很像（？！共模攻击！？）
+
+**漏洞**：相同明文 $m$ 用两个互质的指数 $e_1=3, e_2=17$ 在同一个 $N$ 下加密。
+
+**原理**：扩展欧几里得求 $a \cdot e_1 + b \cdot e_2 = 1$，则：
+
+$$m = m^{1} = m^{a \cdot e_1 + b \cdot e_2} = c_1^{a} \cdot c_2^{b} \pmod N$$
+
+
+```python
+_, a, b = extended_gcd(e1, e2)
+if a < 0:
+    m = pow(modinv(c1, n), -a, n) * pow(c2, b, n) % n
+else:
+    m = pow(c1, a, n) * pow(modinv(c2, n), -b, n) % n
+```
 
 ### 4/6: Hastad Broadcast
 
-**漏洞**：$e=3$，3 个不同 $N$。CRT 求 $m^3$ 再开三次方。
+**漏洞**：相同明文 $m$ 用 $e=3$ 加密，给出了 3 个不同的模数 $N_1, N_2, N_3$。
 
-### 5/6: Franklin-Reiter
+**原理**：中国剩余定理（CRT）求 $m^3 \bmod (N_1 N_2 N_3)$，然后开三次方根。
 
-**漏洞**：$e=3$，加密 $m$ 和 $m+\text{pad}$。多项式 GCD 消去 $x^3$ 项得一次方程。
+因为 $m < \min(N_i)$，所以 $m^3 < N_1 N_2 N_3$，CRT 的结果就是精确的 $m^3$。
 
-### 6/6: Wiener
+**理解**：$e$ 太小了， $m^e$ 不够大，取模运算就失效了
 
-**漏洞**：$d < N^{1/4}$。$\frac{k}{d}$ 是 $\frac{e}{N}$ 的连分数收敛。
+```python
+M = crt([c1, c2, c3], [n1, n2, n3])
+m = iroot(M, 3)  # 整数三次方根
+```
 
-### RSA 攻击速查
+### 5/6: Franklin-Reiter Attack
 
-| 攻击 | 条件 | 关键 |
-|------|------|------|
-| Fermat | $p,q$ 接近 | $N=a^2-b^2$ |
-| Pollard p-1 | $p-1$ 平滑 | $\gcd(a^M-1,N)$ |
-| Common Modulus | 互质 $e_1,e_2$ | 扩展欧几里得 |
-| Hastad | 小 $e$, 多个 $N$ | CRT+开方 |
-| Franklin-Reiter | 相关明文, 小 $e$ | 多项式 GCD |
-| Wiener | $d<N^{1/4}$ | 连分数 |
+**漏洞**：$e=3$，同一个 $N$ 下加密了 $m$ 和 $m + \text{pad}$，且 pad 已知。
+
+**原理**：这两个多项式一定存在公共根 $m$：
+
+$$f_1(x) = x^3 - c_1,\quad f_2(x) = (x + \text{pad})^3 - c_2$$
+
+计算 $\gcd(f_1, f_2)$ 得到 $(x - m)$。对 $e=3$ 我们可以计算多项式消元：
+
+$$\begin{aligned} g(x) &= f_2 - f_1 = 3p \cdot x^2 + 3p^2 \cdot x + (p^3 + c_1 - c_2) \\ &= A \cdot x^2 + B \cdot x + C \end{aligned}$$
+
+再用 $f_1$ 和 $g$ 消去 $x^2$ 项，得到 $x$ 的一次方程，直接求解即可。
+
+
+```python
+A = (3 * pad) % n
+B = (3 * pad * pad) % n
+C = (pad**3 + c1 - c2) % n
+
+x_coeff = (A * C - B * B) % n
+constant = (A * A * c1 - B * C) % n
+m = (-constant * modinv(x_coeff, n)) % n
+```
+
+### 6/6: Wiener's Attack
+
+**漏洞**：私钥 $d$ 很小（约 200 bits），远小于 $N^{1/4}$。
+
+**原理**：由 $ed \equiv 1 \pmod{\varphi}$ 得 $ed - k\varphi = 1$，即：
+
+$$\left|\frac{e}{N} - \frac{k}{d}\right| < \frac{1}{2d^2}$$
+
+$\frac{k}{d}$ 是 $\frac{e}{N}$ 的一个连分数收敛项，遍历即可找到 $d$。
+
+**理解**：当 $d$ 很小时，由 $ed - k\varphi(N) = 1$ 可以推出 $\frac{e}{N} \approx \frac{k}{d}$（误差极小）。因此 $\frac{k}{d}$ 必然藏在 $\frac{e}{N}$ 的连分数收敛项中。
+
+**连分数**：把一个数逐层拆成"整数 + 1/某数"的形式。例如 $\frac{43}{19} = 2 + \frac{1}{3 + \frac{1}{1 + \frac{1}{4}}}$，记作 $[2; 3, 1, 4]$。任意截断得到的值叫"收敛项"：$[2] = 2$，$[2;3] = \frac{7}{3}$，$[2;3,1] = \frac{9}{4}$，$[2;3,1,4] = \frac{43}{19}$。连分数的核心性质是：如果一个分数极其接近目标数，它**必定**作为某个收敛项出现。所以对 $\frac{e}{N}$ 做连分数展开，遍历所有收敛项，一定能找到 $\frac{k}{d}$，从而拿到私钥 $d$。
+
+```python
+def wiener(n, e, c):
+    for k, d in convergents(continued_fraction(e, n)):
+        if k == 0 or d % 2 == 0:
+            continue
+        if (e * d - 1) % k != 0:
+            continue
+        phi = (e * d - 1) // k
+        s = n - phi + 1  # p + q
+        disc = s * s - 4 * n
+        if disc >= 0:
+            sqrt_disc = isqrt(disc)
+            if sqrt_disc * sqrt_disc == disc:
+                p = (s + sqrt_disc) // 2
+                q = (s - sqrt_disc) // 2
+                if p * q == n:
+                    return pow(c, d, n)
+```
+
+### 6 种 RSA 攻击
+
+| 攻击 | 条件 | 关键方法 |
+|------|------|----------|
+| Fermat | $p, q$ 接近 | $N = a^2 - b^2$ |
+| Pollard p-1 | $p-1$ 平滑 | $\gcd(a^{M} - 1, N)$ |
+| Common Modulus | 同一 $N$，互质 $e_1, e_2$ | 扩展欧几里得 |
+| Hastad | 小 $e$，多个 $N$ | CRT + 开方 |
+| Franklin-Reiter | 相关明文，小 $e$ | 多项式 GCD |
+| Wiener | 小 $d$ ($d < N^{1/4}$) | 连分数 |
 
 ---
 
-## 二、KillerECC
+## Task 2 KillerECC
 
 > Flag: `ZJUCTF{eLl1PTiC_6_6_0_was_nOt_fIn3}`
 
-### 漏洞：elliptic 6.6.0 负数 nonce 重用
+### 题目描述
 
-`elliptic@6.6.0` 的 `sign()` 接受负数消息，`"-1"` 和 `"1"` 产生**相同 nonce $k$** 但不同 hash。
+Node.js 服务器使用 `elliptic@6.6.0` 在 secp256k1 曲线上做 ECDSA 签名。给出公钥，可无限签名任意消息，提交私钥得就可以获得 flag。
 
-Nonce 重用 → 私钥泄漏：
-$$k = (h_1 - h_2)(s_1 - s_2)^{-1} \bmod n$$
-$$d = r^{-1}(s_1 k - h_1) \bmod n$$
+提示：`npm audit`，跑完命令会直接返回漏洞，本题是确定性 nonce 的实现出了问题。
 
-### 攻击
+### 漏洞分析
 
-1. `sign("-1")` → $(r, s_1)$, $h_1 = n-1$
-2. `sign("1")` → $(r, s_2)$, $h_2 = 1$
-3. $r$ 相同 → $d$ 直接算出
+elliptic ≤ 6.6.0 的 GHSA-vjh7-7g9h-fjfh 漏洞：`_truncateToN` 函数允许**负数消息**，这会产生如下漏洞：负数消息 `"-X"` 和正数消息 `"X"`（或 `"00X"` 等带前导零）**产生相同的 nonce $k$**，但**消息 hash 不同**（BN(-X) ≠ BN(X)）：
 
-### 知识点
+- `sign("-1")` → `msg = BN(-1)` → nonce 来自 `(-1).toArray()` → $r$
+- `sign("1")` → `msg = BN(1)` → nonce 来自 `(1).toArray()` → **相同的 $r$**
+- 但 hash 值：$-1 \neq 1 \pmod n$ → **不同的 $s$**
 
-- **ECDSA**：$s = k^{-1}(h + rd)$，$k$ 重用即私钥泄漏
-- **RFC 6979**：确定性 nonce，但 elliptic 6.6.0 实现有 bug
-- **CVE-2024-48948**：负数/字符串输入触发 nonce 重用
+这就是 ECDSA nonce 重用！ECDSA 中一旦 nonce 重用，我们就可以直接获取私钥：
 
----
+$$\begin{aligned} s_1 &\equiv k^{-1}(h_1 + r \cdot d) \pmod n \\ s_2 &\equiv k^{-1}(h_2 + r \cdot d) \pmod n \\ \Rightarrow\quad k &\equiv (h_1 - h_2) \cdot (s_1 - s_2)^{-1} \pmod n \\ \Rightarrow\quad d &\equiv r^{-1}(s_1 \cdot k - h_1) \pmod n \end{aligned}$$
 
-## 三、EZcopper
+### 攻击步骤
+
+1. `sign("-1")` → 得到 $(r, s_1)$，hash $h_1 = -1 \equiv n-1 \pmod n$
+2. `sign("1")` → 得到 $(r, s_2)$，hash $h_2 = 1$
+3. $r$ 相同、$s$ 不同 → nonce 重用，代入公式恢复 $d$
+4. `submit <d_hex>` 获得 flag
+
+### 关键代码
+
+```python
+N = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141
+
+r, s1 = sign("-1")   # h1 = -1 mod N = N-1
+r, s2 = sign("1")    # h2 = 1
+
+k = ((N-1 - 1) * pow((s1 - s2) % N, -1, N)) % N
+d = (pow(r, -1, N) * (s1 * k - (N-1))) % N
+```
+
+## Task 3 EZcopper
 
 > Flag: `ZJUCTF{y0u_HavE_l3@rnt_thE_coppER$miTH_m37hod_sO_c13VEr!!!!}`
 
-### 题目
+### 题目描述
 
-$c_1 = m^p \bmod N,\; c_2 = m^q \bmod N$，已知 $N=pq$、$c_1$、$c_2$，求 $m$。
+已知 $N = p \times q$、$c_1 = m^p \bmod N$、$c_2 = m^q \bmod N$，求明文 $m$。
 
-### 核心推导
+### 漏洞分析
 
-### 深入理解：从 FLT 到 GCD 分解
+**第一层（费马小定理）**：
 
-**第一层（FLT 应用）**：
+费马小定理 $a^p \equiv a \pmod{p}$ 对所有整数 $a$ 成立，所以我们可以得到以下两个式子：
 
-由费马小定理 $a^p \equiv a \pmod{p}$：
 $$c_1 = m^p \bmod N \;\Rightarrow\; c_1 \equiv m^p \equiv m \pmod{p}$$
 $$c_2 = m^q \bmod N \;\Rightarrow\; c_2 \equiv m^q \equiv m \pmod{q}$$
 
-**第二层（指数运算，不依赖知道 $p$）**：
+**第二层（模 $p$ 下的指数消去）**：
 
-计算 $c_1^N \bmod p$，利用 $N = pq$：
+模 $p$ 下计算 $c_1^N$，利用 $N = pq$：
+
 $$c_1^N = (m^p)^{pq} = m^{p^2 q}$$
 
-分离出一个 $m^{p-1}$（其 ≡ 1 mod p）：
+从指数中分离出 $p-1$（费马小定理的关键指数）：
+
 $$m^{p^2 q} = m^q \cdot m^{p(p-1)q} = m^q \cdot (m^{p-1})^{pq} \equiv m^q \cdot 1^{pq} = m^q \pmod{p}$$
+
+所以 $c_1^N \equiv m^q \pmod{p}$。而 $c_2 = m^q \bmod N$，自然也有 $c_2 \equiv m^q \pmod{p}$。两式相减：
+
+$$c_1^N - c_2 \equiv 0 \pmod{p} \quad\Rightarrow\quad p \mid (c_1^N - c_2)$$
 
 **第三层（GCD 一步分解）**：
 
+又因为 $p \mid N$，所以：
+
 $$\boxed{\gcd(N,\; c_1^N - c_2) = p}$$
 
-因为 $c_1^N \equiv c_2 \pmod{p}$ 所以 $p \mid c_1^N - c_2$。以压倒性概率，$q \nmid c_1^N - c_2$。
+以压倒性概率 $q \nmid (c_1^N - c_2)$，因此 GCD 直接给出 $p$。
 
-得到 $p, q$ 后：$m = c_1 \bmod p = c_2 \bmod q$。由于 $m$ 是 480-bit 的 flag，$p$ 是 512-bit，$m < p$ 自然成立，$c_1 \bmod p$ 就是 $m$ 本身。
+**例子**：我们可以取简单一点的数字 $p=3,\; q=11,\; N=33,\; m=2$：
+
+$$\begin{aligned}
+c_1 &= m^p \bmod N = 2^3 \bmod 33 = 8 \\
+c_2 &= m^q \bmod N = 2^{11} \bmod 33 = 2
+\end{aligned}$$
+
+验证：$c_1 \bmod p = 8 \bmod 3 = 2 = m$ ✅，$c_2 \bmod q = 2 \bmod 11 = 2 = m$ ✅。
+
+通过已知的 $N, c_1, c_2$ 进行运算：
+
+$$c_1^N \bmod N = 8^{33} \bmod 33 = 17$$
+
+$$c_1^N \bmod N - c_2 = 17 - 2 = 15$$
+
+$$\gcd(N,\; 15) = \gcd(33,\; 15) = 3 = p \quad ✅$$
+
+$$m = c_1 \bmod p = 8 \bmod 3 = 2 \quad ✅$$
+
+只需两行运算，我们就成功分解了 $N$ ，说明这个方法是有效的。
+
+### 攻击步骤
+
+1. 计算 $p = \gcd(N,\; c_1^N - c_2)$，一步分解 $N$
+2. 由 $m = c_1 \bmod p$（或 $m = c_2 \bmod q$）直接恢复明文
+3. 由于 $m$ 是 480-bit，$p$ 是 512-bit，$m < p$ 自然成立，$\bmod p$ 后的结果就是 $m$ 本身
+
+### 关键代码
 
 ```python
-p = math.gcd(N, pow(c1, N, N) - c2)  # 一步分解
-m = c1 % p                              # 直接得到 m
+import math
+from Crypto.Util.number import long_to_bytes
+
+p = math.gcd(N, pow(c1, N, N) - c2)  # 一步分解 N
+m = c1 % p                             # 直接得到明文
 flag = long_to_bytes(m)
 ```
 
-### 知识点
-
-| 知识点 | 说明 |
-|--------|------|
-| 费马小定理 | $a^p \equiv a \pmod{p}$（对所有整数 $a$）|
-| 模幂化简 | $c_1^N \bmod p$ 通过 FLT 化简为 $m^q \bmod p$ |
-| GCD 分解 | $\gcd(N, c_1^N - c_2)$ 直接得 $p$（一步到位）|
-| 题名暗示 | "EZcopper" → Coppersmith 也可解（$(c_1-x)(c_2-x) \equiv 0 \pmod N$ 的小根），但 GCD 法更优雅 |
-
----
-
-## 四、EZDLP
+## Task 4 EZDLP
 
 > Flag: `ZJUCTF{poHl19_h3L1m@n_al6O!?}`
 
-### 深入理解：为什么 DLP 通常困难
+### 题目描述
 
-离散对数 $c = g^x \bmod p$ 的困难性在于"指数"掩盖了 $x$。对于随机 512-bit 素数 $p$，$p-1$ 至少含一个大素数因子。Pohlig-Hellman 把 DLP 分解到各素数幂子群上，但**最大的那个子群的阶**决定了总复杂度。若最大素因子是 $2^{400}$ 量级，则必须用 Pollard-$\rho$（$O(2^{200})$），不可行。
+已知一个大素数 $p$、底数 $g=3$、以及 $c = 3^x \bmod p$（$x$ 是 500-bit 素数），求离散对数 $x$。然后用 $x$ 的 MD5 值作为 AES-ECB 密钥解密密文 $ct$ 得到 flag。
 
-### 本题的关键：极度光滑的 $p-1$
+**什么是 DLP（离散对数问题）？**
 
-$$p - 1 = 2^{518}$$
+普通对数：$g^x = y$，已知 $g, y$ 求 $x$。离散对数：$g^x \equiv y \pmod{p}$，已知 $g, y, p$ 求 $x$——多了个模 $p$，但难度天差地别。对于大素数 $p$，这是公认的数学难题，Diffie-Hellman 密钥交换、ElGamal、DSA 的安全性都基于它。**但**，如果 $p-1$ 光滑（全是小素数因子），DLP 会被 Pohlig-Hellman 算法降维打击（。
 
-$p-1$ 的素因子分解中**只有 2**。$x$ 可直接写成二进制：
+### 漏洞分析
 
-$$x = x_0 + x_1 \cdot 2 + x_2 \cdot 2^2 + \cdots + x_{517} \cdot 2^{517}$$
+**关键发现：$p-1 = 2^{518}$**
 
-### Pohlig-Hellman 在 2-群上的逐比特恢复
+$$p = 960494008017250155494739990397196249930200062145145133132556398221074529657304218221253517153928380265486339083177542201148993799925721673833333778621388110957986908045712612233794551809$$
 
-群 $\mathbb{F}_p^*$ 的阶是 $2^{518}$（2-群）。$g=3$ 是生成元（验证：$3^{2^{517}} \equiv -1 \pmod{p}$，Legend 符号为 $-1$）。
+$p-1$ 极度光滑（至于光滑是什么可以去看Task 1 qwq）——**只有一个素数因子 2**，指数高达 518。一般 DLP 在 $p-1$ 光滑时会变得可解，我们可以用到 Pohlig-Hellman 算法来解决这个问题。
 
-**第 $i$ 轮**（已知低 $i$ 位 $x_0,\dots,x_{i-1}$，求 $x_i$）：
+**Pohlig-Hellman 算法**
 
-令 $y_i = y_{i-1} \cdot g^{-x_{i-1}\cdot 2^{i-1}} \bmod p$（除去已确定的低位）。此时 $y_i = g^{2^i \cdot (x_i + 2x_{i+1} + \cdots)}$。
+DLP 的困难性依赖于 $p-1$ 有大素数因子。当 $p-1 = \prod q_i^{e_i}$ 且所有 $q_i$ 都很小，就可以把原 DLP 分解到每个 $q_i^{e_i}$ 子群中分别求解，再用 CRT 合并。本题中只有一个 $q=2$，所以整个 DLP 退化为逐比特判断。
 
-计算 $y_i^{2^{517-i}} \bmod p$：
-$$y_i^{2^{517-i}} = g^{2^{517} \cdot (x_i + 2x_{i+1} + \cdots)} = (g^{2^{517}})^{x_i} \cdot (g^{2^{518}})^{\cdots}$$
+**2-群上的逐比特恢复**
 
-因为 $g^{2^{518}} = 1$：
-$$y_i^{2^{517-i}} = (-1)^{x_i}$$
+当 $q=2$ 时，$x$ 的 $2$ 进制展开就是二进制。由于 $g=3$ 是模 $p$ 的生成元（$3^{(p-1)/2} \equiv -1 \pmod{p}$），第 $i$ 轮可以判断 $x$ 的第 $i$ 个比特是 0 还是 1：
 
-- 结果为 $1$ → $x_i = 0$
-- 结果为 $p-1 \equiv -1$ → $x_i = 1$
+$$y = c \cdot g^{-x_{\text{已知低位}}} \bmod p$$
+$$y^{(p-1)/2^{i+1}} \bmod p = \begin{cases} 1 & \Rightarrow \text{bit}_i = 0 \\ p-1 & \Rightarrow \text{bit}_i = 1 \end{cases}$$
 
-总共 518 次模幂运算，每次指数减半。复杂度 $O(\log p)$，瞬间完成。
+**理解**：想象 $x$ 是一个 518 位的二进制数。每一轮剥掉已知的低位，让剩下的最低位暴露出来。判断它是不是 1 的方法就是看 $y$ 的 $(p-1)/2^{i+1}$ 次幂——如果是 $-1$（即 $p-1$），说明这一位是 1；如果是 $1$，说明这一位是 0。518 轮之后，$x$ 的所有比特就全部恢复了。
+
+### 攻击步骤
+
+1. 初始化 $x_{\text{low}} = 0$
+2. 对 $i = 0$ 到 $517$：
+   - 计算 $y = c \cdot g^{-x_{\text{low}}} \bmod p$（消除已知低位的影响）
+   - 计算 $y^{(p-1)/2^{i+1}} \bmod p$，若为 $p-1$ 则第 $i$ 位是 1，否则是 0
+   - 更新 $x_{\text{low}} = x_{\text{low}} + \text{bit} \cdot 2^i$
+3. 518 轮后得到完整 $x$，取其 MD5 作为 AES 密钥解密 $ct$
+
+### 关键代码
 
 ```python
-for i in range(518):
-    val = pow(y, n // (2**(i+1)), p)
-    if val == p-1:        # = -1 mod p → bit_i = 1
+n = p - 1           # = 2^518
+k = 518
+x = 0; y = c
+for i in range(k):
+    exp = n // (2 ** (i + 1))
+    val = pow(y, exp, p)
+    if val == p - 1:
+        bit = 1
         x |= (1 << i)
-        y = (y * pow(3, -(1<<i), p)) % p
+        y = (y * pow(g, -(1 << i), p)) % p
+
+key = md5(str(x).encode()).digest()
+flag = AES.new(key, AES.MODE_ECB).decrypt(ct).rstrip(b'\x00')
 ```
 
-### 知识点
+## Task 5 EZHNP
 
-| 知识点 | 说明 |
-|--------|------|
-| Pohlig-Hellman | 将 DLP 分解到 $p-1$ 的素数幂子群，CRT 合并 |
-| 光滑阶 | $p-1$ 的小素因子使 DLP 退化——极端是 $2^k$，逐位判定 |
-| 2-群 DLP | $(-1)^{x_i} = y_i^{2^{517-i}}$，每位对应一次 Legendre 符号 |
-| DLP 的困难根源 | $p-1$ 含大素数 → 大素数阶子群 → 需 Pollard-$\rho$ 等通用方法 |
-
----
-
-## 五、EZHNP
+> Bonus 的两道题很大程度的上用了AI（包括代码及原理解释……）已经尽量把自己的理解写进报告了
 
 > Flag: `ZJUCTF{HNP_atT4cK_D$A}`
 
-### 题目
+### 题目描述
 
-secp256k1，18 个相同消息的 ECDSA 签名，nonce $k_i$ 为 240-bit prime（比 $n \approx 2^{256}$ 少 16 bits）。
+ECDSA 签名（secp256k1 曲线），服务器给出了 18 条**相同消息**的签名 $(r_i, s_i)$。每条签名的 nonce $k_i$ 是一个 240-bit 素数，而曲线阶 $n \approx 2^{256}$——也就是说 nonce 比阶少约 16 bits。需要利用 nonce 的偏差恢复私钥 $sk$，从而解密 flag。
 
-### 方法：HNP + BKZ
+**前置：ECDSA 签名回顾**
 
-$$k_i \equiv a_i \cdot sk + b_i \pmod{n},\quad |k_i| < 2^{240}$$
+$$s = k^{-1}(h + r \cdot sk) \bmod n$$
 
-1. 消去 $sk$：$k_j \equiv c_j \cdot k_0 + d_j \pmod{n}$，**所有变量 $< 2^{240}$**
-2. 构建 19 维 Kannan 嵌入格
-3. **fpylll BKZ-10** 找到 $(k_1,\dots,k_{17},k_0,K)$ 短向量
-4. $sk = (k_0 - b_0) \cdot a_0^{-1} \bmod n$
+其中 $k$ 是临时密钥（nonce），$h$ 是消息哈希，$sk$ 是私钥。如果 $k$ 足够随机且完全未知，签名是安全的。但本题 $k$ 只有 240 bits，这就有攻击的机会。
+
+### 漏洞分析
+
+**第一步：改写为 HNP（Hidden Number Problem）**
+
+将签名方程变形，把 $k_i$ 表示为 $sk$ 的线性函数：
+
+$$k_i \equiv a_i \cdot sk + b_i \pmod{n},\quad |k_i| < K = 2^{240}$$
+
+其中 $a_i = r_i \cdot s_i^{-1} \bmod n,\; b_i = h \cdot s_i^{-1} \bmod n$。
+
+这就是 Hidden Number Problem：已知 $a_i, b_i, n$，求 $sk$，而 $k_i$ 是"隐藏的小数"。
+
+**第二步：消去 $sk$，化为多个 $k_i$ 间的关系**
+
+取 $k_0$ 作为参考，消去未知的 $sk$：
+
+$$k_j \equiv c_j \cdot k_0 + d_j \pmod{n},\quad |k_0| < K,\; |k_j| < K$$
+
+其中 $c_j = a_j \cdot a_0^{-1} \bmod n,\; d_j = b_j - c_j \cdot b_0 \bmod n$。
+
+现在问题变成：找一组 $k_0, k_1, \dots, k_{t-1}$（$t=17$），每个都 $< 2^{240}$，且满足模方程。
+
+**第三步：Kannan 嵌入 → 格基约简**
+
+将问题嵌入到一个 $d = t+1 = 18$ 维的格中：
+
+$$B = \begin{bmatrix} n & 0 & \cdots & 0 & 0 & 0 \\ 0 & n & \cdots & 0 & 0 & 0 \\ \vdots & & \ddots & & \vdots & \vdots \\ 0 & 0 & \cdots & n & 0 & 0 \\ c_1 & c_2 & \cdots & c_{t-1} & 1 & 0 \\ d_1 & d_2 & \cdots & d_{t-1} & 0 & K \end{bmatrix}$$
+
+目标短向量 $[k_1, k_2, \ldots, k_{t-1}, k_0, K]$，每个分量 $\le 2^{240}$。这个向量确实在格中（通过列线性组合可验证），且远短于格中"平均"长度的向量。
+
+**第四步：BKZ 格基约简**
+
+19 维格中，LLL（默认 $\delta=0.75$）质量不够，需要 BKZ：
+- **BKZ-10** 即可找到目标短向量
+- 在约简后的基中搜索最后一列等于 $\pm K$ 的行，提取 $k_0$
+- 验证：$sk = (k_0 - b_0) \cdot a_0^{-1} \bmod n$
+
+**直观理解**：格基约简就是"找格中最短的向量"。目标向量因为所有分量都被约束在 $2^{240}$ 以内，比格中随机向量短得多——就像一堆长棍子里唯一的一根短棍子，BKZ 算法能把它挑出来。
+
+### 攻击步骤
+
+1. 从 18 条签名计算 $a_i, b_i$
+2. 消去 $sk$，得到 $c_j, d_j$（$j = 1..17$）
+3. 构造 19×19 的 Kannan 嵌入格基
+4. 用 fpylll 的 BKZ-10 约简格基
+5. 找到最后一列为 $\pm K$ 的行，提取 $k_0$
+6. 计算 $sk = (k_0 - b_0) \cdot a_0^{-1} \bmod n$，即得私钥
+
+### 关键代码
 
 ```python
 from fpylll import IntegerMatrix, LLL, BKZ
 
-dim = 19
+# 计算 a_i, b_i, 消去 sk 得到 c_j, d_j
+dim = t + 1  # 18
 B = IntegerMatrix(dim, dim)
-# ... fill basis ...
+for i in range(t-1): B[i, i] = n
+for i in range(t-1): B[t-1, i] = c_list[i]
+B[t-1, t-1] = 1; B[t-1, t] = 0
+for i in range(t-1): B[t, i] = d_list[i]
+B[t, t-1] = 0; B[t, t] = K
+
 LLL.reduction(B)
 BKZ.reduction(B, BKZ.Param(10))
-# find row with last = ±K → extract k_0 → sk
+
+# 找 last=±K 的行, 提取 k_0, 计算 sk
+for row in range(dim):
+    if abs(B[row, t]) == K:
+        k0 = B[row, t-1] % n
+        sk = ((k0 - b_all[0]) * pow(a_all[0], -1, n)) % n
 ```
 
-### 深入理解：为什么 HNP 可以用格求解
-
-HNP 的核心是寻找一个数 $sk$，使得 18 个不同的线性函数同时落在"小"区间内：
-
-$$a_i \cdot sk + b_i \pmod{n} \in [-K, K]$$
-
-**直觉**：如果没有 $sk$ 的约束，$a_i \cdot sk \bmod n$ 在 $[0, n-1]$ 上均匀分布。落在一个宽 $2K$ 的窗口内的概率是 $2K/n \approx 2^{241}/2^{256} = 2^{-15}$。18 个方程同时满足的概率是 $2^{-270}$，说明满足条件的 $sk$ **唯一存在**。
-
-**格的视角**：同余式 $a_i \cdot sk + b_i \equiv k_i \pmod{n}$（$|k_i| < K$）可改写为：
-
-$$a_i \cdot sk + b_i - m_i n = k_i$$
-
-其中 $m_i$ 是整数。两边对所有 $i$ 成立。这意味着向量 $(k_0, \dots, k_{17}, sk)$ 是由行向量 $(0,\dots,n,\dots,0)$, $(a_0,\dots,a_{17},1)$, $(b_0,\dots,b_{17},0)$ 的**整数线性组合**——所以它是格中的点。
-
-Kannan 嵌入把寻找这个格点的 **CVP**（最近向量问题）转化为 **SVP**（最短向量问题），在格基上再拼一行，使得最靠近目标向量的格点恰好对应最短的格向量。
-
-**BKZ 为什么比 LLL 强**：LLL 只对相邻两行做交换判断（"2-约简"）。BKZ-$\beta$ 对 $\beta$ 行的子块做 Hermite 约简，能更彻底地"梳理"格基。对于本题的 19 维格，BKZ-10 已经足够找到范数 $\approx 2^{242}$ 的目标向量。
-
-### 知识点
-
-| 概念 | 说明 |
-|------|------|
-| Hidden Number Problem | $a_i x + b_i \equiv k_i \pmod{n}$，$|k_i| < K$，格基约简求 $x$ |
-| 概率论证 | $P(|a_i x + b_i|_n < K) \approx 2K/n$，18 方程保证唯一解 |
-| Kannan 嵌入 | CVP → SVP：多加一行，目标向量变成格中的短向量 |
-| BKZ vs LLL | BKZ-$\beta$ 对 $\beta$ 维子块约简，比 LLL（$\beta=2$）更强 |
-| fpylll | Python 绑定的 C++ fpLLL 库，浮点 Gram-Schmidt，远优于纯整数 LLL |
-
----
-
-## 六、Regev
+## Task 6 Regev
 
 > Flag: `ZJUCTF{LLL_60_brrrr}`
 
-### 题目
+### 题目描述
 
-经典 **LWE**（Learning With Errors），Oded Regev 2005 年提出，是后量子密码学最重要的数学基础之一。
+这是 LWE（Learning With Errors）问题——Regev 2005 年提出，是后量子密码学的基石。已知矩阵 $A$（150×100）、向量 $b$（150维）、模数 $q \approx 10^6$，满足：
 
 $$b = A \cdot s + e \pmod{q}$$
 
-- $s \in \{0,1\}^{100}$：**二进制**秘密（100 维）
-- $e \in \{-1,0,1\}^{150}$：**三元**误差（150 维）
-- $q = 1048583 \approx 2^{20}$：小模数
-- $m = 150 > n = 100$：超定系统
-- $A$ 随机，已知；$b$ 已知；求 $s$（解密密钥）
+目标是恢复秘密向量 $s \in \{0,1\}^{100}$，并用它的 SHA256 作为 AES-CBC 密钥解密 flag。误差向量 $e \in \{-1, 0, 1\}^{150}$ 极小。
 
-### 深入理解：LWE 为什么困难
+**前置：什么是格？**
 
-LWE 的困难性来自两方面：
+格是 $\mathbb{Z}^n$ 中一组线性无关向量的所有整数线性组合——简单说就是一个规则排列的无穷点阵。格基约简（LLL、BKZ）就是在格中找"最短的非零向量"。虽然一般意义上的 SVP 很难，但当目标向量**远短于**格中其他所有向量时，LLL 能把它揪出来。
 
-1. **模 $q$ 运算**：$A \cdot s + e \pmod{q}$ 中模约简抹去了和的高位信息
-2. **误差项 $e$**：即使模 $q$ 是线性变换，误差 $e$ 使方程不再精确成立
+### 漏洞分析
 
-二者的组合创造了一个看似矛盾的局面：
-- **没有误差**：$b = A \cdot s \pmod{q}$ 是线性方程组，高斯消元秒解
-- **没有模约简**：$b = A \cdot s + e$（整数），最小二乘近似即可
-- **两者都有**：即 **LWE**，目前已知最好攻击是格基约简
+**第一步：将 LWE 转化为格问题（Kannan 嵌入）**
 
-### 为什么局部搜索失败
+定义 $d = n + m + 1 = 251$ 维格：
 
-本题尝试了模拟退火和 MILP，全部失败。原因：$A$ 的每一项高达 $10^6$，翻转 $s$ 的任意一位会使**所有** 150 个方程的残差发生巨大变化，目标函数的"地形"极度崎岖——除非已经非常接近真解，否则 $|e| \le 1$ 的约束无一满足。这就是 LWE 的"平均情况最坏情况"困难性。
-
-### 方法：Kannan 嵌入（uSVP 归约）
-
-**核心思想**：将 LWE 的求解转化为格中的**唯一最短向量问题（unique-SVP）**。
-
-定义格：
 $$\mathcal{L} = \{(x, y, z) \in \mathbb{Z}^n \times \mathbb{Z}^m \times \mathbb{Z} : A\cdot x + y \equiv z\cdot b \pmod{q}\}$$
 
-维度 $d = n + m + 1 = 251$。这个格包含一个**异常短**的向量 $(s, e, 1)$：
+目标向量 $(s, e, 1)$ 就落在这个格中（验证：$A\cdot s + e \equiv b \pmod{q}$），且其范数极小：
 
-$$\|(s, e, 1)\| = \sqrt{\sum_{j=1}^{100} s_j^2 + \sum_{i=1}^{150} e_i^2 + 1} \le \sqrt{100 + 150 + 1} \approx 15.8$$
+$$\|(s, e, 1)\| = \sqrt{\underbrace{100}_{\text{二进制 }s_j} + \underbrace{150}_{\text{三元 }e_i} + 1} \approx 16$$
 
-**Gauss 启发式**预测随机 251 维格中（行列式 $q^{m} \approx 10^{900}$）最短向量约为：
-$$\lambda_1 \approx \sqrt{\frac{251}{2\pi e}} \cdot q^{m/d} \approx 3.0 \cdot (10^6)^{150/251} \approx 12000$$
+**第二步：构造格基矩阵**
 
-**差距**：$\lambda_1(\text{random}) / \|(s,e,1)\| \approx 12000 / 16 \approx 750$ 倍。
-
-对于唯一 SVP，只要 $\lambda_2 / \lambda_1$ 足够大，格基约简就能把最短向量"挤"到第一个基向量的位置。750 倍的差距意味这极其容易。
-
-**格基构造**：
 $$B = \begin{bmatrix} q\cdot I_m & \mathbf{0} & \mathbf{0} \\ -\mathbf{A}^T \bmod q & I_n & \mathbf{0} \\ \mathbf{b} & \mathbf{0} & 1 \end{bmatrix}$$
 
-- 前 $m$ 行：$(q\mathbf{e}_i, \mathbf{0}, 0)$，满足 $A\cdot\mathbf{0} + q\mathbf{e}_i \equiv 0 \pmod{q}$
-- 中 $n$ 行：$(-A[:,j] \bmod q,\; \mathbf{e}_j,\; 0)$，满足 $A\cdot\mathbf{e}_j + (-A[:,j]) \equiv 0$
-- 末行：$(\mathbf{b}, \mathbf{0}, 1)$，满足 $A\cdot\mathbf{0} + \mathbf{b} \equiv 1\cdot\mathbf{b}$
+格的行列式 $\det(\mathcal{L}) = q^m \approx 2^{3000}$。Gauss 启发式预测格中"典型"最短向量长度约为 12000，而目标向量只有 16——比平均短了约 **750 倍**，是极其显著的唯一最短向量（uSVP）。
 
-目标向量的线性组合为：
-$$(s,e,1) = 1\cdot(\mathbf{b},\mathbf{0},1) + \sum_{j} s_j\cdot(-A[:,j],\mathbf{e}_j,0) + \sum_i k_i\cdot(q\mathbf{e}_i,\mathbf{0},0)$$
+**第三步：LLL 的 $\delta$ 参数是关键**
 
-其中 $k_i$ 是模约简产生的 wrap count。
+- 默认 $\delta = 0.75$：在 251 维格上 LLL 收敛不到目标，输出最短向量仍在 $3.5q \approx 3.5 \times 10^6$ 级别，远大于目标
+- **$\delta = 0.99$**：Lovász 条件极紧，LLL 直接找到 $|\mathbf{b}_0| = 12$ 即目标向量
 
-### 为什么 $\delta=0.99$ 是关键
+$\delta$ 越接近 1，LLL 每次交换向量的判断越严格，约简质量越高。高维 uSVP 上大 $\delta$ 是唯一出路。
 
-LLL 的 **Lovász 条件**控制着约简的质量：
-$$\delta \cdot \|\mathbf{b}_{k-1}^*\|^2 \le \|\mathbf{b}_k^*\|^2 + \mu_{k,k-1}^2 \|\mathbf{b}_{k-1}^*\|^2$$
+**理解**：目标向量 $(s, e, 1)$ 的每个分量都被约束得极小——$s_j$ 只取 0 或 1，$e_i$ 只取 -1/0/1。而格中随机向量的分量普遍在 $q$ 量级。
 
-- $\delta = 0.75$（理论最小值）：约简最激进，但在 251 维上"信息衰减"太快，找到的 |b0| 停留在 $3.5q$
-- $\delta = 0.99$：每步交换更保守，整个格基被更均匀地"梳理"，最终 |b0| = 12 直接命中目标
+### 攻击步骤
 
-直觉上，高维 LLL 就像把一堆长短不一的棍子反复比较交换。$\delta$ 大意味着"交换的门槛更高"，每次交换的改善更大，最终所有棍子更整齐——第一条最短。
+1. 用 $A, b, q$ 构造 251×251 的 Kannan 嵌入格基
+2. 调用 `LLL.reduction(B, delta=0.99)` 进行格基约简
+3. 在约简后的基中搜索最后一列为 $\pm 1$ 的行
+4. 该行的第 $[m, m+n-1]$ 列乘以符号即恢复 $s$
+5. 用 SHA256(s) 解密 AES-CBC 得 flag
 
-| $\delta$ | 结果 |
-|----------|------|
-| 0.75（默认） | |b0| 停留在 $3.5q \approx 3.6 \times 10^6$ |
-| **0.99** | **|b0| = 12，直接命中目标** |
+### 关键代码
 
-### 尝试过的失败方法
+```python
+from fpylll import IntegerMatrix, LLL
 
-| 方法 | 失败原因 |
-|------|----------|
-| 模拟退火（5 万轮） | 每位翻转改变所有残差，0/150 方程满足 |
-| MILP / CBC（10 分钟） | 100 二进制变量，10 万节点无可行解 |
-| 对偶格 + 浮点求解 | $V\!\cdot\!e = rhs$ 病态（cond ≈ $3\times10^5$），浮点解完全错误 |
-| Kannan + $\delta$=0.75 | 高维 LLL 信息衰减，251 维不收敛 |
-| **Kannan + $\delta$=0.99** | ✅ |b0| = 12，秒出 |
+dim = n + m + 1  # 251
+B = IntegerMatrix(dim, dim)
 
-### 知识点
+for i in range(m):
+    B[i, i] = q                    # q*I_m
+for j in range(n):
+    for i in range(m):
+        B[m+j, i] = (-A[i][j]) % q # -A^T mod q
+    B[m+j, m+j] = 1                # I_n
+for i in range(m):
+    B[dim-1, i] = b[i]             # b
+B[dim-1, dim-1] = 1                # 1
 
-| 概念 | 说明 |
-|------|------|
-| LWE | Regev 2005，后量子密码学基石。$b = As + e \pmod{q}$ |
-| 模约简 + 误差 = 困难 | 缺一模约简→线性方程；缺一误差→最小二乘；两者都有一→LWE |
-| Kannan 嵌入 | LWE → uSVP：将 $(s,e,1)$ 嵌入为格中超短向量 |
-| uSVP | $\lambda_2/\lambda_1 \approx 750 \gg 1$，极易用格基约简求解 |
-| LLL $\delta$ 参数 | $\delta \in (0.25, 1)$，高维 uSVP 需 $\delta \approx 0.99$ |
-| Gauss 启发式 | $\lambda_1 \approx \sqrt{d/(2\pi e)} \cdot \det(L)^{1/d}$，用于判断 SVP 难度 |
-| 对偶格攻击的局限 | 短向量仅张成 50 维子空间，远不足以确定 150 维误差 |
+# 关键：delta=0.99！
+LLL.reduction(B, delta=0.99)
 
-### 尝试过的失败方法
+for row in range(dim):
+    if abs(B[row, dim-1]) == 1:
+        sign = B[row, dim-1]
+        s = [B[row, m+j] * sign for j in range(n)]
+```
 
-| 方法 | 失败原因 |
-|------|----------|
-| 模拟退火 | 位翻转改变所有残差，无梯度 |
-| MILP (CBC 10min) | 100 二进制变量，10 万节点无解 |
-| 对偶格 + 浮点 | 病态矩阵 cond ≈ $3\times10^5$ |
-| Kannan + $\delta$=0.75 | 251 维不收敛 |
+## Bonus Feedback
 
-### 知识点
+这节课我是到教室听的（其实因为没什么事情，基本每节专题课都去了），能感觉到选 Crypto 的人确实比较多。课上讲了 RSA 相关的内容以及椭圆曲线加密等，让我对密码学有了一个整体的认知，这也是推动我选择这个方向的原因（提一嘴，Crypto 的专题三也非常有意思）。比较遗憾的是，由于数理基础比较薄弱，加上专业不太对口，课的后半程渐渐跟不上了，写作业的时候又翻来覆去地看 PPT。
 
-| 概念 | 说明 |
-|------|------|
-| LWE | Regev 2005，后量子密码学基石 |
-| Kannan 嵌入 | LWE → uSVP：$(s,e,1)$ 是极短向量 |
-| uSVP | $\lambda_2/\lambda_1 \approx 750 \gg 1$ → 极易求解 |
-| LLL $\delta$ | $\delta=0.99$ 对高维 uSVP 至关重要 |
+作业方面我个人觉得还是比较友好的 —— 选另一个专题的时候被 Web 和 Reverse 的作业难度劝退了，其实我也真的很感兴趣来着，还去学了汇编语言 TwT。前面 RSA 的部分大部分可以靠自己完成，后面的 Bonus 难度确实很大，但借助 AI 之后至少能大概明白每道题涉及的知识点，不至于像其他专题那样两眼一抹黑。
 
----
-
-## 工具链总结
-
-### 为什么需要 WSL + fpylll
-
-| 环境 | LLL 实现 | EZHNP (19维) | Regev (251维) |
-|------|----------|-------------|---------------|
-| Windows olll | `olll.reduction` | 太慢 | 太慢 |
-| Windows sympy | `Matrix.lll()` | assertion 错误 | 太慢 |
-| WSL flint | `fmpz_mat.lll()` | 未找到目标 | |b0|=q |
-| **WSL fpylll** | `LLL`/`BKZ` | **BKZ-10 ✅** | **LLL $\delta$=0.99 ✅** |
-
-Python 纯整数 LLL 在维度 > 20 时质量严重下降。fpylll（C++ fpLLL）使用浮点 Gram-Schmidt，在高维和大系数下远优于纯整数实现。
-
-### 各题工具汇总
-
-| 题目 | 工具 | 核心参数 |
-|------|------|----------|
-| RSA Party | Python | 纯数学 |
-| KillerECC | netcat + Python | 纯代数 |
-| EZcopper | Python | $\gcd(N, c_1^N-c_2)$ |
-| EZDLP | Python | $p-1 = 2^{518}$ |
-| EZHNP | **fpylll BKZ** | 19 维，BKZ-10 |
-| Regev | **fpylll LLL** | 251 维，$\delta=0.99$ |
-
----
-
-*Writeup by Claude Code | 2026-07-29*
+建议的话，希望课上的知识点密度可以稍微降一点，其他都很好！专题三的课我非常喜欢，可以发扬光大！
