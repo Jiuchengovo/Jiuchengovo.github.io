@@ -24,10 +24,12 @@
 #### 加密与解密
 
 $$
+
 \begin{aligned}
 \text{加密：}&\quad c \equiv m^e \pmod N \\
 \text{解密：}&\quad m \equiv c^d \pmod N
 \end{aligned}
+
 $$
 
 其中 $m$ 是明文整数（$0 \leq m < N$），$c$ 是密文。
@@ -121,10 +123,12 @@ $$f_1(x) = x^3 - c_1,\quad f_2(x) = (x + \text{pad})^3 - c_2$$
 计算 $\gcd(f_1, f_2)$ 得到 $(x - m)$。对 $e=3$ 我们可以计算多项式消元：
 
 $$
+
 \begin{aligned}
 g(x) &= f_2 - f_1 = 3p \cdot x^2 + 3p^2 \cdot x + (p^3 + c_1 - c_2) \\
      &= A \cdot x^2 + B \cdot x + C
 \end{aligned}
+
 $$
 
 再用 $f_1$ 和 $g$ 消去 $x^2$ 项，得到 $x$ 的一次方程，直接求解即可。
@@ -207,12 +211,14 @@ elliptic ≤ 6.6.0 的 GHSA-vjh7-7g9h-fjfh 漏洞：`_truncateToN` 函数允许*
 这就是 ECDSA nonce 重用！ECDSA 中一旦 nonce 重用，我们就可以直接获取私钥：
 
 $$
+
 \begin{aligned}
 s_1 &\equiv k^{-1}(h_1 + r \cdot d) \pmod n \\
 s_2 &\equiv k^{-1}(h_2 + r \cdot d) \pmod n \\
 \Rightarrow\quad k &\equiv (h_1 - h_2) \cdot (s_1 - s_2)^{-1} \pmod n \\
 \Rightarrow\quad d &\equiv r^{-1}(s_1 \cdot k - h_1) \pmod n
 \end{aligned}
+
 $$
 
 ### 攻击步骤
@@ -249,6 +255,7 @@ d = (pow(r, -1, N) * (s1 * k - (N-1))) % N
 费马小定理 $a^p \equiv a \pmod{p}$ 对所有整数 $a$ 成立，所以我们可以得到以下两个式子：
 
 $$c_1 = m^p \bmod N \;\Rightarrow\; c_1 \equiv m^p \equiv m \pmod{p}$$
+
 $$c_2 = m^q \bmod N \;\Rightarrow\; c_2 \equiv m^q \equiv m \pmod{q}$$
 
 **第二层（模 $p$ 下的指数消去）**：
@@ -277,10 +284,12 @@ $$\boxed{\gcd(N,\; c_1^N - c_2) = p}$$
     取 $p=3,\; q=11,\; N=33,\; m=2$：
     
     $$
+
     \begin{aligned}
     c_1 &= m^p \bmod N = 2^3 \bmod 33 = 8 \\
     c_2 &= m^q \bmod N = 2^{11} \bmod 33 = 2
     \end{aligned}
+
     $$
     
     验证：$c_1 \bmod p = 8 \bmod 3 = 2 = m$ ✅，$c_2 \bmod q = 2 \bmod 11 = 2 = m$ ✅。
@@ -288,8 +297,11 @@ $$\boxed{\gcd(N,\; c_1^N - c_2) = p}$$
     通过已知的 $N, c_1, c_2$ 进行运算：
     
     $$c_1^N \bmod N = 8^{33} \bmod 33 = 17$$
+
     $$c_1^N \bmod N - c_2 = 17 - 2 = 15$$
+
     $$\gcd(N,\; 15) = \gcd(33,\; 15) = 3 = p \quad ✅$$
+
     $$m = c_1 \bmod p = 8 \bmod 3 = 2 \quad ✅$$
     
     只需两行运算，我们就成功分解了 $N$ ，说明这个方法是有效的。
@@ -320,7 +332,7 @@ flag = long_to_bytes(m)
 已知一个大素数 $p$、底数 $g=3$、以及 $c = 3^x \bmod p$（$x$ 是 500-bit 素数），求离散对数 $x$。然后用 $x$ 的 MD5 值作为 AES-ECB 密钥解密密文 $ct$ 得到 flag。
 
 !!! question "什么是 DLP（离散对数问题）？"
-    普通对数：$g^x = y$，已知 $g, y$ 求 $x$。离散对数：$g^x \equiv y \pmod{p}$，已知 $g, y, p$ 求 $x$——多了个模 $p$，但难度天差地别。对于大素数 $p$，这是公认的数学难题，Diffie-Hellman 密钥交换、ElGamal、DSA 的安全性都基于它。**但**，如果 $p-1$ 光滑（全是小素数因子），DLP 会被 Pohlig-Hellman 算法降维打击（。
+    普通对数：$g^x = y$，已知 $g, y$ 求 $x$。离散对数：$g^x \equiv y \pmod{p}$，已知 $g, y, p$ 求 $x$ 虽然只是多了个模 $p$，但难度却极高。对于大素数 $p$，这是公认的数学难题，Diffie-Hellman 密钥交换、ElGamal、DSA 的安全性都基于它。**但**，如果 $p-1$ 光滑（全是小素数因子），DLP 会被 Pohlig-Hellman 算法降维打击（
 
 ### 漏洞分析
 
@@ -339,11 +351,14 @@ DLP 的困难性依赖于 $p-1$ 有大素数因子。当 $p-1 = \prod q_i^{e_i}$
 当 $q=2$ 时，$x$ 的 $2$ 进制展开就是二进制。由于 $g=3$ 是模 $p$ 的生成元（$3^{(p-1)/2} \equiv -1 \pmod{p}$），第 $i$ 轮可以判断 $x$ 的第 $i$ 个比特是 0 还是 1：
 
 $$y = c \cdot g^{-x_{\text{已知低位}}} \bmod p$$
+
 $$
+
 y^{(p-1)/2^{i+1}} \bmod p = \begin{cases}
     1 & \Rightarrow \text{bit}_i = 0 \\
     p-1 & \Rightarrow \text{bit}_i = 1
 \end{cases}
+
 $$
 
 **理解**：想象 $x$ 是一个 518 位的二进制数。每一轮剥掉已知的低位，让剩下的最低位暴露出来。判断它是不是 1 的方法就是看 $y$ 的 $(p-1)/2^{i+1}$ 次幂——如果是 $-1$（即 $p-1$），说明这一位是 1；如果是 $1$，说明这一位是 0。518 轮之后，$x$ 的所有比特就全部恢复了。
@@ -418,6 +433,7 @@ $$k_j \equiv c_j \cdot k_0 + d_j \pmod{n},\quad |k_0| < K,\; |k_j| < K$$
 将问题嵌入到一个 $d = t+1 = 18$ 维的格中：
 
 $$
+
 B = \begin{bmatrix}
 n & 0 & \cdots & 0 & 0 & 0 \\
 0 & n & \cdots & 0 & 0 & 0 \\
@@ -426,6 +442,7 @@ n & 0 & \cdots & 0 & 0 & 0 \\
 c_1 & c_2 & \cdots & c_{t-1} & 1 & 0 \\
 d_1 & d_2 & \cdots & d_{t-1} & 0 & K
 \end{bmatrix}
+
 $$
 
 目标短向量 $[k_1, k_2, \ldots, k_{t-1}, k_0, K]$，每个分量 $\le 2^{240}$。这个向量确实在格中（通过列线性组合可验证），且远短于格中"平均"长度的向量。
@@ -502,11 +519,13 @@ $$\|(s, e, 1)\| = \sqrt{\underbrace{100}_{\text{二进制 }s_j} + \underbrace{15
 **第二步：构造格基矩阵**
 
 $$
+
 B = \begin{bmatrix}
 q\cdot I_m & \mathbf{0} & \mathbf{0} \\
 -\mathbf{A}^T \bmod q & I_n & \mathbf{0} \\
 \mathbf{b} & \mathbf{0} & 1
 \end{bmatrix}
+
 $$
 
 格的行列式 $\det(\mathcal{L}) = q^m \approx 2^{3000}$。Gauss 启发式预测格中"典型"最短向量长度约为 12000，而目标向量只有 16——比平均短了约 **750 倍**，是极其显著的唯一最短向量（uSVP）。
