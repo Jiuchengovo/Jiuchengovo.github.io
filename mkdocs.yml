@@ -47,13 +47,15 @@ extra_javascript:
 
 nav:
   - 首页: index.md
-  - Web Lab 1: Web_Lab1.md
-  - "Lab 1: Web": "Lab 1：Web.md"
   - Lab 0: Crypto Lab 0.md
-  - "Lab 1: Crypto": Crypto Lab 1.md
-  - "Lab 1: Pwn": Pwn.md
-  - "Lab 1: Misc": "Lab 1 Misc.md"
-  - "Lab 1: Reverse": "rev lab 1.md"
+  - "Lab 1":
+      - "Crypto": Crypto Lab 1.md
+      - "Web": "Lab 1：Web.md"
+      - "Web基础知识": Web_Lab1.md
+      - "Pwn": Pwn.md
+      - "Misc": "Lab 1 Misc.md"
+      - "Reverse": "rev lab 1.md"
+  - "Lab 2: Crypto": Crypto Lab 2.md
 
 plugins:
   - search
