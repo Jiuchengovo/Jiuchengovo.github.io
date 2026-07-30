@@ -2,7 +2,7 @@
 
 ## Task 1 RSA Party
 
-> Flag: `ZJUCTF{?!Rs@_MA$TEr!?}`
+!!! success "Flag: `ZJUCTF{?!Rs@_MA$TEr!?}`"
 
 ### 题目描述
 
@@ -76,7 +76,7 @@ def pollard_p1(n, bound=100000):
 
 ### 3/6: Common Modulus Attack
 
-> 和 Lab 1 的一道题很像（？！共模攻击！？）
+!!! info "和 Lab 1 的一道题很像（共模攻击！）"
 
 **漏洞**：相同明文 $m$ 用两个互质的指数 $e_1=3, e_2=17$ 在同一个 $N$ 下加密。
 
@@ -181,7 +181,7 @@ def wiener(n, e, c):
 
 ## Task 2 KillerECC
 
-> Flag: `ZJUCTF{eLl1PTiC_6_6_0_was_nOt_fIn3}`
+!!! success "Flag: `ZJUCTF{eLl1PTiC_6_6_0_was_nOt_fIn3}`"
 
 ### 题目描述
 
@@ -222,7 +222,7 @@ d = (pow(r, -1, N) * (s1 * k - (N-1))) % N
 
 ## Task 3 EZcopper
 
-> Flag: `ZJUCTF{y0u_HavE_l3@rnt_thE_coppER$miTH_m37hod_sO_c13VEr!!!!}`
+!!! success "Flag: `ZJUCTF{y0u_HavE_l3@rnt_thE_coppER$miTH_m37hod_sO_c13VEr!!!!}`"
 
 ### 题目描述
 
@@ -259,26 +259,24 @@ $$\boxed{\gcd(N,\; c_1^N - c_2) = p}$$
 
 以压倒性概率 $q \nmid (c_1^N - c_2)$，因此 GCD 直接给出 $p$。
 
-**例子**：我们可以取简单一点的数字 $p=3,\; q=11,\; N=33,\; m=2$：
-
-$$\begin{aligned}
-c_1 &= m^p \bmod N = 2^3 \bmod 33 = 8 \\
-c_2 &= m^q \bmod N = 2^{11} \bmod 33 = 2
-\end{aligned}$$
-
-验证：$c_1 \bmod p = 8 \bmod 3 = 2 = m$ ✅，$c_2 \bmod q = 2 \bmod 11 = 2 = m$ ✅。
-
-通过已知的 $N, c_1, c_2$ 进行运算：
-
-$$c_1^N \bmod N = 8^{33} \bmod 33 = 17$$
-
-$$c_1^N \bmod N - c_2 = 17 - 2 = 15$$
-
-$$\gcd(N,\; 15) = \gcd(33,\; 15) = 3 = p \quad ✅$$
-
-$$m = c_1 \bmod p = 8 \bmod 3 = 2 \quad ✅$$
-
-只需两行运算，我们就成功分解了 $N$ ，说明这个方法是有效的。
+!!! example "小数字验证"
+    取 $p=3,\; q=11,\; N=33,\; m=2$：
+    
+    $$\begin{aligned}
+    c_1 &= m^p \bmod N = 2^3 \bmod 33 = 8 \\
+    c_2 &= m^q \bmod N = 2^{11} \bmod 33 = 2
+    \end{aligned}$$
+    
+    验证：$c_1 \bmod p = 8 \bmod 3 = 2 = m$ ✅，$c_2 \bmod q = 2 \bmod 11 = 2 = m$ ✅。
+    
+    通过已知的 $N, c_1, c_2$ 进行运算：
+    
+    $$c_1^N \bmod N = 8^{33} \bmod 33 = 17$$
+    $$c_1^N \bmod N - c_2 = 17 - 2 = 15$$
+    $$\gcd(N,\; 15) = \gcd(33,\; 15) = 3 = p \quad ✅$$
+    $$m = c_1 \bmod p = 8 \bmod 3 = 2 \quad ✅$$
+    
+    只需两行运算，我们就成功分解了 $N$ ，说明这个方法是有效的。
 
 ### 攻击步骤
 
@@ -299,15 +297,14 @@ flag = long_to_bytes(m)
 
 ## Task 4 EZDLP
 
-> Flag: `ZJUCTF{poHl19_h3L1m@n_al6O!?}`
+!!! success "Flag: `ZJUCTF{poHl19_h3L1m@n_al6O!?}`"
 
 ### 题目描述
 
 已知一个大素数 $p$、底数 $g=3$、以及 $c = 3^x \bmod p$（$x$ 是 500-bit 素数），求离散对数 $x$。然后用 $x$ 的 MD5 值作为 AES-ECB 密钥解密密文 $ct$ 得到 flag。
 
-**什么是 DLP（离散对数问题）？**
-
-普通对数：$g^x = y$，已知 $g, y$ 求 $x$。离散对数：$g^x \equiv y \pmod{p}$，已知 $g, y, p$ 求 $x$——多了个模 $p$，但难度天差地别。对于大素数 $p$，这是公认的数学难题，Diffie-Hellman 密钥交换、ElGamal、DSA 的安全性都基于它。**但**，如果 $p-1$ 光滑（全是小素数因子），DLP 会被 Pohlig-Hellman 算法降维打击（。
+!!! question "什么是 DLP（离散对数问题）？"
+    普通对数：$g^x = y$，已知 $g, y$ 求 $x$。离散对数：$g^x \equiv y \pmod{p}$，已知 $g, y, p$ 求 $x$——多了个模 $p$，但难度天差地别。对于大素数 $p$，这是公认的数学难题，Diffie-Hellman 密钥交换、ElGamal、DSA 的安全性都基于它。**但**，如果 $p-1$ 光滑（全是小素数因子），DLP 会被 Pohlig-Hellman 算法降维打击（。
 
 ### 漏洞分析
 
@@ -361,7 +358,7 @@ flag = AES.new(key, AES.MODE_ECB).decrypt(ct).rstrip(b'\x00')
 
 > Bonus 的两道题很大程度的上用了AI（包括代码及原理解释……）已经尽量把自己的理解写进报告了
 
-> Flag: `ZJUCTF{HNP_atT4cK_D$A}`
+!!! success "Flag: `ZJUCTF{HNP_atT4cK_D$A}`"
 
 ### 题目描述
 
@@ -447,7 +444,7 @@ for row in range(dim):
 
 ## Task 6 Regev
 
-> Flag: `ZJUCTF{LLL_60_brrrr}`
+!!! success "Flag: `ZJUCTF{LLL_60_brrrr}`"
 
 ### 题目描述
 
@@ -457,9 +454,8 @@ $$b = A \cdot s + e \pmod{q}$$
 
 目标是恢复秘密向量 $s \in \{0,1\}^{100}$，并用它的 SHA256 作为 AES-CBC 密钥解密 flag。误差向量 $e \in \{-1, 0, 1\}^{150}$ 极小。
 
-**前置：什么是格？**
-
-格是 $\mathbb{Z}^n$ 中一组线性无关向量的所有整数线性组合——简单说就是一个规则排列的无穷点阵。格基约简（LLL、BKZ）就是在格中找"最短的非零向量"。虽然一般意义上的 SVP 很难，但当目标向量**远短于**格中其他所有向量时，LLL 能把它揪出来。
+!!! question "前置：什么是格？"
+    格是 $\mathbb{Z}^n$ 中一组线性无关向量的所有整数线性组合——简单说就是一个规则排列的无穷点阵。格基约简（LLL、BKZ）就是在格中找"最短的非零向量"。虽然一般意义上的 SVP 很难，但当目标向量**远短于**格中其他所有向量时，LLL 能把它揪出来。
 
 ### 漏洞分析
 
