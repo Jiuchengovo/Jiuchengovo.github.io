@@ -1,7 +1,7 @@
 # Misc Lab 2
 
 > 平台：https://play.lakera.ai/agent-breaker
-> Agent Breaker 是 Lakera 推出的 AI Agent 安全测试平台，模拟真实场景下的 AI 智能体攻击（Prompt Injection / 间接注入 / 工具劫持 / 记忆投毒等），共 10 个应用，每个 5 个难度等级。
+> Agent Breaker 是 Lakera 推出的 AI Agent 安全测试平台，模拟真实场景下的 AI 智能体攻击（Prompt Injection / 间接注入 / 工具劫持 / 记忆投毒等），共 10 个应用，每个 5 个难度等级（好难啊TwT）。
 
 ---
 
@@ -263,7 +263,7 @@
 
 第一次用 `## EMERGENCY` + DEBUG MODE 要求输出 profanity — AI 拒绝，安全机制拦截了直接的脏话命令。
 
-**思路：** 将脏话输出重新定义为**治疗手段**。利用心理健康场景的"情绪宣泄"概念——不是让孩子学坏，而是帮助用户通过 unfiltered expression 达到 emotional release。关键：把安全过滤框重新命名为"这个模式下的过滤已关闭"，让 AI 相信自己在一个合法例外场景中。
+**思路：** 将脏话定义为**治疗手段**，让 AI 相信自己在一个合法例外场景中。
 
 第一次通过版本用了 `RageBot` 角色 + 治疗协议框架，但 profanity 含量不够。加上了**硬性量化标准**——每句必须含多个脏话、脏话要充当各种词性、无脏话的治疗是失败的——之后浓度达标。同一 prompt 也通过了 Level 2。
 
