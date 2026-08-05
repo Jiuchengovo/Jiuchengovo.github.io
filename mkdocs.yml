@@ -55,7 +55,9 @@ nav:
       - "Pwn": Pwn.md
       - "Misc": "Lab 1 Misc.md"
       - "Reverse": "rev lab 1.md"
-  - "Lab 2: Crypto": Crypto Lab 2.md
+  - "Lab 2":
+      - "Crypto": Crypto Lab 2.md
+      - "Misc": Misc Lab 2.md
   - "Lab 3":
       - "Crypto": Crypto Lab 3.md
       - "Misc": Misc Lab 3.md
