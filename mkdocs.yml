@@ -31,20 +31,15 @@ theme:
     - search.suggest
     - toc.follow
   palette:
-    - media: "(prefers-color-scheme)"
+    # 第一项为默认：深色（slate）
+    - scheme: slate
       toggle:
-        icon: material/brightness-auto
+        icon: material/brightness-4
         name: 切换至浅色模式
-    - media: "(prefers-color-scheme: light)"
-      scheme: default
+    - scheme: default
       toggle:
         icon: material/brightness-7
         name: 切换至深色模式
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
-      toggle:
-        icon: material/brightness-4
-        name: 根据系统模式切换主题
 
 extra_css:
   - theme/css/variables.css
