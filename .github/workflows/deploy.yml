@@ -16,10 +16,40 @@ jobs:
       - run: pip install mkdocs mkdocs-material
       # 刷新 GitHub 贡献图数据（失败不影响部署，沿用上一次的数据）
       - run: python .github/scripts/fetch-contributions.py
-      - run: mkdocs build
+      - name: Build site
+        run: |
+          set +e
+          mkdocs build > /tmp/build-out.log 2>&1
+          code=$?
+          if [ $code -ne 0 ]; then
+            git config user.email "ci-bot@users.noreply.github.com"
+            git config user.name "CI Bot"
+            git checkout -b ci-debug 2>/dev/null || git checkout ci-debug
+            printf '%s\n' '## Build failed' > diag.md
+            tail -n 80 /tmp/build-out.log >> diag.md
+            git add diag.md
+            git commit -m "ci: diag build failure $(date -u +%H%M%S)"
+            git push origin ci-debug --force
+            exit $code
+          fi
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./site
-          force_orphan: true
+        run: |
+          cd site
+          git init -b gh-pages
+          git config user.email "ci-bot@users.noreply.github.com"
+          git config user.name "CI Bot"
+          git add -A
+          git commit -m "deploy $(date -u +%Y%m%d-%H%M%S)"
+          set +e
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/Jiuchengovo/Jiuchengovo.github.io.git" HEAD:gh-pages > /tmp/push.log 2>&1
+          code=$?
+          if [ $code -ne 0 ]; then
+            cd ..
+            git checkout -b ci-debug 2>/dev/null || git checkout ci-debug
+            printf '%s\n' '## Push failed' > diag.md
+            tail -n 60 /tmp/push.log >> diag.md
+            git add diag.md
+            git commit -m "ci: diag push failure $(date -u +%H%M%S)"
+            git push origin ci-debug --force
+            exit $code
+          fi
