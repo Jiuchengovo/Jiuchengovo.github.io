@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+  {{ super() }}
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script>
+    (function () {
+      try {
+        var saved = (typeof __md_get === "function") ? __md_get("__palette") : null;
+        var scheme;
+        if (saved && saved.color && saved.color.media) {
+          if (saved.color.media === "(prefers-color-scheme)") {
+            scheme = matchMedia("(prefers-color-scheme: dark)").matches ? "slate" : "default";
+          } else {
+            scheme = saved.color.scheme;
+          }
+        } else {
+          scheme = matchMedia("(prefers-color-scheme: dark)").matches ? "slate" : "default";
+        }
+        document.documentElement.setAttribute("data-md-color-scheme", scheme);
+        var hljsTheme = document.createElement("link");
+        hljsTheme.id = "hljs-theme";
+        hljsTheme.rel = "stylesheet";
+        hljsTheme.href = scheme === "slate"
+          ? "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
+          : "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css";
+        document.head.appendChild(hljsTheme);
+        var attach = function () {
+          document.body.setAttribute("data-md-color-scheme", scheme);
+          new MutationObserver(function () {
+            var s = document.body.getAttribute("data-md-color-scheme");
+            if (s) document.documentElement.setAttribute("data-md-color-scheme", s);
+          }).observe(document.body, {
+            attributes: true,
+            attributeFilter: ["data-md-color-scheme"],
+          });
+        };
+        if (document.body) {
+          attach();
+        } else {
+          new MutationObserver(function (_, obs) {
+            if (document.body) {
+              attach();
+              obs.disconnect();
+            }
+          }).observe(document.documentElement, { childList: true });
+        }
+      } catch (e) {}
+    })();
+  </script>
+{% endblock %}

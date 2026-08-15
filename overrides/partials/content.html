@@ -1,0 +1,26 @@
+{#-
+  Custom content partial — wraps the page in the frontmatter-declared
+  page_class (e.g. "home-page") and adds the rainbow backdrop when
+  `rainbow: true` is set. See bfyes.github.io for the original design.
+-#}
+{% include "partials/actions.html" %}
+{% set page_class = page.meta.page_class | d("", true) %}
+{% if page.meta.rainbow %}
+  {% set page_class = (page_class ~ " rainbow-page") | trim %}
+{% endif %}
+{% if page_class %}
+  <div class="{{ page_class }}">
+    {% if page.meta.rainbow %}
+      <div class="rainbow-backdrop" aria-hidden="true"></div>
+    {% endif %}
+{% endif %}
+{% if "\u003ch1" not in page.content %}
+  <h1 id="__skip">{{ page.title | d(config.site_name, true)}}</h1>
+{% endif %}
+{{ page.content }}
+{% include "partials/tags.html" %}
+{% include "partials/source-file.html" %}
+{% include "partials/feedback.html" %}
+{% if page_class %}
+  </div>
+{% endif %}
