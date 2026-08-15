@@ -14,4 +14,6 @@ jobs:
         with:
           python-version: '3.x'
       - run: pip install mkdocs mkdocs-material
+      # 刷新 GitHub 贡献图数据（失败不影响部署，沿用上一次的数据）
+      - run: python .github/scripts/fetch-contributions.py
       - run: mkdocs gh-deploy --force

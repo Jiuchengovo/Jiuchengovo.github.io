@@ -2,73 +2,126 @@ site_name: Jiucheng's CTF Note
 site_description: 久诚的 CTF 学习笔记
 site_url: https://jiuchengovo.github.io/
 repo_url: https://github.com/Jiuchengovo/Jiuchengovo.github.io
+repo_name: Jiuchengovo.github.io
+edit_uri: edit/master/docs/
+site_author: Jiucheng
+copyright: "Copyright &copy; 2026 Jiucheng"
 
 theme:
   name: material
+  custom_dir: overrides
   language: zh
+  favicon: theme/assets/favicon.svg
   features:
     - navigation.tabs
     - navigation.sections
     - navigation.top
-    - search.suggest
-    - search.highlight
+    - navigation.indexes
+    - navigation.tracking
+    - navigation.footer
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
+    - content.action.edit
+    - content.code.annotate
     - content.code.copy
+    - content.code.select
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
   palette:
-    - scheme: default
-      primary: indigo
-      accent: indigo
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: 切换至浅色模式
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
       toggle:
         icon: material/brightness-7
-        name: 切换深色模式
-    - scheme: slate
-      primary: indigo
-      accent: indigo
+        name: 切换至深色模式
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
       toggle:
         icon: material/brightness-4
-        name: 切换浅色模式
+        name: 根据系统模式切换主题
 
-# 自定义主题：设计令牌 → 正文观感 → 首页组件
 extra_css:
   - theme/css/variables.css
   - theme/css/main.css
   - theme/css/components.css
 
 extra_javascript:
-  - javascripts/theme.js
-  - javascripts/mathjax.js
-  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+  - theme/js/theme-sync.js
+  - theme/js/mathjax.js
+  - https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js
+  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js
+  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/x86asm.min.js
+  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cmake.min.js
+  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/http.min.js
+  - theme/js/highlight.js
+  - theme/js/site.js
+  - theme/js/site-home.js
+  - theme/js/site-terminal.js
+  - theme/js/site-images.js
+  - theme/js/site-pdf.js
+  - theme/js/site-friends.js
+  - theme/js/site-github.js
 
 markdown_extensions:
   - admonition
   - attr_list
-  - codehilite
-  - footnotes
+  - def_list
+  - md_in_html
+  - sane_lists
+  - tables
+  - pymdownx.tilde:
+      smart_delete: false
   - toc:
       permalink: true
-  - pymdownx.highlight:
-      anchor_linenums: true
-  - pymdownx.inlinehilite
-  - pymdownx.snippets
-  - pymdownx.superfences
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
   - pymdownx.arithmatex:
       generic: true
-
-nav:
-  - 首页: index.md
-  - Lab 0: Crypto Lab 0.md
-  - "Lab 1":
-      - "Crypto": Crypto Lab 1.md
-      - "Web": "Lab 1：Web.md"
-      - "Web基础知识": Web_Lab1.md
-      - "Pwn": Pwn.md
-      - "Misc": "Lab 1 Misc.md"
-      - "Reverse": "rev lab 1.md"
-  - "Lab 2":
-      - "Crypto": Crypto Lab 2.md
-      - "Misc": Misc Lab 2.md
-  - "Lab 3":
-      - "Crypto": Crypto Lab 3.md
-      - "Misc": Misc Lab 3.md
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      use_pygments: false
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
 
 plugins:
   - search
+
+nav:
+  - 首页: index.md
+  - 学习:
+      - 学习: study/index.md
+      - CTF:
+          - Lab 0: Crypto Lab 0.md
+          - "Lab 1":
+              - "Crypto": Crypto Lab 1.md
+              - "Web": "Lab 1：Web.md"
+              - "Web基础知识": Web_Lab1.md
+              - "Pwn": Pwn.md
+              - "Misc": "Lab 1 Misc.md"
+              - "Reverse": "rev lab 1.md"
+          - "Lab 2":
+              - "Crypto": Crypto Lab 2.md
+              - "Misc": Misc Lab 2.md
+          - "Lab 3":
+              - "Crypto": Crypto Lab 3.md
+              - "Misc": Misc Lab 3.md
+  - 工具: tools/index.md
+  - 随笔: diaries/index.md
