@@ -1,0 +1,298 @@
+/* ============================================================================
+   components.css —— 首页自定义组件
+   ----------------------------------------------------------------------------
+   01. 终端窗口（hero）
+   02. 分区通用（section 头）
+   03. 笔记分类卡片
+   04. 更新日志
+   05. 友链 / 相关链接
+   06. GitHub 贡献图
+   07. 动画（打字、光标、reduced-motion 降级）
+   ============================================================================ */
+
+/* ---- 01. 终端窗口 ---- */
+/* 首页标题：紧凑、无下划线 */
+.home-page .home-title {
+  font-size: 1.45rem;
+  font-weight: 700;
+  margin: 0 0 1rem;
+  padding: 0;
+  border-bottom: none;
+  color: var(--section-title-color);
+}
+
+.home-terminal {
+  margin: 0.25rem 0 0.5rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--term-border);
+  background: var(--term-bg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.home-terminal__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.6rem 0.9rem;
+  background: color-mix(in srgb, var(--term-border) 55%, transparent);
+  border-bottom: 1px solid var(--term-border);
+}
+
+.home-terminal__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex: none;
+}
+.home-terminal__dot--red {
+  background: var(--term-dot-red);
+}
+.home-terminal__dot--yellow {
+  background: var(--term-dot-yellow);
+}
+.home-terminal__dot--green {
+  background: var(--term-dot-green);
+}
+
+.home-terminal__title {
+  margin-left: 0.4rem;
+  font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  color: var(--term-title-color);
+  user-select: none;
+}
+
+.home-terminal__screen {
+  padding: 1rem 1.1rem 1.2rem;
+  font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.92rem;
+  line-height: 1.75;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.home-terminal__line {
+  min-height: 1.75em;
+}
+
+/* 终端文字配色 */
+.home-terminal__host {
+  color: var(--term-host-color);
+  font-weight: 600;
+}
+.home-terminal__sep {
+  color: var(--term-title-color);
+}
+.home-terminal__path {
+  color: var(--term-path-color);
+  font-weight: 600;
+}
+.home-terminal__cmd {
+  color: var(--term-cmd-color);
+}
+.home-terminal__out {
+  color: var(--term-cmd-color);
+  opacity: 0.88;
+}
+.home-terminal__flag {
+  color: var(--term-flag-color);
+  font-weight: 600;
+}
+.home-terminal__cursor {
+  display: inline-block;
+  color: var(--term-cursor-color);
+  animation: term-blink var(--cursor-blink) step-end infinite;
+}
+
+@keyframes term-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ---- 02. 分区通用 ---- */
+.home-section {
+  margin-top: 2.2rem;
+}
+
+.home-section__head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 0.9rem;
+}
+
+.home-section__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--section-title-color);
+  margin: 0 !important;
+  border-bottom: none !important;
+  padding-bottom: 0 !important;
+}
+
+.home-section__title::after {
+  content: "";
+  display: block;
+  width: 2.4rem;
+  height: 3px;
+  margin-top: 0.35rem;
+  border-radius: 2px;
+  background: var(--sage);
+}
+
+/* ---- 03. 笔记分类卡片 ---- */
+.home-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.9rem;
+}
+
+.home-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1.1rem 1.15rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--home-border);
+  background: var(--home-card-bg);
+  text-decoration: none !important;
+  color: var(--section-title-color);
+  transition: transform 0.15s ease, box-shadow 0.15s ease,
+    background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.home-card:hover {
+  transform: translateY(-3px);
+  background: var(--home-card-hover);
+  border-color: var(--sage);
+  box-shadow: var(--shadow-md);
+  text-decoration: none !important;
+}
+
+.home-card__icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+
+.home-card__name {
+  font-size: 1.02rem;
+  font-weight: 700;
+}
+
+.home-card__desc {
+  font-size: 0.82rem;
+  color: var(--log-date-color);
+  line-height: 1.5;
+}
+
+/* ---- 04. 更新日志 ---- */
+.home-log-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.home-log {
+  display: flex;
+  gap: 1.1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px dashed var(--home-border);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.home-log:last-child {
+  border-bottom: none;
+}
+
+.home-log__date {
+  flex: none;
+  font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  color: var(--log-date-color);
+  padding-top: 0.18em;
+  min-width: 6.4em;
+}
+
+/* ---- 05. 友链 / 相关链接 ---- */
+.home-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.9rem;
+}
+
+.home-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--home-border);
+  background: var(--home-card-bg);
+  text-decoration: none !important;
+  color: var(--section-title-color);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.home-link:hover {
+  background: var(--home-card-hover);
+  border-color: var(--sage);
+  text-decoration: none !important;
+}
+
+.home-link__icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.home-link__text {
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.home-link__desc {
+  margin-left: auto;
+  font-size: 0.78rem;
+  color: var(--log-date-color);
+}
+
+/* ---- 06. GitHub 贡献图 ---- */
+.home-activity {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--home-border);
+  background: var(--home-card-bg);
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+}
+
+.home-activity img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-md);
+}
+
+.home-activity__hint {
+  margin-top: 0.6rem;
+  font-size: 0.78rem;
+  color: var(--log-date-color);
+}
+
+/* ---- 07. 动画 ---- */
+@media (prefers-reduced-motion: reduce) {
+  .home-terminal__cursor {
+    animation: none;
+  }
+  .home-terminal__line {
+    transition: none;
+  }
+}
+
+/* 终端打字内容初始隐藏，由 JS 逐个显示 */
+.term-typed {
+  visibility: hidden;
+}
+.term-typed.is-visible {
+  visibility: visible;
+}

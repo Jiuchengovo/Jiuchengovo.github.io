@@ -1,0 +1,87 @@
+/* ============================================================================
+   variables.css —— 全局设计令牌
+   ----------------------------------------------------------------------------
+   亮色（default）与暗色（slate）两套配置，通过 Material 的
+   [data-md-color-scheme] 切换。加载顺序：variables → main → components。
+   主色采用个人博客同款鼠尾草绿（sage），让笔记站与博客保持统一视觉。
+   ============================================================================ */
+
+:root {
+  /* === 布局 === */
+  --page-max-width: 65rem;
+  --content-padding-inline: 1rem;
+
+  /* === 圆角 === */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+
+  /* === 阴影 === */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.07);
+  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.09);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.08);
+
+  /* === 站点强调色（鼠尾草绿） === */
+  --sage: #6b7d6d;
+  --sage-hover: #5c6e5e;
+  --sage-soft: rgba(107, 125, 109, 0.12);
+  --sage-soft-strong: rgba(107, 125, 109, 0.2);
+
+  /* === 终端（macOS 风格圆点 + 文字） === */
+  --term-dot-red: #ff5f57;
+  --term-dot-yellow: #ffbd2e;
+  --term-dot-green: #28c840;
+  --term-title-color: #57606a;
+  --term-host-color: #1a7f37;
+  --term-path-color: #0969da;
+  --term-cmd-color: #111111;
+  --term-cursor-color: #111111;
+  --term-flag-color: #1a7f37;
+
+  /* === 打字光标闪烁 === */
+  --cursor-blink: 1s;
+
+  /* === 网格背景（浅色） === */
+  --page-grid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72'%3E%3Cpath d='M72 0H0v72' fill='none' stroke='%236b7d6d' stroke-opacity='0.10' stroke-width='1'/%3E%3C/svg%3E");
+}
+
+/* ---- 亮色模式 ---- */
+[data-md-color-scheme="default"] {
+  --home-panel: rgba(255, 255, 255, 0.75);
+  --home-border: #e2e0da;
+  --home-card-bg: #fbfaf7;
+  --home-card-hover: #f4f2ec;
+  --term-bg: #f6f8fa;
+  --term-border: #d0d7de;
+  --section-title-color: #24292f;
+  --log-date-color: #57606a;
+  --grid-fade-color: rgba(255, 255, 255, 0.92);
+}
+
+/* ---- 暗色模式 ---- */
+[data-md-color-scheme="slate"] {
+  --home-panel: rgba(13, 17, 23, 0.72);
+  --home-border: #30363d;
+  --home-card-bg: #161b22;
+  --home-card-hover: #1c2129;
+  --term-bg: #0d1117;
+  --term-border: #30363d;
+  --section-title-color: #e6edf3;
+  --log-date-color: #8b949e;
+  --grid-fade-color: rgba(13, 17, 23, 0.92);
+
+  --term-host-color: #7ee787;
+  --term-path-color: #79c0ff;
+  --term-cmd-color: #ffffff;
+  --term-cursor-color: #ffffff;
+  --term-flag-color: #7ee787;
+  --term-title-color: #8b949e;
+
+  --sage: #8fa893;
+  --sage-hover: #a3bca7;
+  --sage-soft: rgba(143, 168, 147, 0.14);
+  --sage-soft-strong: rgba(143, 168, 147, 0.24);
+
+  --page-grid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72'%3E%3Cpath d='M72 0H0v72' fill='none' stroke='%238fa893' stroke-opacity='0.10' stroke-width='1'/%3E%3C/svg%3E");
+}

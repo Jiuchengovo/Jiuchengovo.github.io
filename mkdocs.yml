@@ -1,6 +1,7 @@
-site_name: CTF Note
-site_description: CTF 学习笔记
+site_name: Jiucheng's CTF Note
+site_description: 久诚的 CTF 学习笔记
 site_url: https://jiuchengovo.github.io/
+repo_url: https://github.com/Jiuchengovo/Jiuchengovo.github.io
 
 theme:
   name: material
@@ -26,6 +27,17 @@ theme:
         icon: material/brightness-4
         name: 切换浅色模式
 
+# 自定义主题：设计令牌 → 正文观感 → 首页组件
+extra_css:
+  - theme/css/variables.css
+  - theme/css/main.css
+  - theme/css/components.css
+
+extra_javascript:
+  - javascripts/theme.js
+  - javascripts/mathjax.js
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
 markdown_extensions:
   - admonition
   - attr_list
@@ -40,10 +52,6 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.arithmatex:
       generic: true
-
-extra_javascript:
-  - javascripts/mathjax.js
-  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
 nav:
   - 首页: index.md
