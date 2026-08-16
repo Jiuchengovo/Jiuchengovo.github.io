@@ -22,9 +22,60 @@
    ============================================================================ */
 
 /* ============================================================================
-   01. 字体资源 Google Fonts（@import 必须位于所有 CSS 规则之前）
+   01. 字体资源 —— 本地自托管（Google Fonts 在国内被墙会导致加载阻塞）
+   ----------------------------------------------------------------------------
+   Inter / JetBrains Mono 使用 @fontsource 的 woff2 文件（docs/theme/fonts/）。
+   中文（Noto Sans/Serif SC）由系统字体回退：PingFang SC / Microsoft YaHei。
    ============================================================================ */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700;800&display=swap");
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/inter-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../fonts/inter-latin-500-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../fonts/inter-latin-600-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../fonts/inter-latin-700-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../fonts/jetbrains-mono-latin-500-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../fonts/jetbrains-mono-latin-600-normal.woff2") format("woff2");
+}
 
 /* 代码语法高亮已切换到 highlight.js（运行时，见 theme/js/highlight.js 与 zensical.toml），
    Pygments token 配色规则已移除。GitHub 配色由 highlight.js 的 github/github-dark 主题提供。 */

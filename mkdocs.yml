@@ -11,6 +11,8 @@ theme:
   name: material
   custom_dir: overrides
   language: zh
+  # 禁用 Material 默认 Roboto（Google Fonts 被墙），字体由本地 @font-face 提供
+  font: false
   favicon: theme/assets/favicon.svg
   features:
     - navigation.tabs
@@ -48,12 +50,13 @@ extra_css:
 
 extra_javascript:
   - theme/js/theme-sync.js
+  # MathJax 惰性加载：theme/js/mathjax.js 检测到页面含公式时才注入 CDN
   - theme/js/mathjax.js
-  - https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js
-  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js
-  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/x86asm.min.js
-  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cmake.min.js
-  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/http.min.js
+  # highlight.js 本地自托管（避免 cdnjs 在国内不稳定）
+  - theme/js/hljs/highlight.min.js
+  - theme/js/hljs/x86asm.min.js
+  - theme/js/hljs/cmake.min.js
+  - theme/js/hljs/http.min.js
   - theme/js/highlight.js
   - theme/js/site.js
   - theme/js/site-home.js

@@ -16,8 +16,8 @@
   if (!hljsLib) return;
 
   var STYLE_ID = "hljs-theme";
-  var DARK_URL = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css";
-  var LIGHT_URL = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css";
+  var DARK_URL = "/theme/css/github-dark.min.css";
+  var LIGHT_URL = "/theme/css/github.min.css";
 
   /** 根据 currentMode('light'/'dark') 应用对应 github 主题样式表。 */
   function applyTheme(mode) {

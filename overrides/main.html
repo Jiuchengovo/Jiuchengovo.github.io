@@ -2,8 +2,8 @@
 
 {% block extrahead %}
   {{ super() }}
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <link rel="preload" as="style" href="/theme/css/github.min.css">
+  <link rel="preload" as="style" href="/theme/css/github-dark.min.css">
   <script>
     (function () {
       try {
@@ -21,8 +21,8 @@
         hljsTheme.id = "hljs-theme";
         hljsTheme.rel = "stylesheet";
         hljsTheme.href = scheme === "slate"
-          ? "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
-          : "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css";
+          ? "/theme/css/github-dark.min.css"
+          : "/theme/css/github.min.css";
         document.head.appendChild(hljsTheme);
         var attach = function () {
           document.body.setAttribute("data-md-color-scheme", scheme);
