@@ -1,0 +1,1689 @@
+/* ============================================================================
+   components.css —— 站点自定义 UI 组件层
+   ----------------------------------------------------------------------------
+   目录
+   01. Markdown 扩展组件
+       标题自动编号、GitHub 风格标题书签、Tabbed 间距、admonition/details 提示块
+   02. GitHub 贡献图
+       .ghc-* / .ContributionCalendar-* 静态贡献日历
+   03. 站点框架组件
+       左上角 Logo、页面信息、底层虚线网格、全局内容宽度
+   04. PDF 阅读器
+       .pdf-viewer-* / 下载进度 + 原生 PDF 查看器 + iOS/iPadOS 画布降级
+   05. 彩虹背景
+       .rainbow-page / .rainbow-backdrop 氛围背景
+   06. 首页
+       .home-* 首页分区、卡片、日志、友链、活动区
+   07. 首页终端
+       .home-terminal-* / .typed-* 打字机组件
+   08. 响应式与动画收尾
+       首页移动端布局、彩虹背景降级、keyframes
+
+   可调参数见 variables.css（加载于本文件之前）。
+   加载顺序：variables.css → main.css → components.css。
+   ============================================================================ */
+
+/* ============================================================================
+   01. Markdown 扩展组件
+   ----------------------------------------------------------------------------
+   标题自动编号（section-counter / subsection-counter / subsubsection-counter），
+   GitHub 风格 permalink 书签（SVG 背景图，悬停显示），
+   Tabbed 折叠组件间距修复，admonition/details 提示块（透明背景 + 渐变标题栏）。
+   ============================================================================ */
+
+/* ---- 标题编号与 GitHub 风格 permalink ----
+   使用站点专用 counter 名称，避免和主题或第三方组件的 counter 冲突。 */
+.md-content__inner { counter-reset: section-counter; }
+.md-content__inner h2 {
+  counter-increment: section-counter;
+  counter-reset: subsection-counter;
+}
+.md-content__inner h2::before {
+  content: counter(section-counter);
+  color: var(--fgColor-default);
+  font-weight: 700;
+  margin-right: 0.6em;
+}
+.md-content__inner h3 {
+  counter-increment: subsection-counter;
+  counter-reset: subsubsection-counter;
+}
+.md-content__inner h3::before {
+  content: counter(section-counter) "." counter(subsection-counter);
+  color: var(--fgColor-default);
+  font-weight: 700;
+  margin-right: 0.6em;
+}
+.md-content__inner h4 {
+  counter-increment: subsubsection-counter;
+}
+.md-content__inner h4::before {
+  content: counter(section-counter) "." counter(subsection-counter) "." counter(subsubsection-counter);
+  color: var(--fgColor-default);
+  font-weight: 700;
+  margin-right: 0.6em;
+}
+
+/* permalink 保留生成器的 HTML 结构，由 CSS 移到标题左侧；SVG 作为背景图绘制，
+   因而不会与标题编号的 ::before 伪元素发生冲突。 */
+.md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink {
+  position: absolute;
+  left: -40px;
+  top: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 1.25em;
+  margin: 0;
+  color: #1f2328;
+  font-size: inherit;
+  line-height: 1;
+  text-decoration: none;
+  text-indent: -9999px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%231f2328' d='m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z'/%3E%3C/svg%3E");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 16px 16px;
+  opacity: 0;
+  transition: color 120ms ease, opacity 120ms ease;
+}
+.md-typeset :is(h1, h2, h3, h4, h5, h6) {
+  position: relative;
+}
+.md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink:hover,
+.md-typeset :is(h1, h2, h3, h4, h5, h6):hover > .headerlink {
+  color: #1f2328;
+  opacity: 1;
+}
+.md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink:focus:not(:focus-visible) {
+  opacity: 0;
+  outline: none;
+}
+.md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink:focus-visible {
+  opacity: 1;
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+[data-md-color-scheme="slate"] .md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink,
+[data-md-color-scheme="slate"] .md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink:hover {
+  color: #f0f6fc;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%23f0f6fc' d='m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z'/%3E%3C/svg%3E");
+}
+
+/* URL 带标题锚点时，仅在目标书签未被操作时隐藏；悬停或键盘聚焦仍可显示。 */
+.md-typeset :is(h1, h2, h3, h4, h5, h6):target:not(:hover) > .headerlink:not(:hover):not(:focus-visible) {
+  opacity: 0;
+}
+
+/* ---- Tabbed 折叠组件（=== "日期" 等）间距 ----
+   修复标签行与下方内容面板紧贴、间距过小的问题 */
+.md-typeset .tabbed-content {
+  margin-top: 0;
+  padding-top: 0.75rem;
+}
+.md-typeset .tabbed-labels {
+  margin-bottom: 0;
+}
+
+/* ---- 强调块（admonition/details） ----
+   标题保留类型色，正文区域透明，贴近 Material 默认文档页的提示块风格。 */
+.md-typeset .admonition,
+.md-typeset details {
+  --admonition-color: #2563eb;
+  --admonition-accent: #06b6d4;
+  --admonition-spectrum: #22c55e;
+  background-color: transparent !important;
+  border: 1px solid var(--borderColor-muted);
+  border: 1px solid color-mix(in srgb, var(--admonition-color) 36%, var(--borderColor-muted));
+  border-radius: var(--radius-md);
+  box-shadow: none;
+  font-size: 13.6px;
+  overflow: hidden;
+  padding: 0 0.8rem;
+}
+.md-typeset .admonition.note,
+.md-typeset details.note {
+  --admonition-color: #2563eb;
+  --admonition-accent: #06b6d4;
+  --admonition-spectrum: #22c55e;
+}
+.md-typeset .admonition.abstract,
+.md-typeset details.abstract {
+  --admonition-color: #7c3aed;
+  --admonition-accent: #2563eb;
+  --admonition-spectrum: #06b6d4;
+}
+.md-typeset .admonition.info,
+.md-typeset details.info {
+  --admonition-color: #2563eb;
+  --admonition-accent: #06b6d4;
+  --admonition-spectrum: #22c55e;
+}
+.md-typeset .admonition.tip,
+.md-typeset details.tip {
+  --admonition-color: #06b6d4;
+  --admonition-accent: #22c55e;
+  --admonition-spectrum: #facc15;
+}
+.md-typeset .admonition.success,
+.md-typeset details.success {
+  --admonition-color: #16a34a;
+  --admonition-accent: #eab308;
+  --admonition-spectrum: #f97316;
+}
+.md-typeset .admonition.question,
+.md-typeset details.question {
+  --admonition-color: #7c3aed;
+  --admonition-accent: #2563eb;
+  --admonition-spectrum: #06b6d4;
+}
+.md-typeset .admonition.warning,
+.md-typeset details.warning {
+  --admonition-color: #eab308;
+  --admonition-accent: #f97316;
+  --admonition-spectrum: #dc2626;
+}
+.md-typeset .admonition.failure,
+.md-typeset details.failure {
+  --admonition-color: #dc2626;
+  --admonition-accent: #d946ef;
+  --admonition-spectrum: #7c3aed;
+}
+.md-typeset .admonition.danger,
+.md-typeset details.danger {
+  --admonition-color: #b91c1c;
+  --admonition-accent: #f97316;
+  --admonition-spectrum: #dc2626;
+}
+.md-typeset .admonition.bug,
+.md-typeset details.bug {
+  --admonition-color: #d946ef;
+  --admonition-accent: #7c3aed;
+  --admonition-spectrum: #2563eb;
+}
+.md-typeset .admonition.example,
+.md-typeset details.example {
+  --admonition-color: #7c3aed;
+  --admonition-accent: #2563eb;
+  --admonition-spectrum: #06b6d4;
+}
+.md-typeset .admonition.quote,
+.md-typeset details.quote {
+  --admonition-color: #475569;
+  --admonition-accent: #2563eb;
+  --admonition-spectrum: #06b6d4;
+}
+.md-typeset .admonition-title,
+.md-typeset summary {
+  margin: 0 -0.8rem 0.55rem;
+  padding-top: 0.55rem;
+  padding-bottom: 0.55rem;
+  background: rgba(127, 127, 127, 0.07);
+  background:
+    linear-gradient(
+      105deg,
+      color-mix(in srgb, var(--admonition-color) 12%, transparent),
+      color-mix(in srgb, var(--admonition-color) 11%, transparent) 50%,
+      color-mix(in srgb, var(--admonition-accent) 10%, transparent) 70%,
+      color-mix(in srgb, var(--admonition-spectrum) 7%, transparent) 86%,
+      transparent
+    );
+  border-bottom: 1px solid var(--borderColor-muted);
+  border-bottom: 1px solid color-mix(in srgb, var(--admonition-color) 28%, transparent);
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  color: var(--fgColor-default);
+  line-height: 1.45;
+}
+[dir="ltr"] .md-typeset .admonition-title,
+[dir="ltr"] .md-typeset summary {
+  padding-left: 2.35rem;
+}
+[dir="rtl"] .md-typeset .admonition-title,
+[dir="rtl"] .md-typeset summary {
+  padding-right: 2.35rem;
+}
+.md-typeset .admonition > :last-child,
+.md-typeset details > :last-child {
+  margin-bottom: 0.45rem;
+}
+.md-typeset .admonition-title::before,
+.md-typeset summary::before {
+  background-color: var(--admonition-color) !important;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.md-typeset .admonition-title::after,
+.md-typeset summary::after {
+  color: var(--admonition-color) !important;
+}
+[dir="ltr"] .md-typeset .admonition-title::before,
+[dir="ltr"] .md-typeset summary::before {
+  left: 0.8rem;
+}
+[dir="rtl"] .md-typeset .admonition-title::before,
+[dir="rtl"] .md-typeset summary::before {
+  right: 0.8rem;
+}
+[dir="ltr"] .md-typeset summary::after {
+  right: 0.35rem;
+}
+[dir="rtl"] .md-typeset summary::after {
+  left: 0.35rem;
+}
+.md-typeset summary::after {
+  top: 50%;
+  transform: translateY(-50%) rotate(0deg);
+}
+.md-typeset details[open] > summary::after {
+  transform: translateY(-50%) rotate(90deg);
+}
+[dir="rtl"] .md-typeset summary::after {
+  transform: translateY(-50%) rotate(180deg);
+}
+[dir="rtl"] .md-typeset details[open] > summary::after {
+  transform: translateY(-50%) rotate(90deg);
+}
+.md-typeset details:not([open]) > summary {
+  margin-bottom: 0;
+  border-bottom: 0;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+/* ============================================================================
+   02. GitHub 贡献图
+   ----------------------------------------------------------------------------
+   .ghc-* / .ContributionCalendar-* 静态贡献日历组件。
+   数据由 theme/js/site-github.js 从 theme/data/contributions.json 读取并渲染。
+   亮/暗模式各有 5 级颜色（data-level="0"~"4"），与 GitHub 官方配色一致。
+   ============================================================================ */
+
+.github-calendar-wrap {
+  max-width: 760px;
+  margin: 1rem auto 0;
+}
+
+.github-calendar-wrap:not([data-ghc-state="loading"]) .ghc-loading {
+  display: none;
+}
+
+.ghc-loading,
+.ghc-error,
+.ghc-shell {
+  border: 1px solid var(--home-border);
+  border-radius: var(--radius-lg);
+  background: var(--home-panel);
+  backdrop-filter: blur(var(--blur-radius));
+  -webkit-backdrop-filter: blur(var(--blur-radius));
+}
+
+.ghc-loading,
+.ghc-error {
+  padding: 1.4rem 0.75rem;
+  text-align: center;
+  color: var(--md-default-fg-color--light);
+  font-size: 0.75rem;
+}
+
+.ghc-error {
+  color: var(--md-primary-fg-color, #b42318);
+}
+
+.ghc-shell {
+  overflow: hidden;
+  font-family: "Inter", "Noto Sans SC", sans-serif;
+}
+
+.ghc-header {
+  padding: 0.85rem 1rem 0.25rem;
+}
+
+.md-typeset .ghc-title {
+  margin: 0;
+  color: var(--md-default-fg-color);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.md-content__inner .ghc-title::before,
+.md-content__inner .ghc-overview-title::before {
+  content: none;
+}
+
+.ghc-calendar-scroller {
+  display: flex;
+  justify-content: center;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.45rem 1rem 0.6rem;
+}
+
+.ContributionCalendar-grid {
+  border-collapse: separate;
+  border-spacing: 3px;
+  overflow: hidden;
+  position: relative;
+  table-layout: fixed;
+}
+
+.ghc-weekday-col {
+  width: 28px;
+}
+
+.ghc-week-col {
+  width: 10px;
+}
+
+.ContributionCalendar-grid tr {
+  height: 10px;
+}
+
+.ContributionCalendar-grid thead tr {
+  height: 13px;
+}
+
+.ContributionCalendar-label {
+  width: 10px;
+  min-width: 10px;
+  padding: 0;
+  color: var(--md-default-fg-color--light);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1;
+  text-align: left;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.ghc-corner,
+.ghc-day-label {
+  width: 28px;
+  min-width: 28px;
+}
+
+.ghc-day-label {
+  position: relative;
+}
+
+.ghc-day-label span:not(.sr-only) {
+  position: absolute;
+  bottom: -3px;
+}
+
+.ContributionCalendar-day,
+.ghc-empty-day {
+  width: 10px;
+  min-width: 10px;
+  height: 10px;
+  padding: 0;
+}
+
+.ContributionCalendar-day {
+  box-sizing: border-box;
+  border: 0.5px solid;
+  border-radius: var(--radius-sm);
+  outline: none;
+  transition: opacity 0.12s ease;
+}
+
+.ContributionCalendar-day:hover,
+.ContributionCalendar-day:focus {
+  opacity: 0.7;
+}
+
+.ContributionCalendar-day:focus {
+  outline: 2px solid var(--md-accent-fg-color);
+  outline-offset: 1px;
+}
+
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="0"] { background-color: rgb(240, 242, 245); border-color: #E4E8EB; }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="1"] { background-color: rgb(172, 238, 187); border-color: transparent; }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="2"] { background-color: rgb(75, 193, 107); border-color: transparent; }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="3"] { background-color: rgb(44, 164, 79); border-color: transparent; }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="4"] { background-color: rgb(16, 99, 41); border-color: transparent; }
+
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="0"] {
+  background-color: #161b22; border-color: #1c2330;
+}
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="1"] { background-color: #0e4429; border-color: transparent; }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="2"] { background-color: #006d32; border-color: transparent; }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="3"] { background-color: #26a641; border-color: transparent; }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="4"] { background-color: #39d353; border-color: transparent; }
+
+.ghc-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.35rem 1rem 0.8rem;
+  color: var(--md-default-fg-color--light);
+  font-size: 12px;
+}
+
+.ghc-help {
+  color: var(--md-default-fg-color--light) !important;
+}
+
+.ghc-legend {
+  display: flex;
+  align-items: center;
+  gap: 0.28rem;
+  white-space: nowrap;
+}
+
+.ghc-legend-day {
+  display: inline-block;
+}
+
+.ghc-overview {
+  border-top: 1px solid var(--md-default-fg-color--lightest);
+  padding: 0.85rem 1rem 1rem;
+}
+
+.md-typeset .ghc-overview-title {
+  margin: 0 0 0.35rem;
+  color: var(--md-default-fg-color);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.md-typeset .ghc-overview-text,
+.md-typeset .ghc-overview-meta {
+  margin: 0.15rem 0;
+  color: var(--md-default-fg-color--light);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* 贡献图 footer 在移动端改为纵向排列（见 08. 响应式） */
+
+/* ============================================================================
+   03. 站点框架组件
+   ----------------------------------------------------------------------------
+   左上角 Logo、页面信息（更新时间 / 字数 / 星标），
+   底层虚线网格背景（SVG stroke-dasharray + mask 视差），
+   正文区域 .md-content（z-index: 1 遮盖网格），
+   顶部导航栏毛玻璃效果，导航选中态，右侧 TOC 阅读进度，
+   页面整体宽度 .md-grid（max-width: 65rem），
+   滚动条样式（sidebar + 代码块共用半透明灰色），
+   highlight.js 行号列 .code-gutter（flex 并排，不破坏高亮）。
+   ============================================================================ */
+
+/* ---- 左上角 BillFeng Logo ---- */
+.bf-logo {
+  display: block;
+  height: 1.45rem;
+  width: auto;
+}
+.bf-logo__text {
+  font-family: "Courier New", Courier, ui-monospace, monospace;
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: 0;
+  fill: var(--md-default-fg-color);
+}
+
+/* ---- 页面信息 ---- */
+.page-updated-top {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: -0.85rem 0 1.35rem;
+  color: var(--md-default-fg-color--light);
+  font-size: 0.68rem;
+  line-height: 1.5;
+}
+
+.page-updated-top[hidden],
+.page-info__item[hidden] {
+  display: none !important;
+}
+
+.page-updated-top__label {
+  width: 12.5em;
+  flex-shrink: 0;
+}
+
+.page-updated-top__time {
+  color: var(--md-default-fg-color--lighter);
+  font-variant-numeric: tabular-nums;
+}
+
+.page-info {
+  display: grid;
+  gap: 0.25rem;
+  margin: 2rem 0 1.2rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--md-default-fg-color--lightest);
+  color: var(--md-default-fg-color--light);
+  font-size: 0.68rem;
+}
+
+.page-info__item {
+  display: flex !important;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 1.4rem;
+}
+
+.page-info__label {
+  width: 12.5em;
+  flex-shrink: 0;
+}
+
+.page-info__value {
+  color: var(--md-default-fg-color--lighter);
+  font-variant-numeric: tabular-nums;
+}
+
+.page-info__stars img {
+  display: block;
+}
+
+/* ---- 底层虚线网格背景（视差） ---- */
+/*
+   SVG stroke-dasharray 实现真正虚线，不是 gradient 色块。
+   正文页只保留很轻的边缘纹理，避免干扰阅读。
+   --page-grid / --grid-clear-half / --grid-fade 由 variables.css 提供。
+*/
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: var(--page-grid);
+  background-position: 0 var(--grid-y, 0);
+  background-size: 80px 80px;
+  opacity: 1;
+  mask-image: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 1) calc(50% - var(--grid-clear-half) - var(--grid-fade)),
+    transparent calc(50% - var(--grid-clear-half)),
+    transparent calc(50% + var(--grid-clear-half)),
+    rgba(0, 0, 0, 1) calc(50% + var(--grid-clear-half) + var(--grid-fade))
+  );
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 1) calc(50% - var(--grid-clear-half) - var(--grid-fade)),
+    transparent calc(50% - var(--grid-clear-half)),
+    transparent calc(50% + var(--grid-clear-half)),
+    rgba(0, 0, 0, 1) calc(50% + var(--grid-clear-half) + var(--grid-fade))
+  );
+}
+
+body.home-active::before,
+body.rainbow-active::before {
+  content: none;
+}
+
+/* 正文区域遮盖网格，避免虚线与文字打架 */
+.md-content {
+  background-color: var(--md-default-bg-color);
+  box-shadow: none;
+  position: relative;
+  z-index: 1;
+}
+
+/* 正文左右保留固定留白，避免贴住内容区边缘。 */
+.md-content__inner {
+  padding-inline: var(--content-padding-inline);
+}
+
+/* 主页外层已经按 65rem 对齐，不再额外扣除正文内边距。 */
+body.home-active .md-content__inner {
+  padding-inline: 0;
+}
+
+/* 亮色条件下显式保证正文白色背景覆盖（防止半透明/网格透出） */
+[data-md-color-scheme="default"] .md-content,
+[data-md-color-scheme="default"] .md-typeset {
+  background-color: var(--content-bg);
+}
+
+/* 首页模式下正文区域透明，让面板毛玻璃生效 */
+body.home-active .md-content,
+body.home-active .md-typeset {
+  background-color: transparent !important;
+}
+
+/* 顶部导航栏毛玻璃效果（与首页面板统一基准颜色和透明度） */
+.md-header,
+.md-tabs {
+  background-color: var(--header-bg);
+  backdrop-filter: blur(var(--blur-radius));
+  -webkit-backdrop-filter: blur(var(--blur-radius));
+}
+[data-md-color-scheme="slate"] .md-header,
+[data-md-color-scheme="slate"] .md-tabs {
+  background-color: var(--header-bg) !important;
+}
+
+/* 导航标签列表左侧增加内边距，与正文左侧对齐 */
+.md-tabs__list {
+  padding-left: 0rem;
+}
+
+/* ---- 导航选中态 ---- */
+.md-sidebar--primary .md-nav__link--active,
+.md-sidebar--primary .md-nav__item--active > .md-nav__container {
+  border-radius: var(--radius-md);
+  background-color: var(--active-nav-bg);
+  color: var(--md-default-fg-color);
+  font-weight: 600;
+}
+
+.md-sidebar--primary .md-nav__item--active > .md-nav__link--active {
+  background-color: var(--active-nav-bg);
+  color: var(--md-default-fg-color);
+  font-weight: 600;
+}
+
+.md-sidebar--primary .md-nav__item--active > .md-nav__container > .md-nav__link {
+  background-color: transparent;
+}
+
+/* ---- 右侧目录阅读进度 ---- */
+.md-nav--secondary [data-md-component="toc"] .md-nav__link {
+  position: relative;
+  color: var(--md-default-fg-color);
+  transition: color 0.15s ease, opacity 0.15s ease;
+}
+
+.md-nav--secondary [data-md-component="toc"] .md-nav__link .md-typeset {
+  color: inherit;
+  background-color: transparent;
+}
+
+.md-nav--secondary [data-md-component="toc"] .md-nav__link--passed {
+  color: var(--md-default-fg-color--light);
+  opacity: 0.86;
+}
+
+.md-nav--secondary [data-md-component="toc"] .md-nav__link--active {
+  color: var(--md-accent-fg-color);
+  opacity: 1;
+}
+
+/* 页面整体加宽 */
+.md-grid {
+  max-width: var(--page-max-width);
+}
+
+/* ---- 滚动条 ----
+   目录、右侧 TOC 与代码块共用低对比度的半透明灰色滚动条。代码区额外留出
+   底部空间，避免横向滚动条覆盖最后一行代码（特别是在使用覆盖式滚动条时）。 */
+.md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner),
+.md-typeset :is(pre.highlight, pre[class*="language-"]) code {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+.md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner)::-webkit-scrollbar,
+.md-typeset :is(pre.highlight, pre[class*="language-"]) code::-webkit-scrollbar {
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-height);
+}
+.md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner)::-webkit-scrollbar-track,
+.md-typeset :is(pre.highlight, pre[class*="language-"]) code::-webkit-scrollbar-track {
+  background: transparent;
+}
+.md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner)::-webkit-scrollbar-thumb,
+.md-typeset :is(pre.highlight, pre[class*="language-"]) code::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+.md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner)::-webkit-scrollbar-thumb:hover,
+.md-typeset :is(pre.highlight, pre[class*="language-"]) code::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-thumb-hover);
+}
+/* Material 在侧栏悬停/聚焦时会改回主题强调色；这里保持灰色。 */
+.md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner):is(:hover, :focus-within) {
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+.md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner):is(:hover, :focus-within)::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+}
+.md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner):is(:hover, :focus-within)::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-thumb-hover);
+}
+
+/* ---- highlight.js 运行时行号（不破坏高亮） ----
+   每个 <code> 由 theme/js/highlight.js 在 <pre> 内 <code> 前插入独立的
+   .code-gutter 行号列，与 <code> 用 flex 并排。不修改 <code> 内部的高亮
+   span，因此绝不破坏高亮。行号样式对齐线上正式版：灰字、等宽、右对齐、
+   右侧分隔竖线、不可选中。 */
+.md-typeset :is(pre.highlight, pre[class*="language-"]) {
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+}
+.md-typeset :is(pre.highlight, pre[class*="language-"]) code {
+  flex: 1 1 auto;
+  display: block;
+  line-height: 1.45;
+  overflow-x: auto;
+  padding-bottom: var(--code-scrollbar-offset);
+  margin-bottom: calc(-1 * var(--code-scrollbar-offset));
+}
+.md-typeset .code-gutter {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  user-select: none;
+  box-sizing: border-box;
+  padding-right: 0.8em;
+  border-right: 1px solid var(--md-default-fg-color--lightest);
+  margin-right: 1em;
+  color: var(--md-default-fg-color--lighter);
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.45;
+  white-space: nowrap;
+}
+.md-typeset .code-gutter .code-ln {
+  display: block;
+  height: var(--code-line-height);
+  line-height: var(--code-line-height);
+}
+/* 代码行号列在移动端缩小间距（见 08. 响应式） */
+
+/* ---- highlight.js 与 Material 布局兼容 ----
+   github.min.css 会给 .hljs 加自身背景与 padding，导致与 Material 的
+   pre(内边距/背景) 叠加冲突。这里让 code 回归 Material 的裸排版，
+   仅保留 github 的 token 配色。 */
+.md-typeset pre .hljs {
+  padding: 0 !important;
+  background: transparent !important;
+  border-radius: 0;
+  line-height: 1.45;
+}
+
+/* ---- 代码块取消圆角（hljs 与 Material pre 均去掉） ---- */
+.md-typeset .highlight,
+.md-typeset pre,
+.md-typeset pre code {
+  border-radius: 0 !important;
+}
+
+/* ============================================================================
+   04. PDF 阅读器
+   ----------------------------------------------------------------------------
+   .pdf-viewer-* / 下载进度 + 原生 PDF 查看器 + iOS/iPadOS 画布降级。
+   工具栏 sticky 置顶，加载覆盖层带进度条和百分比，
+   暗色模式背景跟随 --md-default-bg-color / --md-code-bg-color。
+   ============================================================================ */
+
+/* ---- 查看器外壳 ---- */
+.pdf-viewer {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--md-code-bg-color, #f5f5f5);
+  box-shadow: var(--shadow-sm);
+  font-family: inherit;
+  margin: 1em 0;
+}
+
+/* ---- 工具栏 ---- */
+.pdf-viewer-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 8px 12px;
+  background: var(--md-default-bg-color, #fff);
+  border-bottom: 1px solid var(--md-default-fg-color--lightest, #e0e0e0);
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+
+.pdf-viewer-heading {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex: 1 1 auto;
+}
+
+.pdf-viewer-title,
+.pdf-viewer-status {
+  font-size: 0.85rem;
+  color: var(--md-typeset-color, #555);
+  user-select: none;
+}
+
+.pdf-viewer-title {
+  flex: 0 0 auto;
+  font-weight: 600;
+}
+
+.pdf-viewer-status {
+  overflow: hidden;
+  color: var(--md-default-fg-color--light);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pdf-viewer-spacer {
+  flex: 1;
+}
+
+.pdf-viewer-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+  border-radius: var(--radius-md);
+  color: var(--md-default-fg-color--light, #888);
+  transition: color 0.15s, background 0.15s;
+}
+
+.pdf-viewer-action:hover {
+  color: var(--md-accent-fg-color, #4051b5);
+  background: var(--md-default-fg-color--lightest, #e8e8e8);
+}
+
+.pdf-viewer-mobile-hint {
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--md-default-fg-color--lightest, #e0e0e0);
+  background: var(--md-default-bg-color, #fff);
+  color: var(--md-default-fg-color--light);
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.pdf-viewer-mobile-hint[hidden] {
+  display: none;
+}
+
+/* ---- PDF 查看器：原生 iframe / iOS 画布降级 ---- */
+.pdf-viewer-native-wrap {
+  position: relative;
+  overflow: hidden;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  background: var(--md-code-bg-color, #525252);
+}
+
+.pdf-viewer-native {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: var(--md-default-bg-color);
+}
+
+.pdf-viewer-native[hidden] {
+  display: none;
+}
+
+.pdf-viewer-canvases {
+  display: block;
+  height: 100%;
+  overflow: auto;
+  padding: 12px;
+  background: var(--md-code-bg-color, #f5f5f5);
+  -webkit-overflow-scrolling: touch;
+}
+
+.pdf-viewer-canvases[hidden] {
+  display: none;
+}
+
+.pdf-viewer-page-wrap {
+  width: min(100%, 54rem);
+  margin: 0 auto 12px;
+  background: var(--pdf-page-bg);
+  box-shadow: var(--shadow-sm);
+}
+
+.pdf-viewer-page-wrap:last-child {
+  margin-bottom: 0;
+}
+
+.pdf-viewer-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #fff;
+}
+
+.pdf-viewer-external {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 1.2rem;
+  background: var(--md-default-bg-color);
+  text-align: center;
+}
+
+.pdf-viewer-external[hidden] {
+  display: none;
+}
+
+.pdf-viewer-external__title {
+  color: var(--md-typeset-color, #555);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.pdf-viewer-external__text {
+  color: var(--md-default-fg-color--light);
+  font-size: 0.78rem;
+}
+
+.pdf-viewer-external__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 2rem;
+  padding: 0 0.75rem;
+  border: 1px solid var(--md-accent-fg-color);
+  border-radius: var(--radius-md);
+  background: var(--active-nav-bg, #f5fbff);
+  color: var(--md-accent-fg-color);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.pdf-viewer-external__button:hover {
+  background: color-mix(in srgb, var(--md-accent-fg-color) 9%, var(--md-default-bg-color));
+}
+
+/* ---- 加载覆盖层 ---- */
+.pdf-loader-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--md-default-bg-color, #fff);
+  z-index: 2;
+  transition: opacity 0.4s ease;
+  padding: 24px;
+}
+
+.pdf-loader-dot {
+  width: 0.42rem;
+  height: 0.42rem;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: var(--md-accent-fg-color, #0969da);
+  animation: pdf-loader-blink 2s steps(1, end) infinite;
+}
+
+.pdf-loader-dot--done {
+  opacity: 0.6;
+  animation: none;
+}
+
+@keyframes pdf-loader-blink {
+  0%, 49.999% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/* ---- 进度条 ---- */
+.pdf-loader-percent {
+  color: var(--md-default-fg-color);
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", "Noto Sans Mono CJK SC", monospace;
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.pdf-loader-bar-track {
+  width: min(320px, 80%);
+  height: 6px;
+  background: var(--md-default-fg-color--lightest, #e0e0e0);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.pdf-loader-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--md-accent-fg-color, #4051b5);
+  border-radius: var(--radius-sm);
+  transition: width 0.15s linear;
+}
+
+/* ---- 详情（已下载/总大小） ---- */
+.pdf-loader-detail {
+  font-size: 0.75rem;
+  color: var(--md-default-fg-color--light, #999);
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", "Noto Sans Mono CJK SC", monospace;
+}
+
+/* ---- 错误提示 ---- */
+.pdf-viewer-error {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  color: var(--error-color);
+  font-size: 0.9rem;
+  background: var(--md-default-bg-color, #fff);
+  z-index: 3;
+}
+
+/* ---- 暗色模式 ---- */
+[data-md-color-scheme="slate"] .pdf-viewer {
+  background: var(--md-code-bg-color, #1e1e2e);
+}
+
+[data-md-color-scheme="slate"] .pdf-loader-overlay {
+  background: var(--md-default-bg-color, #1e1e2e);
+}
+
+[data-md-color-scheme="slate"] .pdf-loader-bar-track {
+  background: rgba(255,255,255,0.12);
+}
+
+[data-md-color-scheme="slate"] .pdf-viewer-toolbar {
+  background: var(--md-default-bg-color, #1a1a2e);
+  border-color: rgba(255,255,255,0.08);
+}
+
+[data-md-color-scheme="slate"] .pdf-viewer-mobile-hint {
+  background: var(--md-default-bg-color, #1a1a2e);
+  border-color: rgba(255,255,255,0.08);
+}
+
+[data-md-color-scheme="slate"] .pdf-viewer-native-wrap {
+  background: var(--md-code-bg-color, #1e1e2e);
+}
+
+[data-md-color-scheme="slate"] .pdf-viewer-canvases {
+  background: var(--md-code-bg-color, #1e1e2e);
+}
+
+/* ============================================================================
+   05. 彩虹背景
+   ----------------------------------------------------------------------------
+   z 轴体系（从底到顶）：
+     z-index: -1   彩虹色斑（.rainbow-page::before/after, .rainbow-backdrop）
+                  position: fixed，铺满视口，在 .rainbow-page 层叠上下文内最底
+     z-index: 0    网格（body::before），仅在非彩虹页显示
+     auto          sidebar / .md-content（正常文档流）
+                  彩虹模式下 sidebar 背景设为 transparent（见下方规则）让彩虹透出；
+                  网格模式下 sidebar 保持不透明背景，网格被遮挡
+     z-index: 1    .md-content（position: relative），正文区域
+     z-index: 90   .md-tabs
+     z-index: 100  .md-header
+   ============================================================================ */
+
+.rainbow-page {
+  position: relative;
+  min-height: 100vh;
+  isolation: isolate;
+}
+
+/* 彩虹模式下侧边栏背景透明，让彩虹透出 */
+body.rainbow-active .md-sidebar__inner {
+  background-color: transparent !important;
+}
+
+.rainbow-page::before,
+.rainbow-page::after,
+.rainbow-backdrop::before,
+.rainbow-backdrop::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  pointer-events: none;
+  transform: translate3d(0, 0, 0);
+}
+
+.rainbow-page::before {
+  top: -7rem;
+  right: auto;
+  bottom: auto;
+  left: -10rem;
+  width: min(58vw, 38rem);
+  height: 24rem;
+  background:
+    radial-gradient(circle at 24% 46%, var(--rainbow-red), transparent 8rem),
+    radial-gradient(circle at 48% 32%, var(--rainbow-orange), transparent 9rem),
+    radial-gradient(circle at 68% 56%, var(--rainbow-green), transparent 10rem);
+  filter: blur(24px) saturate(1.25);
+  opacity: 0.34;
+  animation: rainbow-local-aurora 18s ease-in-out infinite alternate;
+}
+
+.rainbow-page::after {
+  top: 35rem;
+  right: auto;
+  bottom: auto;
+  left: 18vw;
+  width: min(30vw, 20rem);
+  height: 12rem;
+  background:
+    radial-gradient(circle at 40% 36%, var(--rainbow-violet), transparent 7rem),
+    radial-gradient(circle at 68% 62%, var(--rainbow-red), transparent 8rem);
+  filter: blur(28px) saturate(1.25);
+  opacity: 0.16;
+  animation: rainbow-beam-c 27s ease-in-out infinite alternate;
+}
+
+.rainbow-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.rainbow-backdrop::before,
+.rainbow-backdrop::after {
+  z-index: 0;
+}
+
+.rainbow-backdrop::before {
+  top: 3.6rem;
+  right: 4vw;
+  bottom: auto;
+  left: auto;
+  width: min(38vw, 26rem);
+  height: 18rem;
+  background:
+    radial-gradient(circle at 35% 38%, var(--rainbow-cyan), transparent 8rem),
+    radial-gradient(circle at 64% 54%, var(--rainbow-blue), transparent 10rem),
+    radial-gradient(circle at 50% 72%, var(--rainbow-violet), transparent 8rem);
+  filter: blur(26px) saturate(1.2);
+  opacity: 0.28;
+  animation: rainbow-band-pass 16s ease-in-out infinite alternate;
+}
+
+.rainbow-backdrop::after {
+  top: 20rem;
+  right: 7vw;
+  bottom: auto;
+  left: auto;
+  width: min(30vw, 20rem);
+  height: 12rem;
+  background:
+    radial-gradient(circle at 35% 35%, var(--rainbow-orange), transparent 7rem),
+    radial-gradient(circle at 42% 40%, var(--rainbow-green), transparent 7rem),
+    radial-gradient(circle at 68% 62%, var(--rainbow-cyan), transparent 8rem),
+    radial-gradient(circle at 72% 58%, var(--rainbow-blue), transparent 8rem);
+  filter: blur(28px) saturate(1.25);
+  opacity: 0.2;
+  animation: rainbow-beam-b 23s ease-in-out infinite alternate;
+}
+
+/* ============================================================================
+   06. 首页
+   ----------------------------------------------------------------------------
+   .home-* 首页分区、卡片、日志、友链、活动区。
+   面板用半透明背景 + backdrop-filter 毛玻璃，暗色模式面板透明度更低。
+   友链卡片悬停上浮 + 边框高亮，头像圆形裁剪。
+   ============================================================================ */
+
+.home-page {
+  --home-muted: var(--md-default-fg-color--light);
+  --home-softer: var(--md-default-fg-color--lighter);
+  margin-top: 0.4rem;
+}
+
+.home-page a {
+  text-decoration: none;
+}
+
+.home-hero {
+  margin: 1rem 0 1.6rem;
+}
+
+.home-section {
+  margin: 1.8rem 0;
+}
+
+.home-section__head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid var(--home-border);
+  padding-bottom: 0.45rem;
+}
+
+.md-typeset .home-section__title {
+  margin: 0;
+  font-family: "JetBrains Mono", "Noto Sans SC", sans-serif;
+  font-size: 0.92rem;
+  font-weight: 800;
+  line-height: 1.25;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.md-content__inner .home-section__title::before {
+  content: none;
+}
+
+.home-card--study { --home-accent: var(--accent-study); }
+.home-card--tools { --home-accent: var(--accent-tools); }
+.home-card--diary { --home-accent: var(--accent-diary); }
+.home-card--games { --home-accent: var(--accent-games); }
+
+[data-md-color-scheme="slate"] .home-card--study { --home-accent: var(--accent-study); }
+[data-md-color-scheme="slate"] .home-card--tools { --home-accent: var(--accent-tools); }
+[data-md-color-scheme="slate"] .home-card--diary { --home-accent: var(--accent-diary); }
+[data-md-color-scheme="slate"] .home-card--games { --home-accent: var(--accent-games); }
+
+/* 终端分类超链接（直接复用正文链接观感，不做成按钮） */
+.home-terminal-keys {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0 0.6rem;
+}
+
+.home-terminal-link {
+  color: var(--fgColor-accent);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.home-terminal-link:hover,
+.home-terminal-link:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+
+.home-log-list {
+  display: grid;
+  border: 1px solid var(--home-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  max-height: 15rem;
+  overflow-y: auto;
+}
+
+.home-log {
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.64rem 0.8rem;
+  background: var(--home-panel);
+  backdrop-filter: blur(var(--blur-radius));
+  -webkit-backdrop-filter: blur(var(--blur-radius));
+}
+
+.home-log + .home-log {
+  border-top: 1px solid var(--home-border);
+}
+
+.home-log__date {
+  color: var(--home-softer);
+  font-size: 0.66rem;
+  font-weight: 800;
+}
+
+.home-log span:last-child {
+  color: var(--home-muted);
+  font-size: 0.7rem;
+  line-height: 1.5;
+}
+
+.home-link-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.65rem;
+}
+
+.home-friend {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr);
+  gap: 0.2rem 0.55rem;
+  align-items: center;
+  min-height: 5.2rem;
+  padding: 0.65rem;
+  border: 1px solid var(--home-border);
+  border-radius: var(--radius-lg);
+  background: var(--home-panel);
+  color: var(--md-default-fg-color) !important;
+  font-size: 0.72rem;
+  backdrop-filter: blur(var(--blur-radius));
+  -webkit-backdrop-filter: blur(var(--blur-radius));
+  transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.home-friend:hover {
+  border-color: var(--md-accent-fg-color);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
+}
+
+.home-friend__avatar {
+  grid-row: span 3;
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid var(--home-border);
+  border-radius: 50%;
+  color: var(--avatar-color);
+  background: var(--avatar-bg);
+  font-size: 0.66rem;
+  font-weight: 900;
+}
+
+.home-friend__avatar img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+[data-md-color-scheme="slate"] .home-friend__avatar {
+  color: var(--avatar-color);
+  background: var(--avatar-bg);
+}
+
+.home-friend strong {
+  font-size: 0.74rem;
+  line-height: 1.2;
+}
+
+.home-friend__handle,
+.home-friend__meta {
+  overflow: hidden;
+  color: var(--home-muted);
+  font-size: 0.62rem;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-section--activity .github-calendar-wrap {
+  margin: 0;
+}
+
+/* ============================================================================
+   07. 首页终端
+   ----------------------------------------------------------------------------
+   .home-terminal-* / .typed-* 打字机组件。
+   终端窗口三色圆点 + 等宽字体屏幕，打字机效果由 theme/js/site-terminal.js 驱动。
+   亮色模式半透明浅灰背景，暗色模式跟随面板背景。
+   ============================================================================ */
+
+.home-terminal {
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--home-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(var(--blur-radius));
+  -webkit-backdrop-filter: blur(var(--blur-radius));
+}
+
+.home-terminal__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.1rem;
+  padding: 0 0.75rem;
+  border-bottom: 1px solid var(--home-border);
+}
+
+.home-terminal__dot {
+  width: 0.68rem;
+  height: 0.68rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+}
+
+.home-terminal__dot--red { background: var(--terminal-dot-red); }
+.home-terminal__dot--yellow { background: var(--terminal-dot-yellow); }
+.home-terminal__dot--green { background: var(--terminal-dot-green); }
+
+.home-terminal__title {
+  margin-left: 0.35rem;
+  color: var(--md-default-fg-color--light);
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", "Noto Sans Mono CJK SC", monospace;
+  font-size: 13.6px;
+}
+
+.home-terminal__screen {
+  position: relative;
+  min-height: 10rem;
+  padding: 0.6rem 0.9rem 0.7rem;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", "Noto Sans Mono CJK SC", monospace;
+  font-size: 13.6px;
+  line-height: 1.45;
+}
+
+.home-terminal__line {
+  min-height: 1.45em;
+  overflow-wrap: anywhere;
+}
+
+.home-terminal__line--output .typed-text {
+  color: var(--md-default-fg-color);
+}
+
+.terminal-hidden-input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  pointer-events: none;
+}
+
+.typed-text {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", "Noto Sans Mono CJK SC", monospace;
+}
+
+.typed-text--host {
+  color: var(--terminal-host-color);
+}
+
+.typed-text--prompt {
+  color: var(--terminal-prompt-color);
+}
+
+/* ---- 打字机光标 ---- */
+.typed-cursor,
+.typed-text .typed-cursor,
+.typed-cursor-standalone {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", "Noto Sans Mono CJK SC", monospace;
+  font-size: inherit;
+  color: var(--md-typeset-color);
+}
+
+[data-md-color-scheme="default"] .typed-text--command,
+[data-md-color-scheme="default"] .typed-text--separator,
+[data-md-color-scheme="default"] .home-terminal__line--user .typed-text,
+[data-md-color-scheme="default"] .home-terminal__line--flag .typed-text {
+  color: var(--terminal-command-color);
+}
+
+[data-md-color-scheme="default"] .typed-cursor,
+[data-md-color-scheme="default"] .typed-text .typed-cursor,
+[data-md-color-scheme="default"] .typed-cursor-standalone {
+  color: var(--terminal-cursor-color);
+}
+
+[data-md-color-scheme="slate"] .typed-text--host {
+  color: var(--terminal-host-color);
+}
+
+[data-md-color-scheme="slate"] .typed-text--prompt {
+  color: var(--terminal-prompt-color);
+}
+
+[data-md-color-scheme="slate"] .typed-text--command,
+[data-md-color-scheme="slate"] .typed-text--separator,
+[data-md-color-scheme="slate"] .home-terminal__line--user .typed-text,
+[data-md-color-scheme="slate"] .home-terminal__line--flag .typed-text {
+  color: var(--terminal-command-color);
+}
+
+[data-md-color-scheme="slate"] .typed-cursor,
+[data-md-color-scheme="slate"] .typed-text .typed-cursor,
+[data-md-color-scheme="slate"] .typed-cursor-standalone {
+  color: var(--terminal-cursor-color);
+}
+
+[data-md-color-scheme="default"] .home-terminal {
+  background: var(--home-panel);
+}
+
+[data-md-color-scheme="default"] .home-terminal__bar {
+  background: transparent;
+}
+
+[data-md-color-scheme="default"] .home-terminal__screen {
+  background: transparent;
+}
+
+[data-md-color-scheme="slate"] .home-terminal {
+  background: var(--home-panel);
+  box-shadow: var(--terminal-shadow);
+}
+
+[data-md-color-scheme="slate"] .home-terminal__bar {
+  background: transparent;
+}
+
+[data-md-color-scheme="slate"] .home-terminal__screen {
+  background: transparent;
+}
+
+/* ============================================================================
+   08. 响应式与动画收尾
+   ----------------------------------------------------------------------------
+   移动端布局（≤44.984375em）：隐藏 permalink、单列友链、去掉正文留白、
+   代码块横向滚动、行号列缩小间距、贡献图 footer 纵向、终端字号调整。
+   prefers-reduced-motion: 彩虹动画停用。
+   keyframes: 彩虹色斑漂移动画（aurora / band-pass / beam-b / beam-c）。
+   ============================================================================ */
+
+@media screen and (max-width: 44.984375em) {
+  /* 移动端宽度有限，不显示左侧 permalink，也不保留左侧间距。 */
+  .md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink {
+    display: none;
+  }
+
+  .home-link-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* 手机端宽度不够用，去掉正文左右留白以充分利用空间 */
+  .md-content__inner {
+    padding-inline: var(--mobile-content-padding);
+  }
+
+  /* 代码块与正文同宽：去掉 Material 的负 margin（避免 pre 撑出比正文宽），
+     让 pre 留在正文容器内与其左右对齐；超长时在 code 内横向滑动。 */
+  .md-typeset pre.highlight,
+  .md-typeset pre[class*="language-"] {
+    margin-inline: 0;
+  }
+  .md-typeset :is(pre.highlight, pre[class*="language-"]) code {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* 代码行号列缩小间距 */
+  .md-typeset .code-gutter {
+    padding-right: var(--mobile-code-gutter-padding-right);
+    margin-right: var(--mobile-code-gutter-margin-right);
+  }
+
+  /* 贡献图 footer 纵向排列 */
+  .ghc-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .home-section__head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--mobile-section-head-gap);
+  }
+
+  .home-log {
+    grid-template-columns: 1fr;
+    gap: var(--mobile-log-gap);
+  }
+
+  .home-terminal__screen {
+    padding: var(--mobile-terminal-padding);
+    font-size: var(--mobile-terminal-font-size);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rainbow-page::before,
+  .rainbow-page::after,
+  .rainbow-backdrop::before,
+  .rainbow-backdrop::after {
+    animation: none;
+  }
+}
+
+@keyframes rainbow-local-aurora {
+  0% { transform: translate3d(-0.8rem, -0.4rem, 0) scale(0.98); opacity: 0.28; }
+  100% { transform: translate3d(2rem, 1rem, 0) scale(1.06); opacity: 0.42; }
+}
+
+@keyframes rainbow-band-pass {
+  0% { transform: translate3d(-1.2rem, -0.7rem, 0) scale(0.96); opacity: 0.2; }
+  100% { transform: translate3d(1.6rem, 0.9rem, 0) scale(1.05); opacity: 0.34; }
+}
+
+@keyframes rainbow-beam-b {
+  0% { transform: translate3d(1rem, -0.8rem, 0) scale(1); opacity: 0.14; }
+  100% { transform: translate3d(-1.6rem, 1rem, 0) scale(1.1); opacity: 0.26; }
+}
+
+@keyframes rainbow-beam-c {
+  0% { transform: translate3d(-0.8rem, -0.2rem, 0) scale(0.96); opacity: 0.12; }
+  100% { transform: translate3d(1.2rem, 1.2rem, 0) scale(1.08); opacity: 0.24; }
+}

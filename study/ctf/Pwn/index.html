@@ -1,0 +1,1984 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="久诚的 CTF 学习笔记">
+      
+      
+        <meta name="author" content="Jiucheng">
+      
+      
+        <link rel="canonical" href="https://jiuchengovo.github.io/study/ctf/Pwn/">
+      
+      
+        <link rel="prev" href="../Web_Lab1/">
+      
+      
+        <link rel="next" href="../Lab%201%20Misc/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../theme/assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Pwn - Jiucheng's CTF Note</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../../theme/css/variables.css">
+    
+      <link rel="stylesheet" href="../../../theme/css/main.css">
+    
+      <link rel="stylesheet" href="../../../theme/css/components.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+  <link rel="preload" as="style" href="/theme/css/github.min.css">
+  <link rel="preload" as="style" href="/theme/css/github-dark.min.css">
+  <script>
+    (function () {
+      try {
+        var saved = (typeof __md_get === "function") ? __md_get("__palette") : null;
+        var scheme;
+        if (saved && saved.color && saved.color.scheme) {
+          // 尊重用户已保存的选择
+          scheme = saved.color.scheme;
+        } else {
+          // 站点默认深色
+          scheme = "slate";
+        }
+        document.documentElement.setAttribute("data-md-color-scheme", scheme);
+        var hljsTheme = document.createElement("link");
+        hljsTheme.id = "hljs-theme";
+        hljsTheme.rel = "stylesheet";
+        hljsTheme.href = scheme === "slate"
+          ? "/theme/css/github-dark.min.css"
+          : "/theme/css/github.min.css";
+        document.head.appendChild(hljsTheme);
+        var attach = function () {
+          document.body.setAttribute("data-md-color-scheme", scheme);
+          new MutationObserver(function () {
+            var s = document.body.getAttribute("data-md-color-scheme");
+            if (s) document.documentElement.setAttribute("data-md-color-scheme", s);
+          }).observe(document.body, {
+            attributes: true,
+            attributeFilter: ["data-md-color-scheme"],
+          });
+        };
+        if (document.body) {
+          attach();
+        } else {
+          new MutationObserver(function (_, obs) {
+            if (document.body) {
+              attach();
+              obs.disconnect();
+            }
+          }).observe(document.documentElement, { childList: true });
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#lab-1pwn" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="Jiucheng&#39;s CTF Note" class="md-header__button md-logo" aria-label="Jiucheng's CTF Note" data-md-component="logo">
+      <!-- Jiucheng 字体图标 Logo -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 48" class="bf-logo" role="img" aria-label="Jiucheng">
+  <text x="0" y="36" class="bf-logo__text">Jiucheng</text>
+</svg>
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Jiucheng's CTF Note
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Pwn
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换至浅色模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换至浅色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换至深色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换至深色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Jiuchengovo/Jiuchengovo.github.io" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Jiuchengovo.github.io
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  学习
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../tools/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  工具
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../diaries/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  随笔
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Jiucheng&#39;s CTF Note" class="md-nav__button md-logo" aria-label="Jiucheng's CTF Note" data-md-component="logo">
+      <!-- Jiucheng 字体图标 Logo -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 48" class="bf-logo" role="img" aria-label="Jiucheng">
+  <text x="0" y="36" class="bf-logo__text">Jiucheng</text>
+</svg>
+    </a>
+    Jiucheng's CTF Note
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Jiuchengovo/Jiuchengovo.github.io" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Jiuchengovo.github.io
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    学习
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    学习
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CTF 夺旗赛
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_2" id="__nav_2_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CTF 夺旗赛
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Crypto%20Lab%200/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_2_3" id="__nav_2_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 1
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Lab 1
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Crypto%20Lab%201/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Crypto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Lab%201%EF%BC%9AWeb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Web
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Web_Lab1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Web基础知识
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pwn
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pwn
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#task1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task1
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Task1">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-nocrash" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 nocrash
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-login_me" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 login_me
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-inject_me" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 inject_me
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.3 inject_me">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#一些知识没学过汇编qwq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一些知识（没学过汇编qwq）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#解题流程part-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解题流程（Part 1）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-bypass_me" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 bypass_me
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-2-alpha" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 2 Alpha
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-3-sbofsc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 3 sbofsc
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-4-sbuf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 4 sbuf
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Lab%201%20Misc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Misc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rev%20lab%201/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reverse
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2_4" id="__nav_2_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 2
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Lab 2
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Crypto%20Lab%202/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Crypto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Misc%20Lab%202/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Misc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2_5" id="__nav_2_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 3
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Lab 3
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Crypto%20Lab%203/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Crypto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Misc%20Lab%203/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Misc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    工具
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../diaries/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    随笔
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#task1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task1
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Task1">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-nocrash" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 nocrash
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-login_me" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 login_me
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-inject_me" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 inject_me
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.3 inject_me">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#一些知识没学过汇编qwq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一些知识（没学过汇编qwq）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#解题流程part-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解题流程（Part 1）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-bypass_me" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 bypass_me
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-2-alpha" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 2 Alpha
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-3-sbofsc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 3 sbofsc
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-4-sbuf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 4 sbuf
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+  
+    <a href="https://github.com/Jiuchengovo/Jiuchengovo.github.io/edit/master/docs/study/ctf/Pwn.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+
+
+
+<h1 id="lab-1pwn">Lab 1：Pwn<a class="headerlink" href="#lab-1pwn" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>相当于从 0 学汇编……</p>
+</blockquote>
+<h2 id="task1">Task1<a class="headerlink" href="#task1" title="Permanent link">&para;</a></h2>
+<h3 id="11-nocrash">1.1 nocrash<a class="headerlink" href="#11-nocrash" title="Permanent link">&para;</a></h3>
+<p>通过直接分析源码<code>nocrash.c</code>即可，这里用到的是除0错误
+只要将第二个input设置为0即可</p>
+<p><img alt="" src="../image-44.png" /></p>
+<h3 id="12-login_me">1.2 login_me<a class="headerlink" href="#12-login_me" title="Permanent link">&para;</a></h3>
+<p>首先按照要求用一下gdb</p>
+<blockquote>
+<p>其实不一定要用。因为凭借我贫瘠的C语言知识也知道在main里面开数组是存在栈上的，就是顺序这里可能看的清晰一点</p>
+</blockquote>
+<p><img alt="" src="../image-16.png" /></p>
+<blockquote>
+<p>这张截图告诉了我们什么？</p>
+</blockquote>
+<ol>
+<li><code>02:0010│-070 0x7fffffffdd90 {username}</code>说明了username地址  <code>06:0030│-050 0x7fffffffddb0 {password}</code>说明了password地址，之后还有verify字段</li>
+<li>计算可得二者相差32字节，username位于低地址</li>
+</ol>
+<blockquote>
+<p>源码告诉了我什么（user/admin）？</p>
+</blockquote>
+<ol>
+<li><code>read(STDIN_FILENO, buf, BUFFER_SIZE);</code> 和 <code>char password[32];</code> 说明输入密码最多 32 字节</li>
+<li>考虑<code>read</code>和<code>printf</code>的区别，<code>read</code>不会自动补<code>\0</code>，而<code>printf</code>必须读到<code>\0</code>才会停止，所以直接把后面的password_verify也读出来了，得到正确密码读出flag1！
+<strong>这就是栈泄露！！</strong></li>
+<li><code>admin</code>也就只多了一步：<code>user</code>会直接打印出flag，而<code>admin</code>会给你shell权限，直接<code>ls</code>再<code>cat flag2</code>就可以</li>
+</ol>
+<p><img alt="" src="../image-18.png" /></p>
+<p><img alt="" src="../image-17.png" /></p>
+<h3 id="13-inject_me">1.3 inject_me<a class="headerlink" href="#13-inject_me" title="Permanent link">&para;</a></h3>
+<h4 id="一些知识没学过汇编qwq">一些知识（没学过汇编qwq）<a class="headerlink" href="#一些知识没学过汇编qwq" title="Permanent link">&para;</a></h4>
+<ol>
+<li>CPU 只认识机器码（101010...） CPU 是电路的集合，它只能理解高电平和低电平，也就是 0 和 1。比如我们写代码 <code>a + b</code>，CPU 根本不认识。CPU 只认识类似这样的东西：
+<code>1000 1101  0000 0100  0011 0111  1100 0011</code> 写成十六进制就是 <code>8d 04 37 c3</code>，就是机器码。</li>
+<li>寄存器。寄存器就是 CPU 内部的小格子，用来存储数字：<ul>
+<li>rax 是 64 位全名</li>
+<li>eax 是 rax 的低 32 位</li>
+<li>edi 是 rdi 的低 32 位</li>
+<li>esi 是 rsi 的低 32 位</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p><strong>每个寄存器在 cpu 内部都有一个三位的数字编号，每种操作也有数字编号</strong></p>
+</blockquote>
+<ol start="3">
+<li>
+<p>汇编语言。告诉 CPU "把哪个寄存器的值拿去干嘛，结果放哪个寄存器"。</p>
+<pre class="highlight"><code class="language-asm">mov 目标, 来源     ; move 的缩写，"把来源的值抄到目标"
+add 目标, 来源     ; 目标 = 目标 + 来源
+sub 目标, 来源     ; 目标 = 目标 - 来源
+and 目标, 来源     ; 目标 = 目标 &amp; 来源（按位与）
+or  目标, 来源     ; 目标 = 目标 | 来源（按位或）
+xor 目标, 来源     ; 目标 = 目标 ^ 来源（按位异或）
+lea 目标, [计算]   ; 把"计算结果"存入目标（不用读内存，纯算地址）
+ret                ; 函数结束，返回</code></pre>
+</li>
+</ol>
+<h4 id="解题流程part-1">解题流程（Part 1）<a class="headerlink" href="#解题流程part-1" title="Permanent link">&para;</a></h4>
+<ul>
+<li>
+<p>分析代码可得：需要依次执行五次运算操作之后返回flag的第一部分</p>
+<ul>
+<li>需要注意这里需要传的是汇编 -&gt; 对应的机器码</li>
+<li>为什么？程序端将收到的字节放到内存里！</li>
+</ul>
+</li>
+<li>
+<p>课上听讲可得：在第一次注入时直接发弹shell的代码，程序执行后就变成了我的shell，之后在<code>ls</code>就行</p>
+</li>
+</ul>
+<blockquote>
+<p>部分exp1.py的用汇编 + asm的改写👇</p>
+</blockquote>
+<pre class="highlight"><code class="language-python">codes = [
+    asm("lea eax, [rdi+rsi]; ret"),   # ADD
+    asm("mov eax, edi; sub eax, esi; ret"),  # SUB
+    asm("mov eax, edi; and eax, esi; ret"),  # AND
+    asm("mov eax, edi; or eax, esi; ret"),   # OR
+    asm("mov eax, edi; xor eax, esi; ret"),  # XOR
+]</code></pre>
+<p><img alt="" src="../image-26.png" /></p>
+<p><img alt="" src="../image-27.png" /></p>
+<h3 id="14-bypass_me">1.4 bypass_me<a class="headerlink" href="#14-bypass_me" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>前置知识</p>
+<ul>
+<li>沙箱：限制程序行为的安全机制（常见seccomp沙箱过滤<code>syscall</code>来限制程序能力，可以禁止<code>execve</code>直接getshell）</li>
+<li>常见绕过方法（orw - “open + read + write”，这也是本题的方法）</li>
+</ul>
+</li>
+<li>
+<p>代码分析：把<code>bypass_me</code>用 ghidra 进行分析</p>
+<ul>
+<li><code>checksec</code> 说明栈可执行，<code>seccomp-tools</code> 说明 <code>execve</code> 被禁止，走 ORW 路线</li>
+</ul>
+</li>
+<li>
+<p>脚本构建</p>
+<ul>
+<li>在栈上构建了一个 <code>flag\0</code> 字符串，<code>rdi</code>指向它，<code>rsi = 0</code></li>
+<li>syscall 执行了 open("flag", O_RDONLY, 0) 打开flag，fd = 3 存于 rax</li>
+<li>syscall 执行了 read(3, buf, 256)，flag 内容读入栈上的缓冲区，rax = 实际读取的字节数</li>
+<li>syscall 直接将 flag 内容输出在屏幕上</li>
+</ul>
+</li>
+</ol>
+<p><img alt="" src="../image-28.png" /></p>
+<p><img alt="" src="../image-30.png" /></p>
+<p><img alt="" src="../image-29.png" /></p>
+<h2 id="task-2-alpha">Task 2 Alpha<a class="headerlink" href="#task-2-alpha" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>这道题是我 Lab0 + Lab 1 做的时间最长的一道题……</p>
+</blockquote>
+<ol>
+<li>
+<p>代码分析</p>
+<ul>
+<li>用ghidra分析之后可以发现这道题要求“Visible Shellcode Only”, 所以我们要将编写的shellcode转换成可见字符。</li>
+<li>用 <code>seccomp-tools</code> 分析规则，得到返回错误 ERRNO(1) 的：read、write、open、execve、execveat，除此之外所有其他小于 0x40000000 的系统调用都被 ALLOW
+<pre class="highlight"><code>Visible shellcode only:
+line  CODE  JT   JF      K
+==============================
+0000: 0x20 0x00 0x00 0x00000004  A = arch
+0001: 0x15 0x00 0x0a 0xc000003e  if (A != ARCH_X86_64) goto 0012
+0002: 0x20 0x00 0x00 0x00000000  A = sys_number
+0003: 0x35 0x00 0x01 0x40000000  if (A &lt; 0x40000000) goto 0005
+0004: 0x15 0x00 0x07 0xffffffff  if (A != 0xffffffff) goto 0012
+0005: 0x15 0x05 0x00 0x00000000  if (A == read) goto 0011
+0006: 0x15 0x04 0x00 0x00000001  if (A == write) goto 0011
+0007: 0x15 0x03 0x00 0x00000002  if (A == open) goto 0011
+0008: 0x15 0x02 0x00 0x0000003b  if (A == execve) goto 0011
+0009: 0x15 0x01 0x00 0x00000142  if (A == execveat) goto 0011
+0010: 0x06 0x00 0x00 0x7fff0000  return ALLOW
+0011: 0x06 0x00 0x00 0x00050001  return ERRNO(1)
+0012: 0x06 0x00 0x00 0x00000000  return KILL</code></pre></li>
+</ul>
+</li>
+<li>
+<p>解题流程</p>
+<ul>
+<li>可以用 read、open、write 的变体来解决这个问题</li>
+<li>首先执行第一个 Python 脚本，将不使用 open、write 等被 ban 的系统调用的 shellcode 写进 <code>raw_sc.bin</code></li>
+<li>然后根据推荐使用 ae 工具（第一个脚本里写的是 Alpha3，但一直不太行 qwq，所以最后换工具了）进行编码，生成可打印字符组成的 shellcode</li>
+<li>用 <code>nc</code> 连接到靶机成功取出 flag 即可</li>
+<li>具体流程写在代码注释里面了</li>
+</ul>
+</li>
+<li>
+<p>AE64 原理简述</p>
+<ul>
+<li>普通 shellcode 包含 <code>\x00</code>、<code>\xFF</code> 等不可打印字节，无法通过 <code>isprint()</code> 等输入过滤。AE64 将其<strong>转码为全由字母数字（<code>0-9 A-Z a-z</code>）组成的等价形式</strong>，绕过过滤后在内存中自修改还原。</li>
+<li>核心思想：自修改代码</li>
+</ul>
+<p>3.1 算术分解</p>
+<p>对原始 shellcode 的每个字节 <strong>T</strong>，找 printable 的 <strong>(P, K)</strong> 使得：</p>
+<pre class="highlight"><code>P XOR K = T</code></pre>
+<ul>
+<li><strong>P</strong> → 存入 Encoded Payload</li>
+<li><strong>K</strong> → 嵌入 Decoder Stub 作为 XOR 密钥</li>
+<li>运行时执行 <code>[mem] ^= K</code>，P 被还原为 T</li>
+</ul>
+<p>3.2 Printable 指令</p>
+<p>关键是找到机器码全部在 <code>0x21</code>–<code>0x7E</code> 范围内的 x86-64 指令：</p>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>机器码</th>
+<th>ASCII</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PUSH imm8</code></td>
+<td><code>6A KK</code></td>
+<td><code>j</code> + 任意 printable</td>
+</tr>
+<tr>
+<td><code>POP rdx</code></td>
+<td><code>5A</code></td>
+<td><code>Z</code></td>
+</tr>
+<tr>
+<td><code>XOR [rax+disp8], dl</code></td>
+<td><code>30 50 OO</code></td>
+<td><code>0P</code> + printable 偏移</td>
+</tr>
+</tbody>
+</table>
+<p><code>0x50</code> 的位分解（ModR/M 字节）：</p>
+<pre class="highlight"><code>mod=01 (disp8) | reg=010 (dl) | r/m=000 (rax) → 0x50 = 'P' ✓</code></pre>
+<p>3.3 两种策略</p>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>方法</th>
+<th>速度</th>
+<th>输出大小</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fast</code></td>
+<td>贪心查表，逐字节编码</td>
+<td>毫秒级</td>
+<td>较大</td>
+</tr>
+<tr>
+<td><code>small</code></td>
+<td>Z3 SMT 求解器，全局优化</td>
+<td>秒~分钟</td>
+<td>较小</td>
+</tr>
+</tbody>
+</table>
+<p>3.4 使用</p>
+<pre class="highlight"><code class="language-python">from ae64 import AE64
+sc = open('raw_sc.bin', 'rb').read()
+enc = AE64().encode(sc, register='rax', strategy='small')
+open('encoded.bin', 'wb').write(enc)</code></pre>
+<ul>
+<li><code>register</code>: 假设运行时哪个寄存器指向 shellcode 起始位置</li>
+<li><code>offset</code>: 寄存器偏移量（可选）</li>
+<li><code>strategy</code>: <code>'fast'</code> 或 <code>'small'</code></li>
+</ul>
+</li>
+</ol>
+<p><img alt="" src="../image-31.png" /></p>
+<p><img alt="" src="../image-33.png" /></p>
+<p><img alt="" src="image-47.png" /></p>
+<p><img alt="" src="image-48.png" /></p>
+<p><img alt="" src="image-49.png" /></p>
+<p><img alt="" src="image-50.png" /></p>
+<p><img alt="" src="image-51.png" /></p>
+<p><img alt="" src="image-52.png" /></p>
+<h2 id="task-3-sbofsc">Task 3 sbofsc<a class="headerlink" href="#task-3-sbofsc" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p>代码分析</p>
+<ul>
+<li><code>mmap(local_20,(long)local_c,7,0x32,-1,0);</code> - 在地址 0x20000 分配一页内存，这页内存可以读、写、执行，而且地址绝对不变。</li>
+<li><code>puts("what's your name: ");  read(0, local_20, 0x40);</code> - 把输入的 64 字节，原封不动写入 0x20000 这个地址</li>
+<li><code>gets(local_48);</code> -  键盘读取 → 放入一个只有 36 字节的局部变量</li>
+</ul>
+</li>
+<li>
+<p>溢出原理</p>
+<ul>
+<li>gets 从 local_48 开始写，一直往上写。如果你输入的内容比缓冲区大：</li>
+<li>输入[AAAA...AAAA][覆盖saved RBP][覆盖返回地址]</li>
+<li>gets 不会停，它会一路覆盖上去：<ul>
+<li>先填满 local_48 缓冲区</li>
+<li>继续写，覆盖掉 saved RBP</li>
+<li>再继续写，覆盖掉返回地址</li>
+</ul>
+</li>
+<li>正常流程：main() 执行到 return → 从栈上取返回地址 → 跳回调用者</li>
+<li>被覆盖后：main() 执行到 return → 从栈上取返回地址 → 取到 0x20000 → 跳到 0x20000</li>
+<li>而 0x20000 这里是什么？是在第 2 步通过 read() 写入的 shellcode</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>需要说明的是，这里的地址似乎是不确定的，可能需要暴力枚举各种不同的地址qwq
+有一部分代码交给AI完成了，实在是搞不太清楚orz</p>
+</blockquote>
+<p><img alt="" src="../image-34.png" /></p>
+<p><img alt="" src="../image-35.png" /></p>
+<h2 id="task-4-sbuf">Task 4 sbuf<a class="headerlink" href="#task-4-sbuf" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>这道题的核心是利用计算器表达式求值过程中 pop/push 不匹配造成的栈下溢，实现对栈上数据的任意写入，最终劫持控制流到 <code>execve("/bin/sh")</code> 拿到 shell。</p>
+</blockquote>
+<ol>
+<li>
+<p>代码分析</p>
+<ul>
+<li>在 <code>pop_value</code> 函数（0x40132b）中存在一个关键缺陷：先递减计数器 → 检查是否为负 → 如果为负则跳过读取，但计数器已经变成负数！</li>
+<li>如果 pop 的次数多于 push 的次数，数值栈计数器会变成负数。之后调用 <code>push_value</code> 时：<ul>
+<li>检查 <code>counter &gt; 63</code> — 负数不大于 63，绕过检查</li>
+<li>在 <code>state[counter * 8]</code> 处写入 8 字节 — counter 为负数时，相当于向 state 结构体前方（低地址方向）写入</li>
+</ul>
+</li>
+<li>这就是 "sbuf"（stack buffer overflow）的真正含义 — 利用负数下标实现向栈上的任意偏移写入。</li>
+<li>运算符优先级函数（0x401532）返回：<ul>
+<li><code>(</code> = 0, <code>)</code> = 1, <code>*</code> = 2, <code>+</code> = 3</li>
+<li><code>-</code> 和 <code>/</code> 返回 -1（无效）</li>
+</ul>
+</li>
+<li>这意味着 <code>-</code> 和 <code>/</code> 的处理路径与 <code>+</code> 和 <code>*</code> 不同，可能与触发漏洞有关。</li>
+<li>程序中存在一个后门函数（0x4011a6），直接调用 <code>execve("/bin/sh", ...)</code></li>
+</ul>
+</li>
+<li>
+<p>利用目标</p>
+<ul>
+<li>覆盖返回地址或其他控制流指针</li>
+<li>跳转到 <code>/bin/sh</code> 的 execve 调用处</li>
+</ul>
+</li>
+<li>
+<p>利用约束</p>
+<ul>
+<li>输入验证只允许最多 3 位数字、括号和 <code>+-*/</code></li>
+<li>输入表达式最长 512 字节</li>
+<li>没有栈 canary 绕过问题（虽然函数用了 canary，但我们可以直接覆盖返回地址下方的 saved RBP 等）</li>
+<li>需要构造特定的表达式序列，使得 pop 次数超过 push 次数，从而获得负数计数器，再利用后续 push 写入目标地址</li>
+</ul>
+</li>
+</ol>
+<p><img alt="" src="../image-36.png" /></p>
+<p><img alt="" src="../image-37.png" /></p>
+<p><img alt="" src="../image-38.png" /></p>
+<p><img alt="" src="../image-39.png" /></p>
+<ol start="4">
+<li>
+<p>调试过程</p>
+<ul>
+<li><code>rdi</code> 指向 state 地址，栈上有 payload 字符串</li>
+</ul>
+<p><img alt="" src="../image-40.png" /></p>
+<p><img alt="" src="../image-41.png" /></p>
+<ul>
+<li>栈的下溢示意</li>
+</ul>
+<p><img alt="" src="../image-42.png" /></p>
+<p><img alt="" src="../image-43.png" /></p>
+</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="页脚" >
+        
+          
+          <a href="../Web_Lab1/" class="md-footer__link md-footer__link--prev" aria-label="上一页: Web基础知识">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              <div class="md-ellipsis">
+                Web基础知识
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../Lab%201%20Misc/" class="md-footer__link md-footer__link--next" aria-label="下一页: Misc">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              <div class="md-ellipsis">
+                Misc
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 Jiucheng
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "navigation.indexes", "navigation.tracking", "navigation.footer", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.progress", "content.action.edit", "content.code.annotate", "content.code.copy", "content.code.select", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../../theme/js/theme-sync.js"></script>
+      
+        <script src="../../../theme/js/mathjax.js"></script>
+      
+        <script src="../../../theme/js/hljs/highlight.min.js"></script>
+      
+        <script src="../../../theme/js/hljs/x86asm.min.js"></script>
+      
+        <script src="../../../theme/js/hljs/cmake.min.js"></script>
+      
+        <script src="../../../theme/js/hljs/http.min.js"></script>
+      
+        <script src="../../../theme/js/highlight.js"></script>
+      
+        <script src="../../../theme/js/site.js"></script>
+      
+        <script src="../../../theme/js/site-home.js"></script>
+      
+        <script src="../../../theme/js/site-terminal.js"></script>
+      
+        <script src="../../../theme/js/site-images.js"></script>
+      
+        <script src="../../../theme/js/site-pdf.js"></script>
+      
+        <script src="../../../theme/js/site-friends.js"></script>
+      
+        <script src="../../../theme/js/site-github.js"></script>
+      
+    
+  </body>
+</html>

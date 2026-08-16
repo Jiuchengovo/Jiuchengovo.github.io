@@ -1,0 +1,2131 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="久诚的 CTF 学习笔记">
+      
+      
+        <meta name="author" content="Jiucheng">
+      
+      
+        <link rel="canonical" href="https://jiuchengovo.github.io/study/ctf/rev%20lab%201/">
+      
+      
+        <link rel="prev" href="../Lab%201%20Misc/">
+      
+      
+        <link rel="next" href="../Crypto%20Lab%202/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../theme/assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Reverse - Jiucheng's CTF Note</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../../theme/css/variables.css">
+    
+      <link rel="stylesheet" href="../../../theme/css/main.css">
+    
+      <link rel="stylesheet" href="../../../theme/css/components.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+  <link rel="preload" as="style" href="/theme/css/github.min.css">
+  <link rel="preload" as="style" href="/theme/css/github-dark.min.css">
+  <script>
+    (function () {
+      try {
+        var saved = (typeof __md_get === "function") ? __md_get("__palette") : null;
+        var scheme;
+        if (saved && saved.color && saved.color.scheme) {
+          // 尊重用户已保存的选择
+          scheme = saved.color.scheme;
+        } else {
+          // 站点默认深色
+          scheme = "slate";
+        }
+        document.documentElement.setAttribute("data-md-color-scheme", scheme);
+        var hljsTheme = document.createElement("link");
+        hljsTheme.id = "hljs-theme";
+        hljsTheme.rel = "stylesheet";
+        hljsTheme.href = scheme === "slate"
+          ? "/theme/css/github-dark.min.css"
+          : "/theme/css/github.min.css";
+        document.head.appendChild(hljsTheme);
+        var attach = function () {
+          document.body.setAttribute("data-md-color-scheme", scheme);
+          new MutationObserver(function () {
+            var s = document.body.getAttribute("data-md-color-scheme");
+            if (s) document.documentElement.setAttribute("data-md-color-scheme", s);
+          }).observe(document.body, {
+            attributes: true,
+            attributeFilter: ["data-md-color-scheme"],
+          });
+        };
+        if (document.body) {
+          attach();
+        } else {
+          new MutationObserver(function (_, obs) {
+            if (document.body) {
+              attach();
+              obs.disconnect();
+            }
+          }).observe(document.documentElement, { childList: true });
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#lab-1reverse" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="Jiucheng&#39;s CTF Note" class="md-header__button md-logo" aria-label="Jiucheng's CTF Note" data-md-component="logo">
+      <!-- Jiucheng 字体图标 Logo -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 48" class="bf-logo" role="img" aria-label="Jiucheng">
+  <text x="0" y="36" class="bf-logo__text">Jiucheng</text>
+</svg>
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Jiucheng's CTF Note
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Reverse
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换至浅色模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换至浅色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换至深色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换至深色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Jiuchengovo/Jiuchengovo.github.io" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Jiuchengovo.github.io
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  学习
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../tools/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  工具
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../diaries/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  随笔
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Jiucheng&#39;s CTF Note" class="md-nav__button md-logo" aria-label="Jiucheng's CTF Note" data-md-component="logo">
+      <!-- Jiucheng 字体图标 Logo -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 48" class="bf-logo" role="img" aria-label="Jiucheng">
+  <text x="0" y="36" class="bf-logo__text">Jiucheng</text>
+</svg>
+    </a>
+    Jiucheng's CTF Note
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Jiuchengovo/Jiuchengovo.github.io" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Jiuchengovo.github.io
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    学习
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    学习
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CTF 夺旗赛
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_2" id="__nav_2_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CTF 夺旗赛
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Crypto%20Lab%200/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_2_3" id="__nav_2_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 1
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Lab 1
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Crypto%20Lab%201/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Crypto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Lab%201%EF%BC%9AWeb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Web
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Web_Lab1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Web基础知识
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Pwn/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pwn
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Lab%201%20Misc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Misc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reverse
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reverse
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#task-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 1.1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-12--汇编与调试分析" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 1.2 — 汇编与调试分析
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Task 1.2 — 汇编与调试分析">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gcc-的-lambda-实现" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GCC 的 Lambda 实现
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clang-的-lambda-实现" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clang 的 Lambda 实现
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gcc-汇编实现地址-0x10233f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GCC 汇编实现（地址 0x10233f）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clang-汇编实现地址-0x10231a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clang 汇编实现（地址 0x10231a）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#对比总结" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        对比总结
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#基础操作" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        基础操作
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lambda-函数动态分析" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lambda 函数动态分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#常用命令速查" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        常用命令速查
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-2--rev_morego-程序逆向" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 2 — rev_more（Go 程序逆向）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-3--rev_again" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 3 — rev_again
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2_4" id="__nav_2_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 2
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Lab 2
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Crypto%20Lab%202/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Crypto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Misc%20Lab%202/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Misc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2_5" id="__nav_2_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 3
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Lab 3
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Crypto%20Lab%203/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Crypto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Misc%20Lab%203/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Misc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    工具
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../diaries/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    随笔
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#task-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 1.1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-12--汇编与调试分析" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 1.2 — 汇编与调试分析
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Task 1.2 — 汇编与调试分析">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gcc-的-lambda-实现" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GCC 的 Lambda 实现
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clang-的-lambda-实现" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clang 的 Lambda 实现
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gcc-汇编实现地址-0x10233f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GCC 汇编实现（地址 0x10233f）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clang-汇编实现地址-0x10231a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clang 汇编实现（地址 0x10231a）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#对比总结" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        对比总结
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#基础操作" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        基础操作
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lambda-函数动态分析" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lambda 函数动态分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#常用命令速查" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        常用命令速查
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-2--rev_morego-程序逆向" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 2 — rev_more（Go 程序逆向）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-3--rev_again" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 3 — rev_again
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+  
+    <a href="https://github.com/Jiuchengovo/Jiuchengovo.github.io/edit/master/docs/study/ctf/rev lab 1.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+
+
+
+<h1 id="lab-1reverse">Lab 1：Reverse<a class="headerlink" href="#lab-1reverse" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>可能某些标题含人量不是很足因为我写到这个lab的时候已经没精力排版了 由AI进行markdown的排版 但是未标注AI的地方都是我自己写的</p>
+</blockquote>
+<h2 id="task-11">Task 1.1<a class="headerlink" href="#task-11" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>计算机好神奇……
+Task 1.1 就是把源代码逐步"翻译"成 CPU 能直接执行的机器指令的过程。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>命令</th>
+<th>产物</th>
+<th>在干什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>预处理</td>
+<td><code>g++ -E -std=c++20 xx.cpp -o xx.i</code></td>
+<td><code>xx.i</code></td>
+<td>宏替换、头文件粘贴、删注释</td>
+</tr>
+<tr>
+<td>编译</td>
+<td><code>g++ -S -std=c++20 xx.cpp -o xx.s</code></td>
+<td><code>xx.s</code></td>
+<td>C++ → 汇编语言</td>
+</tr>
+<tr>
+<td>汇编</td>
+<td><code>g++ -c -std=c++20 xx.cpp -o xx.o</code></td>
+<td><code>xx.o</code></td>
+<td>汇编 → 二进制机器码</td>
+</tr>
+<tr>
+<td>链接</td>
+<td><code>g++ -std=c++20 xx.cpp -o xx</code></td>
+<td><code>xx</code></td>
+<td>拼接库、填地址 → 可执行文件</td>
+</tr>
+<tr>
+<td>运行</td>
+<td><code>./xx</code></td>
+<td>—</td>
+<td>执行程序</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">个人理解</p>
+<ul>
+<li><strong>预处理</strong>：做"准备工作"，例如 <code>#include &lt;iostream&gt;</code> 会在这一步进行处理，即跑到系统目录里找 <code>iostream</code> 文件粘贴到文件里，宏展开，注释删掉，拼成一个极大的 C 代码（比如说我的 <code>.i</code> 文件有 36984 行）。</li>
+<li><strong>编译（核心）</strong>：将 C++ 代码编译成汇编语言。</li>
+<li><strong>汇编</strong>：将汇编里的 <code>mov</code>、<code>add</code>、<code>call</code> 等指令编译成 CPU 认识的 0 和 1，产出 <code>.o</code> 目标文件。</li>
+<li><strong>链接</strong>：但 <code>.o</code> 文件依旧不能执行——因为代码里调用了 <code>printf</code>、<code>cout</code> 等标准库函数，这些函数的代码不在文件里。编译器只知道"这里需要一个外部函数"，但不知道这个函数的真实内存地址。所以 <code>.o</code> 文件里这些地方是留空的，等于一张"地址待填写"的表格。链接器把 <code>.o</code> 文件和系统提供的标准库拼在一起，确定每个函数、每个全局变量在最终可执行文件里的绝对地址，把之前留空的地方都填补成真实的函数地址。然后就可以 <code>./</code> 执行了。</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">关于待填充的内容</p>
+<p>这里待填充的是非模板的声明，比如说初始化函数之类的较为底层的代码。像 <code>std::cout</code>、<code>upper_bound</code> 这种都是直接在预处理的时候粘贴进来的。</p>
+</div>
+</div>
+<p><img alt="" src="../rev-image-27.png" /></p>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>命令</th>
+<th>产物</th>
+<th>在干什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LLVM IR 文本</td>
+<td><code>clang++ -std=c++20 -S -emit-llvm xx.cpp -o xx.ll</code></td>
+<td><code>xx.ll</code></td>
+<td>生成文本格式的中间表示</td>
+</tr>
+<tr>
+<td>LLVM Bitcode</td>
+<td><code>clang++ -std=c++20 -c -emit-llvm xx.cpp -o xx.bc</code></td>
+<td><code>xx.bc</code></td>
+<td>生成二进制格式的中间表示</td>
+</tr>
+<tr>
+<td>链接+运行</td>
+<td><code>clang++ -std=c++20 xx.cpp -o xx &amp;&amp; ./xx</code></td>
+<td><code>xx</code></td>
+<td>生成可执行文件并运行</td>
+</tr>
+</tbody>
+</table>
+<p>Clang++ 会在中间经历 LLVM IR 的步骤。LLVM IR 是一种"中间语言"，优势在于<strong>跨平台</strong>。</p>
+<pre class="highlight"><code>gcc:    C++ → 汇编 → 机器码 → 可执行文件
+
+clang:  C++ → LLVM IR → 汇编 → 机器码 → 可执行文件
+                 ↑
+             多出来这一层：跨平台优化和分析</code></pre>
+<p><img alt="" src="../rev-image-28.png" /></p>
+<p><img alt="" src="../rev-image-29.png" /></p>
+<hr />
+<h2 id="task-12--汇编与调试分析">Task 1.2 — 汇编与调试分析<a class="headerlink" href="#task-12--汇编与调试分析" title="Permanent link">&para;</a></h2>
+<p>逆推 flag 很简单，就按照 C++ 代码一步步逆回去就可以了。</p>
+<p><img alt="" src="../rev-image-30.png" /></p>
+<blockquote>
+<p>没学过汇编我是真的看不懂一点……大部分借助了 AI 来分析。</p>
+</blockquote>
+<p><img alt="" src="../rev-image-31.png" /> <em>gcc main</em></p>
+<p><img alt="" src="../rev-image-32.png" /> <em>clang main</em></p>
+<h4 id="gcc-的-lambda-实现">GCC 的 Lambda 实现<a class="headerlink" href="#gcc-的-lambda-实现" title="Permanent link">&para;</a></h4>
+<p>Lambda 被编译为独立的匿名类，并保留了源码中的变量名作为符号名。在 Ghidra 的 Symbol Tree 中搜索 <code>cmp</code> 就可以找到 <code>cmp::operator()</code> 函数，图片上就是这个函数。</p>
+<pre class="highlight"><code class="language-asm">LEA  RDI, [cmp]              ; 加载 lambda 对象地址
+MOV  R8, RCX                 ; ok 引用（第4个参数）
+MOV  ECX, EDX                ; i（第3个参数）
+MOV  EDX, EBX                ; target[i]（第2个参数）
+MOV  ESI, EAX                ; input[i]（第1个参数）
+CALL cmp::{lambda}#1::operator()&lt;unsigned char&gt;</code></pre>
+<p>可以看出参数通过寄存器传递（<code>esi</code>、<code>edx</code>、<code>ecx</code>、<code>r8</code>）。</p>
+<h4 id="clang-的-lambda-实现">Clang 的 Lambda 实现<a class="headerlink" href="#clang-的-lambda-实现" title="Permanent link">&para;</a></h4>
+<p>Lambda 也会被编译为独立匿名类，但符号名为编译器自动生成的 <code>$_0</code>（无意义的序号标识）。Ghidra 中搜索 <code>$_0</code> 才可以找到。</p>
+<pre class="highlight"><code class="language-asm">LEA  RDI, [$_0]              ; 加载匿名 lambda 对象地址
+LEA  R8, [RBP-0x61]          ; ok 引用（第4个参数）
+CALL $_0::operator()&lt;unsigned char&gt;</code></pre>
+<p>部分参数通过栈传递（<code>ok</code> 引用），这与上面的 GCC 的策略是不同的。</p>
+<p><img alt="" src="../rev-image-33.png" /> <em>gcc lambda</em></p>
+<p><img alt="" src="../rev-image-34.png" /> <em>clang lambda</em></p>
+<h4 id="gcc-汇编实现地址-0x10233f">GCC 汇编实现（地址 <code>0x10233f</code>）<a class="headerlink" href="#gcc-汇编实现地址-0x10233f" title="Permanent link">&para;</a></h4>
+<pre class="highlight"><code class="language-asm">LEA  RAX, [RBP-0x7c]
+MOV  RDI, RAX
+CALL std::ranges::iota_view&lt;int,int&gt;::_Iterator::operator*   ; 取迭代器当前值
+MOV  dword ptr [RBP+local_7c], EAX
+MOV  EAX, dword ptr [RBP+local_7c]
+CDQE
+MOVZX EAX, byte ptr [RBP+RAX*0x1-0x40]                      ; 取 target[i]
+MOVZX EBX, AL
+MOV  EAX, dword ptr [RBP+local_7c]
+MOVSXD RDX, EAX
+LEA  RAX, [RBP-0x60]
+MOV  RSI, RDX
+MOV  RDI, RAX
+CALL std::__cxx11::string::operator[]                        ; 取 input[i]
+MOVZX EAX, byte ptr [RAX]
+MOVZX EAX, AL
+LEA  RCX, [RBP-0x7d]                                         ; ok 变量地址
+MOV  EDX, dword ptr [RBP+local_7c]                           ; i
+LEA  RDI, [cmp]                                               ; lambda 地址
+MOV  R8, RCX                                                  ; ok 引用
+MOV  ECX, EDX                                                 ; i
+MOV  EDX, EBX                                                 ; target[i]
+MOV  ESI, EAX                                                 ; input[i]
+CALL cmp::operator()                                          ; 调 lambda
+LEA  RAX, [RBP-0x7c]
+MOV  RDI, RAX
+CALL std::ranges::iota_view&lt;int,int&gt;::_Iterator::operator++ ; i++</code></pre>
+<h4 id="clang-汇编实现地址-0x10231a">Clang 汇编实现（地址 <code>0x10231a</code>）<a class="headerlink" href="#clang-汇编实现地址-0x10231a" title="Permanent link">&para;</a></h4>
+<pre class="highlight"><code class="language-asm">LEA  RDI, [RBP-0x84]
+LEA  RSI, [RBP-0x88]
+CALL iota_view::_Iterator::operator==       ; 先比较迭代器（含 equality_comparable 约束）
+; ... 比较逻辑 ...
+LEA  RDI, [RBP-0x84]
+CALL iota_view::_Iterator::operator*        ; 取迭代器当前值
+MOV  dword ptr [RBP+local_94], EAX
+MOVSXD RSI, dword ptr [RBP+local_94]
+LEA  RDI, [RBP-0x28]
+CALL string::operator[]                     ; 取 input[i]
+MOV  qword ptr [RBP+local_c0], RAX
+; ...
+MOV  RAX, qword ptr [RBP+local_c0]
+MOVZX ESI, byte ptr [RAX]
+MOVSXD RAX, dword ptr [RBP+local_94]
+MOV  ECX, EAX
+MOVZX EDX, byte ptr [RBP+RAX*0x1-0x60]     ; 取 target[i]
+LEA  RDI, [$_0]                             ; 匿名 lambda 地址
+LEA  R8, [RBP-0x61]                         ; ok 引用
+CALL $_0::operator()                        ; 调 lambda
+; ...
+LEA  RDI, [RBP-0x84]
+CALL iota_view::_Iterator::operator++       ; i++</code></pre>
+<h4 id="对比总结">对比总结<a class="headerlink" href="#对比总结" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>GCC</th>
+<th>Clang</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>迭代器构造</td>
+<td>直接调用 <code>begin()</code> / <code>end()</code></td>
+<td>先通过工厂函数 <code>_Iota</code> 检查 <code>__can_iota_view</code> 类型约束</td>
+</tr>
+<tr>
+<td><code>end()</code> 符号名</td>
+<td><code>_IteratorFeqERKS2_S4_</code></td>
+<td><code>_IteratorFeqERKS2_S4_Q19equality_comparableIT_E</code>（携带 concept 信息）</td>
+</tr>
+<tr>
+<td><code>operator==</code> 符号名</td>
+<td>简洁</td>
+<td>带 <code>Q7same_asIT_T0_E</code> 类型约束标记</td>
+</tr>
+<tr>
+<td>优化程度</td>
+<td>较少冗余指令</td>
+<td>含大量 <code>eb 00</code>（<code>jmp $+2</code>）对齐填充，未开优化编译</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">我的理解</p>
+<p>GCC 在编译期将解释并丢弃掉约束信息，生成的符号名会更简洁。Clang 将这些约束信息保留在符号名中，即使编译完成后也可以通过符号名反推源码。此外 Clang 也多了一层 <code>_Iota</code> 函数作为 <code>iota_view</code> 的检查。</p>
+</div>
+<p><img alt="" src="../rev-image-35.png" /> <em>gcc iota</em></p>
+<p><img alt="" src="../rev-image-36.png" /> <em>clang iota 1</em></p>
+<p><img alt="" src="../rev-image-37.png" /> <em>clang iota 2</em></p>
+<h4 id="基础操作">基础操作<a class="headerlink" href="#基础操作" title="Permanent link">&para;</a></h4>
+<p>加载程序、查看源码、设置断点：</p>
+<p><img alt="" src="../rev-image-38.png" /></p>
+<p><img alt="" src="../rev-image-39.png" /></p>
+<p>运行、单步执行：</p>
+<p><img alt="" src="../rev-image-40.png" /></p>
+<h4 id="lambda-函数动态分析">Lambda 函数动态分析<a class="headerlink" href="#lambda-函数动态分析" title="Permanent link">&para;</a></h4>
+<p>步入 lambda，查看参数：</p>
+<p><img alt="" src="../rev-image-41.png" /></p>
+<p>跟踪 <code>c</code> 值的变化：</p>
+<p><img alt="" src="../rev-image-42.png" /></p>
+<h4 id="常用命令速查">常用命令速查<a class="headerlink" href="#常用命令速查" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>b N</code></td>
+<td>在第 N 行设断点</td>
+</tr>
+<tr>
+<td><code>r</code></td>
+<td>运行程序</td>
+</tr>
+<tr>
+<td><code>n</code></td>
+<td>单步步过</td>
+</tr>
+<tr>
+<td><code>s</code></td>
+<td>单步步入</td>
+</tr>
+<tr>
+<td><code>finish</code></td>
+<td>跳出当前函数</td>
+</tr>
+<tr>
+<td><code>p var</code></td>
+<td>打印变量值</td>
+</tr>
+<tr>
+<td><code>info args</code></td>
+<td>查看当前函数参数</td>
+</tr>
+<tr>
+<td><code>info locals</code></td>
+<td>查看局部变量</td>
+</tr>
+<tr>
+<td><code>i b</code></td>
+<td>查看断点列表</td>
+</tr>
+<tr>
+<td><code>disable N</code></td>
+<td>禁用编号为 N 的断点</td>
+</tr>
+<tr>
+<td><code>c</code></td>
+<td>继续执行</td>
+</tr>
+<tr>
+<td><code>q</code></td>
+<td>退出 GDB</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="task-2--rev_morego-程序逆向">Task 2 — rev_more（Go 程序逆向）<a class="headerlink" href="#task-2--rev_morego-程序逆向" title="Permanent link">&para;</a></h2>
+<p>该文件<strong>未剥离符号（not stripped）</strong>，Ghidra 能够直接显示出所有 Go 函数的原始名称。</p>
+<p>程序读取了 <code>flag.txt</code> 这个文件：</p>
+<p><img alt="" src="../rev-image-43.png" /></p>
+<p><strong>长度校验</strong>——长度必须能被 8 整除：</p>
+<ul>
+<li><code>extraout_RBX == 0</code> → 文件为空 → panic</li>
+<li><code>extraout_RBX &amp; 7</code> → 按位与 7，等价于 <code>% 8</code>。不为 0 就是不能被 8 整除 → panic</li>
+</ul>
+<p><img alt="" src="../rev-image-44.png" /></p>
+<p><strong>密钥长度</strong>——十六字节：</p>
+<ul>
+<li><code>crypto/rand.Read(local_e4, 0x10, 0x10)</code></li>
+<li>第二个参数就是要读取的字节数</li>
+</ul>
+<p><img alt="" src="../rev-image-45.png" /></p>
+<p>下面是关键的加密环节（结合 AI 辅助分析）：</p>
+<pre class="highlight"><code class="language-c">for (iVar6 = 0; iVar6 &lt; 0x6f; iVar6 = iVar6 + 1) {
+  //                 ^^^^^^
+  //                 0x6F = 111 → 加密轮数
+
+      // ============ 第一半：更新 v0 ============
+      local_a8 = local_a8 + (
+          // ^^^^^^^^ v0
+
+          (local_c8[dVar11 &amp; 3] + dVar11)
+          //  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+          //  key[sum &amp; 3] + sum
+
+          ^
+
+          ((local_a4 &gt;&gt; 5 ^ local_a4 &lt;&lt; 4) + local_a4)
+          //  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+          //  ((v1 &gt;&gt; 5) ^ (v1 &lt;&lt; 4)) + v1   ← XTEA 标志性操作！
+      );
+
+      // ============ Delta 累加 ============
+      local_cc = dVar11 + 0x4a537f29;
+      //         ^^^^^^   ^^^^^^^^^^
+      //         sum      DELTA（自定义，不是标准 0x9E3779B9）
+
+      // ============ 第二半：更新 v1 ============
+      local_a4 = local_a4 + (
+          // ^^^^^^^^ v1
+
+          (dVar11 + local_c8[local_cc &gt;&gt; 0xb &amp; 3] + 0x4a537f29)
+          //                   ^^^^^^^^^^^^^^^^^
+          //                   key[(sum+delta) &gt;&gt; 11 &amp; 3]
+
+          ^
+
+          (local_a8 + (local_a8 &gt;&gt; 5 ^ local_a8 * 0x10))
+          //            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+          //            ((v0 &gt;&gt; 5) ^ (v0 &lt;&lt; 4)) + v0
+          //            注意：* 0x10 = &lt;&lt; 4，Ghidra 有时显示为乘法
+      );
+
+      // ============ sum 传递到下一轮 ============
+      dVar11 = local_cc;
+      // sum = sum + delta
+  }
+
+  // ═══════════════ 111 轮结束 ═══════════════
+
+  // ============ BSWAP 回 LE 并输出 ============
+  uVar1 = uVar9 + 8;
+  local_ec = CONCAT44(
+      // v1 的 BSWAP —— 把加密后的 v1 转回小端序存储
+      local_a4 &gt;&gt; 0x18 | (local_a4 &amp; 0xff0000) &gt;&gt; 8 |
+      (local_a4 &amp; 0xff00) &lt;&lt; 8 | local_a4 &lt;&lt; 0x18,
+      //                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      //                 这就是 bswap(local_a4)
+
+      // v0 的 BSWAP —— 把加密后的 v0 转回小端序存储
+      local_a8 &gt;&gt; 0x18 | (local_a8 &amp; 0xff0000) &gt;&gt; 8 |
+      (local_a8 &amp; 0xff00) &lt;&lt; 8 | local_a8 &lt;&lt; 0x18
+      //                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      //                 这就是 bswap(local_a8)
+  );
+  // CONCAT44 把两个 32 位值拼成一个 64 位值
+  // 高32位=v1, 低32位=v0 → 写入输出缓冲区 8 字节
+
+  uVar10 = uVar9;    // 旧指针保存
+  uVar5 = uVar2;     // 跳到下一个 8 字节分组</code></pre>
+<p>Flag 每 8 字节拆成左右两个数 <code>v0</code> 和 <code>v1</code>，程序用长度为 16 字节的密钥做 111 轮加密：</p>
+<ol>
+<li>先把 <code>v1</code> 右移 5 位异或左移 4 位再加 <code>v1</code> 自身</li>
+<li>用 <code>key[sum &amp; 3] + sum</code> 异或上去，加到 <code>v0</code> 上</li>
+<li>然后把 <code>sum</code> 加上 <code>0x4A537F29</code></li>
+<li>再用 <code>v0</code> 右移 5 位异或左移 4 位加 <code>v0</code> 自身，去异或 <code>sum + key[(sum&gt;&gt;11) &amp; 3]</code>，加到 <code>v1</code> 上</li>
+</ol>
+<p>111 轮后输出的 <code>v0</code>、<code>v1</code> 就是密文。</p>
+<p><img alt="" src="../rev-image-46.png" /></p>
+<p>解密的时候把这个过程逆回去就可以（脚本使用了 AI 协助进行编写 qwq）。</p>
+<p><img alt="" src="../rev-image-47.png" /></p>
+<hr />
+<h2 id="task-3--rev_again">Task 3 — rev_again<a class="headerlink" href="#task-3--rev_again" title="Permanent link">&para;</a></h2>
+<p>将文件放 Ghidra 里，看 Program Trees，发现 <code>UPX0</code>、<code>UPX1</code>。</p>
+<div class="admonition info">
+<p class="admonition-title">知识点：加壳</p>
+<p>加壳是将可执行文件<strong>压缩或加密</strong>，运行时再自动解压还原。对逆向分析的影响是：直接用 Ghidra/IDA 打开加壳文件，只能看到壳的代码，看不到真正程序逻辑。</p>
+<p><strong>判断方法</strong>：用 Ghidra 打开文件后，如果段名是 <code>UPX0</code>、<code>UPX1</code>（或 <code>UPX0</code>、<code>UPX1</code>、<code>UPX2</code>），说明被 UPX 加壳了。</p>
+<p><strong>脱壳方法</strong>：用 UPX 工具直接解压：
+<pre class="highlight"><code class="language-bash">upx -d input.exe -o output.exe</code></pre></p>
+</div>
+<p><img alt="" src="../rev-image-48.png" />  <img alt="" src="../rev-image-49.png" /></p>
+<p>脱壳后可以看到文件的大体内容。一个 Windows <code>.exe</code> 文件主要包含以下几个关键部分：</p>
+<table>
+<thead>
+<tr>
+<th>结构</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.text</code></td>
+<td>代码段，存放所有函数的机器码</td>
+</tr>
+<tr>
+<td><code>.rdata</code></td>
+<td>只读数据段，存放字符串、常量、加密数据等</td>
+</tr>
+<tr>
+<td><code>.data</code></td>
+<td>可读写数据段，存放全局变量</td>
+</tr>
+<tr>
+<td>导入表 (IAT)</td>
+<td>列出程序调用的外部 DLL 函数（如 <code>MessageBoxW</code>）</td>
+</tr>
+<tr>
+<td>导出表</td>
+<td>程序提供给外部的函数（<code>.exe</code> 通常没有）</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>输入端</strong>：明文 + 密钥（RVA <code>0x6020</code>，即 <code>kEy3rd</code>）</li>
+<li><strong>输出端</strong>：密文</li>
+<li><strong>运算</strong>：RC4 流加密（XOR）</li>
+</ul>
+<p><img alt="" src="../rev-image-50.png" /></p>
+<p><img alt="" src="../rev-image-51.png" /></p>
+<ul>
+<li>
+<p><strong>密钥</strong>：用 String 搜索 <code>kEy3rd</code> 确定位置，然后 Search String 定位。</p>
+<p><img alt="" src="../rev-image-52.png" /></p>
+</li>
+<li>
+<p><strong>密文</strong>：Ghidra Listing 窗口 <code>0x1400060e0</code> 处显示的数据（注意顶部 XREF 表明 <code>WindowProc</code> 函数两处引用了该地址），该地址到 <code>0x140006110</code> 之间即为加密后的 flag 密文。</p>
+<p><img alt="" src="../rev-image-53.png" /></p>
+</li>
+</ul>
+<p>执行脚本后得到 flag。</p>
+<blockquote>
+<p>偷偷补一个 <code>}</code> 应该没关系吧……我也不知道为什么不对。这道题基本从头到尾都是 AI 协助完成的，我改写不出来 orz。</p>
+</blockquote>
+<p><img alt="" src="../rev-image-54.png" /></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="页脚" >
+        
+          
+          <a href="../Lab%201%20Misc/" class="md-footer__link md-footer__link--prev" aria-label="上一页: Misc">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              <div class="md-ellipsis">
+                Misc
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../Crypto%20Lab%202/" class="md-footer__link md-footer__link--next" aria-label="下一页: Crypto">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              <div class="md-ellipsis">
+                Crypto
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 Jiucheng
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "navigation.indexes", "navigation.tracking", "navigation.footer", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.progress", "content.action.edit", "content.code.annotate", "content.code.copy", "content.code.select", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../../theme/js/theme-sync.js"></script>
+      
+        <script src="../../../theme/js/mathjax.js"></script>
+      
+        <script src="../../../theme/js/hljs/highlight.min.js"></script>
+      
+        <script src="../../../theme/js/hljs/x86asm.min.js"></script>
+      
+        <script src="../../../theme/js/hljs/cmake.min.js"></script>
+      
+        <script src="../../../theme/js/hljs/http.min.js"></script>
+      
+        <script src="../../../theme/js/highlight.js"></script>
+      
+        <script src="../../../theme/js/site.js"></script>
+      
+        <script src="../../../theme/js/site-home.js"></script>
+      
+        <script src="../../../theme/js/site-terminal.js"></script>
+      
+        <script src="../../../theme/js/site-images.js"></script>
+      
+        <script src="../../../theme/js/site-pdf.js"></script>
+      
+        <script src="../../../theme/js/site-friends.js"></script>
+      
+        <script src="../../../theme/js/site-github.js"></script>
+      
+    
+  </body>
+</html>

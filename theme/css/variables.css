@@ -1,0 +1,163 @@
+/* ============================================================================
+   variables.css —— 全局可调配置
+   ----------------------------------------------------------------------------
+   所有可调参数集中在此，方便统一调整。
+   亮色（default）和暗色（slate）分别定义，通过 [data-md-color-scheme] 切换。
+   加载顺序：variables.css → main.css → components.css。
+   ============================================================================ */
+
+/* ---- 通用变量（亮暗共用） ---- */
+:root {
+  /* === 布局 === */
+  --page-max-width: 65rem;
+  --content-padding-inline: 1rem;
+
+  /* === 响应式断点（移动端 ≤ 此值，桌面端 > 此值） === */
+  --mobile-breakpoint: 44.984375em;
+
+  /* === 毛玻璃 === */
+  --blur-radius: 12px;
+
+  /* === 圆角 === */
+  --radius-sm: 2px;   /* 贡献图小方块 */
+  --radius-md: 6px;   /* 按钮、行内代码、键盘按键、导航选中态 */
+  --radius-lg: 8px;   /* 卡片、面板、终端窗口、日志列表 */
+
+  /* === 网格背景 === */
+  --grid-clear-half: 22rem;
+  --grid-fade: 20rem;
+
+  /* === 代码块行号列 === */
+  --code-scrollbar-offset: 0.4rem;
+  --code-line-height: 1.45em;
+
+  /* === 滚动条 === */
+  --scrollbar-width: 8px;
+  --scrollbar-height: 8px;
+
+  /* === 终端圆点（macOS 风格） === */
+  --terminal-dot-red: #ff5f57;
+  --terminal-dot-yellow: #ffbd2e;
+  --terminal-dot-green: #28c840;
+
+  /* === 终端文字颜色 === */
+  --terminal-host-color: #2da44e;
+  --terminal-prompt-color: #0969da;
+  --terminal-command-color: #111111;
+  --terminal-cursor-color: #111111;
+
+  /* === 阴影 === */
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.10);
+  --shadow-lg: 0 8px 18px rgba(0, 0, 0, 0.07);
+
+  /* === 错误色 === */
+  --error-color: #e53e3e;
+
+  /* === PDF 页面背景 === */
+  --pdf-page-bg: #fff;
+
+  /* === 移动端 === */
+  --mobile-content-padding: 0;
+  --mobile-code-gutter-padding-right: 0.5em;
+  --mobile-code-gutter-margin-right: 0.6em;
+  --mobile-terminal-font-size: 14px;
+  --mobile-terminal-padding: 0.85rem 0.9rem 0.95rem;
+  --mobile-log-gap: 0.25rem;
+  --mobile-section-head-gap: 0.25rem;
+}
+
+/* ---- 亮色模式（default） ---- */
+[data-md-color-scheme="default"] {
+  /* === 导航栏 / 面板半透明背景 === */
+  --header-bg: rgba(255, 255, 255, 0.8);
+  --panel-bg: rgba(255, 255, 255, 0.4);
+
+  /* === 正文区域不透明背景 === */
+  --content-bg: #ffffff;
+
+  /* === 导航选中态 === */
+  --active-nav-bg: #f2f2f2;
+  --active-nav-border: #0969da;
+
+  /* === 滚动条 === */
+  --scrollbar-thumb: rgba(107, 114, 128, 0.42);
+  --scrollbar-thumb-hover: rgba(75, 85, 99, 0.58);
+
+  /* === 网格 SVG（虚线） === */
+  --page-grid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cline x1='0' y1='0' x2='80' y2='0' stroke='rgba(100,100,100,0.32)' stroke-width='1' stroke-dasharray='3 5'/%3E%3Cline x1='0' y1='0' x2='0' y2='80' stroke='rgba(100,100,100,0.32)' stroke-width='1' stroke-dasharray='3 5'/%3E%3C/svg%3E");
+
+  /* === 首页面板 === */
+  --home-panel: rgba(255, 255, 255, 0.4);
+  --home-border: #ccd6d8;
+
+  /* === 首页分类强调色 === */
+  --accent-study: #0969da;
+  --accent-tools: #bc4c00;
+  --accent-diary: #8250df;
+  --accent-games: #1a7f37;
+
+  /* === 友链头像 === */
+  --avatar-color: #1a7f37;
+  --avatar-bg: color-mix(in srgb, #2da44e 10%, transparent);
+
+  /* === 彩虹色斑 === */
+  --rainbow-red: rgba(255, 92, 122, 0.2);
+  --rainbow-orange: rgba(255, 190, 86, 0.2);
+  --rainbow-green: rgba(77, 220, 138, 0.18);
+  --rainbow-cyan: rgba(58, 213, 230, 0.18);
+  --rainbow-blue: rgba(91, 156, 255, 0.18);
+  --rainbow-violet: rgba(174, 111, 255, 0.18);
+
+  /* === 终端暗色阴影 === */
+  --terminal-shadow: var(--shadow-md);
+}
+
+/* ---- 暗色模式（slate） ---- */
+[data-md-color-scheme="slate"] {
+  /* === 导航栏 / 面板半透明背景 === */
+  --header-bg: rgba(13, 17, 23, 0.8);
+  --panel-bg: rgba(1, 4, 9, 0.4);
+
+  /* === 导航选中态 === */
+  --active-nav-bg: #272b30;
+  --active-nav-border: #4493f8;
+
+  /* === 滚动条 === */
+  --scrollbar-thumb: rgba(156, 163, 175, 0.38);
+  --scrollbar-thumb-hover: rgba(209, 213, 219, 0.52);
+
+  /* === 网格 SVG（虚线，暗色更淡） === */
+  --page-grid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cline x1='0' y1='0' x2='80' y2='0' stroke='rgba(180,180,180,0.2)' stroke-width='1' stroke-dasharray='3 5'/%3E%3Cline x1='0' y1='0' x2='0' y2='80' stroke='rgba(180,180,180,0.2)' stroke-width='1' stroke-dasharray='3 5'/%3E%3C/svg%3E");
+
+  /* === 首页面板 === */
+  --home-panel: rgba(1, 4, 9, 0.4);
+  --home-border: #383e42;
+
+  /* === 首页分类强调色 === */
+  --accent-study: #79c0ff;
+  --accent-tools: #ffa657;
+  --accent-diary: #d2a8ff;
+  --accent-games: #7ee787;
+
+  /* === 友链头像 === */
+  --avatar-color: #7ee787;
+  --avatar-bg: color-mix(in srgb, #7ee787 12%, transparent);
+
+  /* === 彩虹色斑（暗色更亮） === */
+  --rainbow-red: rgba(255, 123, 146, 0.2);
+  --rainbow-orange: rgba(255, 201, 107, 0.2);
+  --rainbow-green: rgba(126, 231, 161, 0.18);
+  --rainbow-cyan: rgba(94, 234, 255, 0.18);
+  --rainbow-blue: rgba(147, 197, 253, 0.2);
+  --rainbow-violet: rgba(216, 180, 254, 0.18);
+
+  /* === 终端暗色阴影 === */
+  --terminal-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
+
+  /* === 终端文字颜色（暗色覆盖） === */
+  --terminal-host-color: #7ee787;
+  --terminal-prompt-color: #79c0ff;
+  --terminal-command-color: #ffffff;
+  --terminal-cursor-color: #fff;
+}

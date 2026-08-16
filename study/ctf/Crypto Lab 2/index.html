@@ -1,0 +1,2763 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="久诚的 CTF 学习笔记">
+      
+      
+        <meta name="author" content="Jiucheng">
+      
+      
+        <link rel="canonical" href="https://jiuchengovo.github.io/study/ctf/Crypto%20Lab%202/">
+      
+      
+        <link rel="prev" href="../rev%20lab%201/">
+      
+      
+        <link rel="next" href="../Misc%20Lab%202/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../theme/assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Crypto - Jiucheng's CTF Note</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../../theme/css/variables.css">
+    
+      <link rel="stylesheet" href="../../../theme/css/main.css">
+    
+      <link rel="stylesheet" href="../../../theme/css/components.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+  <link rel="preload" as="style" href="/theme/css/github.min.css">
+  <link rel="preload" as="style" href="/theme/css/github-dark.min.css">
+  <script>
+    (function () {
+      try {
+        var saved = (typeof __md_get === "function") ? __md_get("__palette") : null;
+        var scheme;
+        if (saved && saved.color && saved.color.scheme) {
+          // 尊重用户已保存的选择
+          scheme = saved.color.scheme;
+        } else {
+          // 站点默认深色
+          scheme = "slate";
+        }
+        document.documentElement.setAttribute("data-md-color-scheme", scheme);
+        var hljsTheme = document.createElement("link");
+        hljsTheme.id = "hljs-theme";
+        hljsTheme.rel = "stylesheet";
+        hljsTheme.href = scheme === "slate"
+          ? "/theme/css/github-dark.min.css"
+          : "/theme/css/github.min.css";
+        document.head.appendChild(hljsTheme);
+        var attach = function () {
+          document.body.setAttribute("data-md-color-scheme", scheme);
+          new MutationObserver(function () {
+            var s = document.body.getAttribute("data-md-color-scheme");
+            if (s) document.documentElement.setAttribute("data-md-color-scheme", s);
+          }).observe(document.body, {
+            attributes: true,
+            attributeFilter: ["data-md-color-scheme"],
+          });
+        };
+        if (document.body) {
+          attach();
+        } else {
+          new MutationObserver(function (_, obs) {
+            if (document.body) {
+              attach();
+              obs.disconnect();
+            }
+          }).observe(document.documentElement, { childList: true });
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#crypto-lab-2" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="Jiucheng&#39;s CTF Note" class="md-header__button md-logo" aria-label="Jiucheng's CTF Note" data-md-component="logo">
+      <!-- Jiucheng 字体图标 Logo -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 48" class="bf-logo" role="img" aria-label="Jiucheng">
+  <text x="0" y="36" class="bf-logo__text">Jiucheng</text>
+</svg>
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Jiucheng's CTF Note
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Crypto
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换至浅色模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换至浅色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换至深色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换至深色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Jiuchengovo/Jiuchengovo.github.io" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Jiuchengovo.github.io
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  学习
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../tools/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  工具
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../diaries/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  随笔
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Jiucheng&#39;s CTF Note" class="md-nav__button md-logo" aria-label="Jiucheng's CTF Note" data-md-component="logo">
+      <!-- Jiucheng 字体图标 Logo -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 48" class="bf-logo" role="img" aria-label="Jiucheng">
+  <text x="0" y="36" class="bf-logo__text">Jiucheng</text>
+</svg>
+    </a>
+    Jiucheng's CTF Note
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Jiuchengovo/Jiuchengovo.github.io" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Jiuchengovo.github.io
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    学习
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    学习
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CTF 夺旗赛
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_2" id="__nav_2_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CTF 夺旗赛
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Crypto%20Lab%200/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2_3" id="__nav_2_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 1
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Lab 1
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Crypto%20Lab%201/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Crypto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Lab%201%EF%BC%9AWeb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Web
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Web_Lab1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Web基础知识
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Pwn/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pwn
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Lab%201%20Misc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Misc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rev%20lab%201/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reverse
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_2_4" id="__nav_2_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 2
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Lab 2
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Crypto
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Crypto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#task-1-rsa-party" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 1 RSA Party
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Task 1 RSA Party">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#题目描述" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        题目描述
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rsa-回顾" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RSA 回顾
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RSA 回顾">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#密钥生成" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        密钥生成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#加密与解密" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        加密与解密
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#16-fermat-factorization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1/6: Fermat Factorization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#26-pollard-p-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2/6: Pollard p-1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#36-common-modulus-attack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3/6: Common Modulus Attack
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#46-hastad-broadcast" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4/6: Hastad Broadcast
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#56-franklin-reiter-attack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5/6: Franklin-Reiter Attack
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#66-wieners-attack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6/6: Wiener's Attack
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-种-rsa-攻击" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 种 RSA 攻击
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-2-killerecc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 2 KillerECC
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Task 2 KillerECC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#题目描述_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        题目描述
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#漏洞分析" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        漏洞分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#攻击步骤" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        攻击步骤
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#关键代码" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        关键代码
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-3-ezcopper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 3 EZcopper
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Task 3 EZcopper">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#题目描述_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        题目描述
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#漏洞分析_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        漏洞分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#攻击步骤_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        攻击步骤
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#关键代码_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        关键代码
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-4-ezdlp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 4 EZDLP
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Task 4 EZDLP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#题目描述_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        题目描述
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#漏洞分析_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        漏洞分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#攻击步骤_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        攻击步骤
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#关键代码_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        关键代码
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-5-ezhnp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 5 EZHNP
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Task 5 EZHNP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#题目描述_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        题目描述
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#漏洞分析_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        漏洞分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#攻击步骤_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        攻击步骤
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#关键代码_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        关键代码
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-6-regev" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 6 Regev
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Task 6 Regev">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#题目描述_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        题目描述
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#漏洞分析_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        漏洞分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#攻击步骤_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        攻击步骤
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#关键代码_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        关键代码
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bonus-feedback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bonus Feedback
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Misc%20Lab%202/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Misc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2_5" id="__nav_2_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 3
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Lab 3
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Crypto%20Lab%203/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Crypto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Misc%20Lab%203/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Misc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    工具
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../diaries/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    随笔
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#task-1-rsa-party" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 1 RSA Party
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Task 1 RSA Party">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#题目描述" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        题目描述
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rsa-回顾" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RSA 回顾
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RSA 回顾">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#密钥生成" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        密钥生成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#加密与解密" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        加密与解密
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#16-fermat-factorization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1/6: Fermat Factorization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#26-pollard-p-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2/6: Pollard p-1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#36-common-modulus-attack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3/6: Common Modulus Attack
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#46-hastad-broadcast" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4/6: Hastad Broadcast
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#56-franklin-reiter-attack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5/6: Franklin-Reiter Attack
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#66-wieners-attack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6/6: Wiener's Attack
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-种-rsa-攻击" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6 种 RSA 攻击
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-2-killerecc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 2 KillerECC
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Task 2 KillerECC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#题目描述_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        题目描述
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#漏洞分析" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        漏洞分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#攻击步骤" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        攻击步骤
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#关键代码" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        关键代码
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-3-ezcopper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 3 EZcopper
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Task 3 EZcopper">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#题目描述_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        题目描述
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#漏洞分析_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        漏洞分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#攻击步骤_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        攻击步骤
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#关键代码_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        关键代码
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-4-ezdlp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 4 EZDLP
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Task 4 EZDLP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#题目描述_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        题目描述
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#漏洞分析_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        漏洞分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#攻击步骤_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        攻击步骤
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#关键代码_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        关键代码
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-5-ezhnp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 5 EZHNP
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Task 5 EZHNP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#题目描述_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        题目描述
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#漏洞分析_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        漏洞分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#攻击步骤_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        攻击步骤
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#关键代码_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        关键代码
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-6-regev" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task 6 Regev
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Task 6 Regev">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#题目描述_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        题目描述
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#漏洞分析_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        漏洞分析
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#攻击步骤_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        攻击步骤
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#关键代码_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        关键代码
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bonus-feedback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bonus Feedback
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+  
+    <a href="https://github.com/Jiuchengovo/Jiuchengovo.github.io/edit/master/docs/study/ctf/Crypto Lab 2.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+
+
+
+<h1 id="crypto-lab-2">Crypto Lab 2<a class="headerlink" href="#crypto-lab-2" title="Permanent link">&para;</a></h1>
+<h2 id="task-1-rsa-party">Task 1 RSA Party<a class="headerlink" href="#task-1-rsa-party" title="Permanent link">&para;</a></h2>
+<div class="admonition success">
+<p class="admonition-title">Flag: <code>ZJUCTF{?!Rs@_MA$TEr!?}</code></p>
+</div>
+<h3 id="题目描述">题目描述<a class="headerlink" href="#题目描述" title="Permanent link">&para;</a></h3>
+<p>服务器依次给出 6 道 RSA 变种题，每道题需要解出明文 <span class="arithmatex">\(m\)</span>（以十六进制提交），全部通过可以获得flag。也就是说这道题需要掌握常见的 RSA 漏洞及其对应的攻击方式。
+解题前还有一个 4 位字母数字的 PoW，回答正确后可以进入正式题目（SHA256 爆破，无法破译，只能暴力枚举约 62^4 次，大概需要几秒）</p>
+<h3 id="rsa-回顾">RSA 回顾<a class="headerlink" href="#rsa-回顾" title="Permanent link">&para;</a></h3>
+<h4 id="密钥生成">密钥生成<a class="headerlink" href="#密钥生成" title="Permanent link">&para;</a></h4>
+<ol>
+<li>随机选取两个大素数 <span class="arithmatex">\(p\)</span> 和 <span class="arithmatex">\(q\)</span></li>
+<li>计算模数 <span class="arithmatex">\(N = p \times q\)</span></li>
+<li>计算欧拉函数 <span class="arithmatex">\(\varphi(N) = (p-1)(q-1)\)</span></li>
+<li>选取公钥指数 <span class="arithmatex">\(e\)</span>（满足 <span class="arithmatex">\(1 &lt; e &lt; \varphi(N)\)</span> 且 <span class="arithmatex">\(\gcd(e, \varphi(N)) = 1\)</span>，常用 3、17、65537）</li>
+<li>计算私钥指数 <span class="arithmatex">\(d \equiv e^{-1} \pmod{\varphi(N)}\)</span>（即 <span class="arithmatex">\(e \cdot d \equiv 1 \pmod{\varphi(N)}\)</span>）</li>
+</ol>
+<p><strong>公钥</strong>：<span class="arithmatex">\((N, e)\)</span>，<strong>私钥</strong>：<span class="arithmatex">\((d)\)</span>（或 <span class="arithmatex">\((p, q, d)\)</span>）</p>
+<h4 id="加密与解密">加密与解密<a class="headerlink" href="#加密与解密" title="Permanent link">&para;</a></h4>
+<div class="arithmatex">\[
+\begin{aligned}
+\text{加密：}&amp;\quad c \equiv m^e \pmod N \\
+\text{解密：}&amp;\quad m \equiv c^d \pmod N
+\end{aligned}
+\]</div>
+<p>其中 <span class="arithmatex">\(m\)</span> 是明文整数（<span class="arithmatex">\(0 \leq m &lt; N\)</span>），<span class="arithmatex">\(c\)</span> 是密文。</p>
+<h3 id="16-fermat-factorization">1/6: Fermat Factorization<a class="headerlink" href="#16-fermat-factorization" title="Permanent link">&para;</a></h3>
+<p><strong>漏洞</strong>：<span class="arithmatex">\(p\)</span> 和 <span class="arithmatex">\(q\)</span> 很接近（差距 ≤ 10000）。</p>
+<p><strong>原理</strong>：<span class="arithmatex">\(N = pq = \left(\frac{p+q}{2}\right)^2 - \left(\frac{p-q}{2}\right)^2 = a^2 - b^2\)</span></p>
+<p>从 <span class="arithmatex">\(a = \lceil\sqrt{N}\rceil\)</span> 开始，每次 <span class="arithmatex">\(a \leftarrow a+1\)</span>，检查 <span class="arithmatex">\(a^2 - N\)</span> 是否为完全平方数。由于 <span class="arithmatex">\(p\)</span> 和 <span class="arithmatex">\(q\)</span> 的差值很小，循环次数在可接受的范围内，这样我们就完成了攻击。</p>
+<pre class="highlight"><code class="language-python">def fermat_factor(n):
+    a = isqrt(n)
+    if a * a &lt; n:
+        a += 1
+    while True:
+        b2 = a * a - n
+        b = isqrt(b2)
+        if b * b == b2:
+            return a + b, a - b
+        a += 1</code></pre>
+<h3 id="26-pollard-p-1">2/6: Pollard p-1<a class="headerlink" href="#26-pollard-p-1" title="Permanent link">&para;</a></h3>
+<p><strong>漏洞</strong>：<span class="arithmatex">\(p-1\)</span> 的所有质因子都很小，≤ 1000，且每个质因子的幂 ≤ <span class="arithmatex">\(2^{16}\)</span>。</p>
+<p><strong>原理</strong>：令 <span class="arithmatex">\(M = \operatorname{lcm}(1, 2, \dots, B)\)</span>，计算 <span class="arithmatex">\(a^M \bmod N\)</span>。由费马小定理，<span class="arithmatex">\(a^M \equiv 1 \pmod p\)</span>，所以 <span class="arithmatex">\(\gcd(a^M - 1, N) = p\)</span>。</p>
+<p><strong>理解</strong>：费马小定理告诉我们 <span class="arithmatex">\(a^{p-1} \equiv 1 \pmod p\)</span>。如果 <span class="arithmatex">\(p-1\)</span> 只由小质数组成（比如 <span class="arithmatex">\(p-1 = 2^3 \times 3 \times 5\)</span>），那我们找一个足够大的 <span class="arithmatex">\(M\)</span>（囊括所有小质数的幂），<span class="arithmatex">\(M\)</span> 一定是 <span class="arithmatex">\(p-1\)</span> 的倍数。此时 <span class="arithmatex">\(a^M \equiv 1 \pmod p\)</span>，即 <span class="arithmatex">\(p \mid (a^M - 1)\)</span>。同时我们还知道 <span class="arithmatex">\(p \mid N\)</span>，所以 <span class="arithmatex">\(\gcd(a^M - 1, N)\)</span> 能把 <span class="arithmatex">\(p\)</span> 找出来。</p>
+<pre class="highlight"><code class="language-python">def pollard_p1(n, bound=100000):
+    a = 2
+    M = 1
+    for p in primes_up_to(bound):
+        power = p
+        while power * p &lt;= bound:
+            power *= p
+        M *= power
+    x = pow(a, M, n)
+    p = gcd(x - 1, n)
+    return p, n // p</code></pre>
+<h3 id="36-common-modulus-attack">3/6: Common Modulus Attack<a class="headerlink" href="#36-common-modulus-attack" title="Permanent link">&para;</a></h3>
+<div class="admonition info">
+<p class="admonition-title">和 Lab 1 的一道题很像（共模攻击！）</p>
+</div>
+<p><strong>漏洞</strong>：相同明文 <span class="arithmatex">\(m\)</span> 用两个互质的指数 <span class="arithmatex">\(e_1=3, e_2=17\)</span> 在同一个 <span class="arithmatex">\(N\)</span> 下加密。</p>
+<p><strong>原理</strong>：扩展欧几里得求 <span class="arithmatex">\(a \cdot e_1 + b \cdot e_2 = 1\)</span>，则：</p>
+<div class="arithmatex">\[m = m^{1} = m^{a \cdot e_1 + b \cdot e_2} = c_1^{a} \cdot c_2^{b} \pmod N\]</div>
+<pre class="highlight"><code class="language-python">_, a, b = extended_gcd(e1, e2)
+if a &lt; 0:
+    m = pow(modinv(c1, n), -a, n) * pow(c2, b, n) % n
+else:
+    m = pow(c1, a, n) * pow(modinv(c2, n), -b, n) % n</code></pre>
+<h3 id="46-hastad-broadcast">4/6: Hastad Broadcast<a class="headerlink" href="#46-hastad-broadcast" title="Permanent link">&para;</a></h3>
+<p><strong>漏洞</strong>：相同明文 <span class="arithmatex">\(m\)</span> 用 <span class="arithmatex">\(e=3\)</span> 加密，给出了 3 个不同的模数 <span class="arithmatex">\(N_1, N_2, N_3\)</span>。</p>
+<p><strong>原理</strong>：中国剩余定理（CRT）求 <span class="arithmatex">\(m^3 \bmod (N_1 N_2 N_3)\)</span>，然后开三次方根。</p>
+<p>因为 <span class="arithmatex">\(m &lt; \min(N_i)\)</span>，所以 <span class="arithmatex">\(m^3 &lt; N_1 N_2 N_3\)</span>，CRT 的结果就是精确的 <span class="arithmatex">\(m^3\)</span>。</p>
+<p><strong>理解</strong>：<span class="arithmatex">\(e\)</span> 太小了， <span class="arithmatex">\(m^e\)</span> 不够大，取模运算就失效了</p>
+<pre class="highlight"><code class="language-python">M = crt([c1, c2, c3], [n1, n2, n3])
+m = iroot(M, 3)  # 整数三次方根</code></pre>
+<h3 id="56-franklin-reiter-attack">5/6: Franklin-Reiter Attack<a class="headerlink" href="#56-franklin-reiter-attack" title="Permanent link">&para;</a></h3>
+<p><strong>漏洞</strong>：<span class="arithmatex">\(e=3\)</span>，同一个 <span class="arithmatex">\(N\)</span> 下加密了 <span class="arithmatex">\(m\)</span> 和 <span class="arithmatex">\(m + \text{pad}\)</span>，且 pad 已知。</p>
+<p><strong>原理</strong>：这两个多项式一定存在公共根 <span class="arithmatex">\(m\)</span>：</p>
+<div class="arithmatex">\[f_1(x) = x^3 - c_1,\quad f_2(x) = (x + \text{pad})^3 - c_2\]</div>
+<p>计算 <span class="arithmatex">\(\gcd(f_1, f_2)\)</span> 得到 <span class="arithmatex">\((x - m)\)</span>。对 <span class="arithmatex">\(e=3\)</span> 我们可以计算多项式消元：</p>
+<div class="arithmatex">\[
+\begin{aligned}
+g(x) &amp;= f_2 - f_1 = 3p \cdot x^2 + 3p^2 \cdot x + (p^3 + c_1 - c_2) \\
+     &amp;= A \cdot x^2 + B \cdot x + C
+\end{aligned}
+\]</div>
+<p>再用 <span class="arithmatex">\(f_1\)</span> 和 <span class="arithmatex">\(g\)</span> 消去 <span class="arithmatex">\(x^2\)</span> 项，得到 <span class="arithmatex">\(x\)</span> 的一次方程，直接求解即可。</p>
+<pre class="highlight"><code class="language-python">A = (3 * pad) % n
+B = (3 * pad * pad) % n
+C = (pad**3 + c1 - c2) % n
+
+x_coeff = (A * C - B * B) % n
+constant = (A * A * c1 - B * C) % n
+m = (-constant * modinv(x_coeff, n)) % n</code></pre>
+<h3 id="66-wieners-attack">6/6: Wiener's Attack<a class="headerlink" href="#66-wieners-attack" title="Permanent link">&para;</a></h3>
+<p><strong>漏洞</strong>：私钥 <span class="arithmatex">\(d\)</span> 很小（约 200 bits），远小于 <span class="arithmatex">\(N^{1/4}\)</span>。</p>
+<p><strong>原理</strong>：由 <span class="arithmatex">\(ed \equiv 1 \pmod{\varphi}\)</span> 得 <span class="arithmatex">\(ed - k\varphi = 1\)</span>，即：</p>
+<div class="arithmatex">\[\left|\frac{e}{N} - \frac{k}{d}\right| &lt; \frac{1}{2d^2}\]</div>
+<p><span class="arithmatex">\(\frac{k}{d}\)</span> 是 <span class="arithmatex">\(\frac{e}{N}\)</span> 的一个连分数收敛项，遍历即可找到 <span class="arithmatex">\(d\)</span>。</p>
+<p><strong>理解</strong>：当 <span class="arithmatex">\(d\)</span> 很小时，由 <span class="arithmatex">\(ed - k\varphi(N) = 1\)</span> 可以推出 <span class="arithmatex">\(\frac{e}{N} \approx \frac{k}{d}\)</span>（误差极小）。因此 <span class="arithmatex">\(\frac{k}{d}\)</span> 必然藏在 <span class="arithmatex">\(\frac{e}{N}\)</span> 的连分数收敛项中。</p>
+<p><strong>连分数</strong>：把一个数逐层拆成"整数 + 1/某数"的形式。例如 <span class="arithmatex">\(\frac{43}{19} = 2 + \frac{1}{3 + \frac{1}{1 + \frac{1}{4}}}\)</span>，记作 <span class="arithmatex">\([2; 3, 1, 4]\)</span>。任意截断得到的值叫"收敛项"：<span class="arithmatex">\([2] = 2\)</span>，<span class="arithmatex">\([2;3] = \frac{7}{3}\)</span>，<span class="arithmatex">\([2;3,1] = \frac{9}{4}\)</span>，<span class="arithmatex">\([2;3,1,4] = \frac{43}{19}\)</span>。连分数的核心性质是：如果一个分数极其接近目标数，它<strong>必定</strong>作为某个收敛项出现。所以对 <span class="arithmatex">\(\frac{e}{N}\)</span> 做连分数展开，遍历所有收敛项，一定能找到 <span class="arithmatex">\(\frac{k}{d}\)</span>，从而拿到私钥 <span class="arithmatex">\(d\)</span>。</p>
+<pre class="highlight"><code class="language-python">def wiener(n, e, c):
+    for k, d in convergents(continued_fraction(e, n)):
+        if k == 0 or d % 2 == 0:
+            continue
+        if (e * d - 1) % k != 0:
+            continue
+        phi = (e * d - 1) // k
+        s = n - phi + 1  # p + q
+        disc = s * s - 4 * n
+        if disc &gt;= 0:
+            sqrt_disc = isqrt(disc)
+            if sqrt_disc * sqrt_disc == disc:
+                p = (s + sqrt_disc) // 2
+                q = (s - sqrt_disc) // 2
+                if p * q == n:
+                    return pow(c, d, n)</code></pre>
+<h3 id="6-种-rsa-攻击">6 种 RSA 攻击<a class="headerlink" href="#6-种-rsa-攻击" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>攻击</th>
+<th>条件</th>
+<th>关键方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fermat</td>
+<td><span class="arithmatex">\(p, q\)</span> 接近</td>
+<td><span class="arithmatex">\(N = a^2 - b^2\)</span></td>
+</tr>
+<tr>
+<td>Pollard p-1</td>
+<td><span class="arithmatex">\(p-1\)</span> 平滑</td>
+<td><span class="arithmatex">\(\gcd(a^{M} - 1, N)\)</span></td>
+</tr>
+<tr>
+<td>Common Modulus</td>
+<td>同一 <span class="arithmatex">\(N\)</span>，互质 <span class="arithmatex">\(e_1, e_2\)</span></td>
+<td>扩展欧几里得</td>
+</tr>
+<tr>
+<td>Hastad</td>
+<td>小 <span class="arithmatex">\(e\)</span>，多个 <span class="arithmatex">\(N\)</span></td>
+<td>CRT + 开方</td>
+</tr>
+<tr>
+<td>Franklin-Reiter</td>
+<td>相关明文，小 <span class="arithmatex">\(e\)</span></td>
+<td>多项式 GCD</td>
+</tr>
+<tr>
+<td>Wiener</td>
+<td>小 <span class="arithmatex">\(d\)</span> (<span class="arithmatex">\(d &lt; N^{1/4}\)</span>)</td>
+<td>连分数</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="task-2-killerecc">Task 2 KillerECC<a class="headerlink" href="#task-2-killerecc" title="Permanent link">&para;</a></h2>
+<div class="admonition success">
+<p class="admonition-title">Flag: <code>ZJUCTF{eLl1PTiC_6_6_0_was_nOt_fIn3}</code></p>
+</div>
+<h3 id="题目描述_1">题目描述<a class="headerlink" href="#题目描述_1" title="Permanent link">&para;</a></h3>
+<p>Node.js 服务器使用 <code>elliptic@6.6.0</code> 在 secp256k1 曲线上做 ECDSA 签名。给出公钥，可无限签名任意消息，提交私钥得就可以获得 flag。</p>
+<p>提示：<code>npm audit</code>，跑完命令会直接返回漏洞，本题是确定性 nonce 的实现出了问题。</p>
+<h3 id="漏洞分析">漏洞分析<a class="headerlink" href="#漏洞分析" title="Permanent link">&para;</a></h3>
+<p>elliptic ≤ 6.6.0 的 GHSA-vjh7-7g9h-fjfh 漏洞：<code>_truncateToN</code> 函数允许<strong>负数消息</strong>，这会产生如下漏洞：负数消息 <code>"-X"</code> 和正数消息 <code>"X"</code>（或 <code>"00X"</code> 等带前导零）<strong>产生相同的 nonce <span class="arithmatex">\(k\)</span></strong>，但<strong>消息 hash 不同</strong>（BN(-X) ≠ BN(X)）：</p>
+<ul>
+<li><code>sign("-1")</code> → <code>msg = BN(-1)</code> → nonce 来自 <code>(-1).toArray()</code> → <span class="arithmatex">\(r\)</span></li>
+<li><code>sign("1")</code> → <code>msg = BN(1)</code> → nonce 来自 <code>(1).toArray()</code> → <strong>相同的 <span class="arithmatex">\(r\)</span></strong></li>
+<li>但 hash 值：<span class="arithmatex">\(-1 \neq 1 \pmod n\)</span> → <strong>不同的 <span class="arithmatex">\(s\)</span></strong></li>
+</ul>
+<p>这就是 ECDSA nonce 重用！ECDSA 中一旦 nonce 重用，我们就可以直接获取私钥：</p>
+<div class="arithmatex">\[
+\begin{aligned}
+s_1 &amp;\equiv k^{-1}(h_1 + r \cdot d) \pmod n \\
+s_2 &amp;\equiv k^{-1}(h_2 + r \cdot d) \pmod n \\
+\Rightarrow\quad k &amp;\equiv (h_1 - h_2) \cdot (s_1 - s_2)^{-1} \pmod n \\
+\Rightarrow\quad d &amp;\equiv r^{-1}(s_1 \cdot k - h_1) \pmod n
+\end{aligned}
+\]</div>
+<h3 id="攻击步骤">攻击步骤<a class="headerlink" href="#攻击步骤" title="Permanent link">&para;</a></h3>
+<ol>
+<li><code>sign("-1")</code> → 得到 <span class="arithmatex">\((r, s_1)\)</span>，hash <span class="arithmatex">\(h_1 = -1 \equiv n-1 \pmod n\)</span></li>
+<li><code>sign("1")</code> → 得到 <span class="arithmatex">\((r, s_2)\)</span>，hash <span class="arithmatex">\(h_2 = 1\)</span></li>
+<li><span class="arithmatex">\(r\)</span> 相同、<span class="arithmatex">\(s\)</span> 不同 → nonce 重用，代入公式恢复 <span class="arithmatex">\(d\)</span></li>
+<li><code>submit &lt;d_hex&gt;</code> 获得 flag</li>
+</ol>
+<h3 id="关键代码">关键代码<a class="headerlink" href="#关键代码" title="Permanent link">&para;</a></h3>
+<pre class="highlight"><code class="language-python">N = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141
+
+r, s1 = sign("-1")   # h1 = -1 mod N = N-1
+r, s2 = sign("1")    # h2 = 1
+
+k = ((N-1 - 1) * pow((s1 - s2) % N, -1, N)) % N
+d = (pow(r, -1, N) * (s1 * k - (N-1))) % N</code></pre>
+<h2 id="task-3-ezcopper">Task 3 EZcopper<a class="headerlink" href="#task-3-ezcopper" title="Permanent link">&para;</a></h2>
+<div class="admonition success">
+<p class="admonition-title">Flag: <code>ZJUCTF{y0u_HavE_l3@rnt_thE_coppER$miTH_m37hod_sO_c13VEr!!!!}</code></p>
+</div>
+<h3 id="题目描述_2">题目描述<a class="headerlink" href="#题目描述_2" title="Permanent link">&para;</a></h3>
+<p>已知 <span class="arithmatex">\(N = p \times q\)</span>、<span class="arithmatex">\(c_1 = m^p \bmod N\)</span>、<span class="arithmatex">\(c_2 = m^q \bmod N\)</span>，求明文 <span class="arithmatex">\(m\)</span>。</p>
+<h3 id="漏洞分析_1">漏洞分析<a class="headerlink" href="#漏洞分析_1" title="Permanent link">&para;</a></h3>
+<p><strong>第一层（费马小定理）</strong>：</p>
+<p>费马小定理 <span class="arithmatex">\(a^p \equiv a \pmod{p}\)</span> 对所有整数 <span class="arithmatex">\(a\)</span> 成立，所以我们可以得到以下两个式子：</p>
+<div class="arithmatex">\[c_1 = m^p \bmod N \;\Rightarrow\; c_1 \equiv m^p \equiv m \pmod{p}\]</div>
+<div class="arithmatex">\[c_2 = m^q \bmod N \;\Rightarrow\; c_2 \equiv m^q \equiv m \pmod{q}\]</div>
+<p><strong>第二层（模 <span class="arithmatex">\(p\)</span> 下的指数消去）</strong>：</p>
+<p>模 <span class="arithmatex">\(p\)</span> 下计算 <span class="arithmatex">\(c_1^N\)</span>，利用 <span class="arithmatex">\(N = pq\)</span>：</p>
+<div class="arithmatex">\[c_1^N = (m^p)^{pq} = m^{p^2 q}\]</div>
+<p>从指数中分离出 <span class="arithmatex">\(p-1\)</span>（费马小定理的关键指数）：</p>
+<div class="arithmatex">\[m^{p^2 q} = m^q \cdot m^{p(p-1)q} = m^q \cdot (m^{p-1})^{pq} \equiv m^q \cdot 1^{pq} = m^q \pmod{p}\]</div>
+<p>所以 <span class="arithmatex">\(c_1^N \equiv m^q \pmod{p}\)</span>。而 <span class="arithmatex">\(c_2 = m^q \bmod N\)</span>，自然也有 <span class="arithmatex">\(c_2 \equiv m^q \pmod{p}\)</span>。两式相减：</p>
+<div class="arithmatex">\[c_1^N - c_2 \equiv 0 \pmod{p} \quad\Rightarrow\quad p \mid (c_1^N - c_2)\]</div>
+<p><strong>第三层（GCD 一步分解）</strong>：</p>
+<p>又因为 <span class="arithmatex">\(p \mid N\)</span>，所以：</p>
+<div class="arithmatex">\[\boxed{\gcd(N,\; c_1^N - c_2) = p}\]</div>
+<p>以压倒性概率 <span class="arithmatex">\(q \nmid (c_1^N - c_2)\)</span>，因此 GCD 直接给出 <span class="arithmatex">\(p\)</span>。</p>
+<div class="admonition example">
+<p class="admonition-title">小数字验证</p>
+<p>取 <span class="arithmatex">\(p=3,\; q=11,\; N=33,\; m=2\)</span>：</p>
+<div class="arithmatex">\[
+\begin{aligned}
+c_1 &amp;= m^p \bmod N = 2^3 \bmod 33 = 8 \\
+c_2 &amp;= m^q \bmod N = 2^{11} \bmod 33 = 2
+\end{aligned}
+\]</div>
+<p>验证：<span class="arithmatex">\(c_1 \bmod p = 8 \bmod 3 = 2 = m\)</span> ✅，<span class="arithmatex">\(c_2 \bmod q = 2 \bmod 11 = 2 = m\)</span> ✅。</p>
+<p>通过已知的 <span class="arithmatex">\(N, c_1, c_2\)</span> 进行运算：</p>
+<div class="arithmatex">\[c_1^N \bmod N = 8^{33} \bmod 33 = 17\]</div>
+<div class="arithmatex">\[c_1^N \bmod N - c_2 = 17 - 2 = 15\]</div>
+<div class="arithmatex">\[\gcd(N,\; 15) = \gcd(33,\; 15) = 3 = p \quad ✅\]</div>
+<div class="arithmatex">\[m = c_1 \bmod p = 8 \bmod 3 = 2 \quad ✅\]</div>
+<p>只需两行运算，我们就成功分解了 <span class="arithmatex">\(N\)</span> ，说明这个方法是有效的。</p>
+</div>
+<h3 id="攻击步骤_1">攻击步骤<a class="headerlink" href="#攻击步骤_1" title="Permanent link">&para;</a></h3>
+<ol>
+<li>计算 <span class="arithmatex">\(p = \gcd(N,\; c_1^N - c_2)\)</span>，一步分解 <span class="arithmatex">\(N\)</span></li>
+<li>由 <span class="arithmatex">\(m = c_1 \bmod p\)</span>（或 <span class="arithmatex">\(m = c_2 \bmod q\)</span>）直接恢复明文</li>
+<li>由于 <span class="arithmatex">\(m\)</span> 是 480-bit，<span class="arithmatex">\(p\)</span> 是 512-bit，<span class="arithmatex">\(m &lt; p\)</span> 自然成立，<span class="arithmatex">\(\bmod p\)</span> 后的结果就是 <span class="arithmatex">\(m\)</span> 本身</li>
+</ol>
+<h3 id="关键代码_1">关键代码<a class="headerlink" href="#关键代码_1" title="Permanent link">&para;</a></h3>
+<pre class="highlight"><code class="language-python">import math
+from Crypto.Util.number import long_to_bytes
+
+p = math.gcd(N, pow(c1, N, N) - c2)  # 一步分解 N
+m = c1 % p                             # 直接得到明文
+flag = long_to_bytes(m)</code></pre>
+<h2 id="task-4-ezdlp">Task 4 EZDLP<a class="headerlink" href="#task-4-ezdlp" title="Permanent link">&para;</a></h2>
+<div class="admonition success">
+<p class="admonition-title">Flag: <code>ZJUCTF{poHl19_h3L1m@n_al6O!?}</code></p>
+</div>
+<h3 id="题目描述_3">题目描述<a class="headerlink" href="#题目描述_3" title="Permanent link">&para;</a></h3>
+<p>已知一个大素数 <span class="arithmatex">\(p\)</span>、底数 <span class="arithmatex">\(g=3\)</span>、以及 <span class="arithmatex">\(c = 3^x \bmod p\)</span>（<span class="arithmatex">\(x\)</span> 是 500-bit 素数），求离散对数 <span class="arithmatex">\(x\)</span>。然后用 <span class="arithmatex">\(x\)</span> 的 MD5 值作为 AES-ECB 密钥解密密文 <span class="arithmatex">\(ct\)</span> 得到 flag。</p>
+<div class="admonition question">
+<p class="admonition-title">什么是 DLP（离散对数问题）？</p>
+<p>普通对数：<span class="arithmatex">\(g^x = y\)</span>，已知 <span class="arithmatex">\(g, y\)</span> 求 <span class="arithmatex">\(x\)</span>。离散对数：<span class="arithmatex">\(g^x \equiv y \pmod{p}\)</span>，已知 <span class="arithmatex">\(g, y, p\)</span> 求 <span class="arithmatex">\(x\)</span> 虽然只是多了个模 <span class="arithmatex">\(p\)</span>，但难度却极高。对于大素数 <span class="arithmatex">\(p\)</span>，这是公认的数学难题，Diffie-Hellman 密钥交换、ElGamal、DSA 的安全性都基于它。<strong>但</strong>，如果 <span class="arithmatex">\(p-1\)</span> 光滑（全是小素数因子），DLP 会被 Pohlig-Hellman 算法降维打击（</p>
+</div>
+<h3 id="漏洞分析_2">漏洞分析<a class="headerlink" href="#漏洞分析_2" title="Permanent link">&para;</a></h3>
+<p><strong>关键发现：<span class="arithmatex">\(p-1 = 2^{518}\)</span></strong></p>
+<div class="arithmatex">\[p = 960494008017250155494739990397196249930200062145145133132556398221074529657304218221253517153928380265486339083177542201148993799925721673833333778621388110957986908045712612233794551809\]</div>
+<p><span class="arithmatex">\(p-1\)</span> 极度光滑（至于光滑是什么可以去看Task 1 qwq）——<strong>只有一个素数因子 2</strong>，指数高达 518。一般 DLP 在 <span class="arithmatex">\(p-1\)</span> 光滑时会变得可解，我们可以用到 Pohlig-Hellman 算法来解决这个问题。</p>
+<p><strong>Pohlig-Hellman 算法</strong></p>
+<p>DLP 的困难性依赖于 <span class="arithmatex">\(p-1\)</span> 有大素数因子。当 <span class="arithmatex">\(p-1 = \prod q_i^{e_i}\)</span> 且所有 <span class="arithmatex">\(q_i\)</span> 都很小，就可以把原 DLP 分解到每个 <span class="arithmatex">\(q_i^{e_i}\)</span> 子群中分别求解，再用 CRT 合并。本题中只有一个 <span class="arithmatex">\(q=2\)</span>，所以整个 DLP 退化为逐比特判断。</p>
+<p><strong>2-群上的逐比特恢复</strong></p>
+<p>当 <span class="arithmatex">\(q=2\)</span> 时，<span class="arithmatex">\(x\)</span> 的 <span class="arithmatex">\(2\)</span> 进制展开就是二进制。由于 <span class="arithmatex">\(g=3\)</span> 是模 <span class="arithmatex">\(p\)</span> 的生成元（<span class="arithmatex">\(3^{(p-1)/2} \equiv -1 \pmod{p}\)</span>），第 <span class="arithmatex">\(i\)</span> 轮可以判断 <span class="arithmatex">\(x\)</span> 的第 <span class="arithmatex">\(i\)</span> 个比特是 0 还是 1：</p>
+<div class="arithmatex">\[y = c \cdot g^{-x_{\text{已知低位}}} \bmod p\]</div>
+<div class="arithmatex">\[
+y^{(p-1)/2^{i+1}} \bmod p = \begin{cases}
+    1 &amp; \Rightarrow \text{bit}_i = 0 \\
+    p-1 &amp; \Rightarrow \text{bit}_i = 1
+\end{cases}
+\]</div>
+<p><strong>理解</strong>：想象 <span class="arithmatex">\(x\)</span> 是一个 518 位的二进制数。每一轮剥掉已知的低位，让剩下的最低位暴露出来。判断它是不是 1 的方法就是看 <span class="arithmatex">\(y\)</span> 的 <span class="arithmatex">\((p-1)/2^{i+1}\)</span> 次幂——如果是 <span class="arithmatex">\(-1\)</span>（即 <span class="arithmatex">\(p-1\)</span>），说明这一位是 1；如果是 <span class="arithmatex">\(1\)</span>，说明这一位是 0。518 轮之后，<span class="arithmatex">\(x\)</span> 的所有比特就全部恢复了。</p>
+<h3 id="攻击步骤_2">攻击步骤<a class="headerlink" href="#攻击步骤_2" title="Permanent link">&para;</a></h3>
+<ol>
+<li>初始化 <span class="arithmatex">\(x_{\text{low}} = 0\)</span></li>
+<li>对 <span class="arithmatex">\(i = 0\)</span> 到 <span class="arithmatex">\(517\)</span>：
+   - 计算 <span class="arithmatex">\(y = c \cdot g^{-x_{\text{low}}} \bmod p\)</span>（消除已知低位的影响）
+   - 计算 <span class="arithmatex">\(y^{(p-1)/2^{i+1}} \bmod p\)</span>，若为 <span class="arithmatex">\(p-1\)</span> 则第 <span class="arithmatex">\(i\)</span> 位是 1，否则是 0
+   - 更新 <span class="arithmatex">\(x_{\text{low}} = x_{\text{low}} + \text{bit} \cdot 2^i\)</span></li>
+<li>518 轮后得到完整 <span class="arithmatex">\(x\)</span>，取其 MD5 作为 AES 密钥解密 <span class="arithmatex">\(ct\)</span></li>
+</ol>
+<h3 id="关键代码_2">关键代码<a class="headerlink" href="#关键代码_2" title="Permanent link">&para;</a></h3>
+<pre class="highlight"><code class="language-python">n = p - 1           # = 2^518
+k = 518
+x = 0; y = c
+for i in range(k):
+    exp = n // (2 ** (i + 1))
+    val = pow(y, exp, p)
+    if val == p - 1:
+        bit = 1
+        x |= (1 &lt;&lt; i)
+        y = (y * pow(g, -(1 &lt;&lt; i), p)) % p
+
+key = md5(str(x).encode()).digest()
+flag = AES.new(key, AES.MODE_ECB).decrypt(ct).rstrip(b'\x00')</code></pre>
+<h2 id="task-5-ezhnp">Task 5 EZHNP<a class="headerlink" href="#task-5-ezhnp" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>Bonus 的两道题很大程度的上用了AI（包括代码及原理解释……）已经尽量把自己的理解写进报告了</p>
+</blockquote>
+<div class="admonition success">
+<p class="admonition-title">Flag: <code>ZJUCTF{HNP_atT4cK_D$A}</code></p>
+</div>
+<h3 id="题目描述_4">题目描述<a class="headerlink" href="#题目描述_4" title="Permanent link">&para;</a></h3>
+<p>ECDSA 签名（secp256k1 曲线），服务器给出了 18 条<strong>相同消息</strong>的签名 <span class="arithmatex">\((r_i, s_i)\)</span>。每条签名的 nonce <span class="arithmatex">\(k_i\)</span> 是一个 240-bit 素数，而曲线阶 <span class="arithmatex">\(n \approx 2^{256}\)</span>——也就是说 nonce 比阶少约 16 bits。需要利用 nonce 的偏差恢复私钥 <span class="arithmatex">\(sk\)</span>，从而解密 flag。</p>
+<p><strong>前置：ECDSA 签名回顾</strong></p>
+<div class="arithmatex">\[s = k^{-1}(h + r \cdot sk) \bmod n\]</div>
+<p>其中 <span class="arithmatex">\(k\)</span> 是临时密钥（nonce），<span class="arithmatex">\(h\)</span> 是消息哈希，<span class="arithmatex">\(sk\)</span> 是私钥。如果 <span class="arithmatex">\(k\)</span> 足够随机且完全未知，签名是安全的。但本题 <span class="arithmatex">\(k\)</span> 只有 240 bits，这就有攻击的机会。</p>
+<h3 id="漏洞分析_3">漏洞分析<a class="headerlink" href="#漏洞分析_3" title="Permanent link">&para;</a></h3>
+<p><strong>第一步：改写为 HNP（Hidden Number Problem）</strong></p>
+<p>将签名方程变形，把 <span class="arithmatex">\(k_i\)</span> 表示为 <span class="arithmatex">\(sk\)</span> 的线性函数：</p>
+<div class="arithmatex">\[k_i \equiv a_i \cdot sk + b_i \pmod{n},\quad |k_i| &lt; K = 2^{240}\]</div>
+<p>其中 <span class="arithmatex">\(a_i = r_i \cdot s_i^{-1} \bmod n,\; b_i = h \cdot s_i^{-1} \bmod n\)</span>。</p>
+<p>这就是 Hidden Number Problem：已知 <span class="arithmatex">\(a_i, b_i, n\)</span>，求 <span class="arithmatex">\(sk\)</span>，而 <span class="arithmatex">\(k_i\)</span> 是"隐藏的小数"。</p>
+<p><strong>第二步：消去 <span class="arithmatex">\(sk\)</span>，化为多个 <span class="arithmatex">\(k_i\)</span> 间的关系</strong></p>
+<p>取 <span class="arithmatex">\(k_0\)</span> 作为参考，消去未知的 <span class="arithmatex">\(sk\)</span>：</p>
+<div class="arithmatex">\[k_j \equiv c_j \cdot k_0 + d_j \pmod{n},\quad |k_0| &lt; K,\; |k_j| &lt; K\]</div>
+<p>其中 <span class="arithmatex">\(c_j = a_j \cdot a_0^{-1} \bmod n,\; d_j = b_j - c_j \cdot b_0 \bmod n\)</span>。</p>
+<p>现在问题变成：找一组 <span class="arithmatex">\(k_0, k_1, \dots, k_{t-1}\)</span>（<span class="arithmatex">\(t=17\)</span>），每个都 <span class="arithmatex">\(&lt; 2^{240}\)</span>，且满足模方程。</p>
+<p><strong>第三步：Kannan 嵌入 → 格基约简</strong></p>
+<p>将问题嵌入到一个 <span class="arithmatex">\(d = t+1 = 18\)</span> 维的格中：</p>
+<div class="arithmatex">\[
+B = \begin{bmatrix}
+n &amp; 0 &amp; \cdots &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; n &amp; \cdots &amp; 0 &amp; 0 &amp; 0 \\
+\vdots &amp; &amp; \ddots &amp; &amp; \vdots &amp; \vdots \\
+0 &amp; 0 &amp; \cdots &amp; n &amp; 0 &amp; 0 \\
+c_1 &amp; c_2 &amp; \cdots &amp; c_{t-1} &amp; 1 &amp; 0 \\
+d_1 &amp; d_2 &amp; \cdots &amp; d_{t-1} &amp; 0 &amp; K
+\end{bmatrix}
+\]</div>
+<p>目标短向量 <span class="arithmatex">\([k_1, k_2, \ldots, k_{t-1}, k_0, K]\)</span>，每个分量 <span class="arithmatex">\(\le 2^{240}\)</span>。这个向量确实在格中（通过列线性组合可验证），且远短于格中"平均"长度的向量。</p>
+<p><strong>第四步：BKZ 格基约简</strong></p>
+<p>19 维格中，LLL（默认 <span class="arithmatex">\(\delta=0.75\)</span>）质量不够，需要 BKZ：
+- <strong>BKZ-10</strong> 即可找到目标短向量
+- 在约简后的基中搜索最后一列等于 <span class="arithmatex">\(\pm K\)</span> 的行，提取 <span class="arithmatex">\(k_0\)</span>
+- 验证：<span class="arithmatex">\(sk = (k_0 - b_0) \cdot a_0^{-1} \bmod n\)</span></p>
+<p><strong>直观理解</strong>：格基约简就是"找格中最短的向量"。目标向量因为所有分量都被约束在 <span class="arithmatex">\(2^{240}\)</span> 以内，比格中随机向量短得多——就像一堆长棍子里唯一的一根短棍子，BKZ 算法能把它挑出来。</p>
+<h3 id="攻击步骤_3">攻击步骤<a class="headerlink" href="#攻击步骤_3" title="Permanent link">&para;</a></h3>
+<ol>
+<li>从 18 条签名计算 <span class="arithmatex">\(a_i, b_i\)</span></li>
+<li>消去 <span class="arithmatex">\(sk\)</span>，得到 <span class="arithmatex">\(c_j, d_j\)</span>（<span class="arithmatex">\(j = 1..17\)</span>）</li>
+<li>构造 19×19 的 Kannan 嵌入格基</li>
+<li>用 fpylll 的 BKZ-10 约简格基</li>
+<li>找到最后一列为 <span class="arithmatex">\(\pm K\)</span> 的行，提取 <span class="arithmatex">\(k_0\)</span></li>
+<li>计算 <span class="arithmatex">\(sk = (k_0 - b_0) \cdot a_0^{-1} \bmod n\)</span>，即得私钥</li>
+</ol>
+<h3 id="关键代码_3">关键代码<a class="headerlink" href="#关键代码_3" title="Permanent link">&para;</a></h3>
+<pre class="highlight"><code class="language-python">from fpylll import IntegerMatrix, LLL, BKZ
+
+# 计算 a_i, b_i, 消去 sk 得到 c_j, d_j
+dim = t + 1  # 18
+B = IntegerMatrix(dim, dim)
+for i in range(t-1): B[i, i] = n
+for i in range(t-1): B[t-1, i] = c_list[i]
+B[t-1, t-1] = 1; B[t-1, t] = 0
+for i in range(t-1): B[t, i] = d_list[i]
+B[t, t-1] = 0; B[t, t] = K
+
+LLL.reduction(B)
+BKZ.reduction(B, BKZ.Param(10))
+
+# 找 last=±K 的行, 提取 k_0, 计算 sk
+for row in range(dim):
+    if abs(B[row, t]) == K:
+        k0 = B[row, t-1] % n
+        sk = ((k0 - b_all[0]) * pow(a_all[0], -1, n)) % n</code></pre>
+<h2 id="task-6-regev">Task 6 Regev<a class="headerlink" href="#task-6-regev" title="Permanent link">&para;</a></h2>
+<div class="admonition success">
+<p class="admonition-title">Flag: <code>ZJUCTF{LLL_60_brrrr}</code></p>
+</div>
+<h3 id="题目描述_5">题目描述<a class="headerlink" href="#题目描述_5" title="Permanent link">&para;</a></h3>
+<p>这是 LWE（Learning With Errors）问题——Regev 2005 年提出，是后量子密码学的基石。已知矩阵 <span class="arithmatex">\(A\)</span>（150×100）、向量 <span class="arithmatex">\(b\)</span>（150维）、模数 <span class="arithmatex">\(q \approx 10^6\)</span>，满足：</p>
+<div class="arithmatex">\[b = A \cdot s + e \pmod{q}\]</div>
+<p>目标是恢复秘密向量 <span class="arithmatex">\(s \in \{0,1\}^{100}\)</span>，并用它的 SHA256 作为 AES-CBC 密钥解密 flag。误差向量 <span class="arithmatex">\(e \in \{-1, 0, 1\}^{150}\)</span> 极小。</p>
+<div class="admonition question">
+<p class="admonition-title">前置：什么是格？</p>
+<p>格是 <span class="arithmatex">\(\mathbb{Z}^n\)</span> 中一组线性无关向量的所有整数线性组合——简单说就是一个规则排列的无穷点阵。格基约简（LLL、BKZ）就是在格中找"最短的非零向量"。虽然一般意义上的 SVP 很难，但当目标向量<strong>远短于</strong>格中其他所有向量时，LLL 能把它揪出来。</p>
+</div>
+<h3 id="漏洞分析_4">漏洞分析<a class="headerlink" href="#漏洞分析_4" title="Permanent link">&para;</a></h3>
+<p><strong>第一步：将 LWE 转化为格问题（Kannan 嵌入）</strong></p>
+<p>定义 <span class="arithmatex">\(d = n + m + 1 = 251\)</span> 维格：</p>
+<div class="arithmatex">\[\mathcal{L} = \{(x, y, z) \in \mathbb{Z}^n \times \mathbb{Z}^m \times \mathbb{Z} : A\cdot x + y \equiv z\cdot b \pmod{q}\}\]</div>
+<p>目标向量 <span class="arithmatex">\((s, e, 1)\)</span> 就落在这个格中（验证：<span class="arithmatex">\(A\cdot s + e \equiv b \pmod{q}\)</span>），且其范数极小：</p>
+<div class="arithmatex">\[\|(s, e, 1)\| = \sqrt{\underbrace{100}_{\text{二进制 }s_j} + \underbrace{150}_{\text{三元 }e_i} + 1} \approx 16\]</div>
+<p><strong>第二步：构造格基矩阵</strong></p>
+<div class="arithmatex">\[
+B = \begin{bmatrix}
+q\cdot I_m &amp; \mathbf{0} &amp; \mathbf{0} \\
+-\mathbf{A}^T \bmod q &amp; I_n &amp; \mathbf{0} \\
+\mathbf{b} &amp; \mathbf{0} &amp; 1
+\end{bmatrix}
+\]</div>
+<p>格的行列式 <span class="arithmatex">\(\det(\mathcal{L}) = q^m \approx 2^{3000}\)</span>。Gauss 启发式预测格中"典型"最短向量长度约为 12000，而目标向量只有 16——比平均短了约 <strong>750 倍</strong>，是极其显著的唯一最短向量（uSVP）。</p>
+<p><strong>第三步：LLL 的 <span class="arithmatex">\(\delta\)</span> 参数是关键</strong></p>
+<ul>
+<li>默认 <span class="arithmatex">\(\delta = 0.75\)</span>：在 251 维格上 LLL 收敛不到目标，输出最短向量仍在 <span class="arithmatex">\(3.5q \approx 3.5 \times 10^6\)</span> 级别，远大于目标</li>
+<li><strong><span class="arithmatex">\(\delta = 0.99\)</span></strong>：Lovász 条件极紧，LLL 直接找到 <span class="arithmatex">\(|\mathbf{b}_0| = 12\)</span> 即目标向量</li>
+</ul>
+<p><span class="arithmatex">\(\delta\)</span> 越接近 1，LLL 每次交换向量的判断越严格，约简质量越高。高维 uSVP 上大 <span class="arithmatex">\(\delta\)</span> 是唯一出路。</p>
+<p><strong>理解</strong>：目标向量 <span class="arithmatex">\((s, e, 1)\)</span> 的每个分量都被约束得极小——<span class="arithmatex">\(s_j\)</span> 只取 0 或 1，<span class="arithmatex">\(e_i\)</span> 只取 -1/0/1。而格中随机向量的分量普遍在 <span class="arithmatex">\(q\)</span> 量级。</p>
+<h3 id="攻击步骤_4">攻击步骤<a class="headerlink" href="#攻击步骤_4" title="Permanent link">&para;</a></h3>
+<ol>
+<li>用 <span class="arithmatex">\(A, b, q\)</span> 构造 251×251 的 Kannan 嵌入格基</li>
+<li>调用 <code>LLL.reduction(B, delta=0.99)</code> 进行格基约简</li>
+<li>在约简后的基中搜索最后一列为 <span class="arithmatex">\(\pm 1\)</span> 的行</li>
+<li>该行的第 <span class="arithmatex">\([m, m+n-1]\)</span> 列乘以符号即恢复 <span class="arithmatex">\(s\)</span></li>
+<li>用 SHA256(s) 解密 AES-CBC 得 flag</li>
+</ol>
+<h3 id="关键代码_4">关键代码<a class="headerlink" href="#关键代码_4" title="Permanent link">&para;</a></h3>
+<pre class="highlight"><code class="language-python">from fpylll import IntegerMatrix, LLL
+
+dim = n + m + 1  # 251
+B = IntegerMatrix(dim, dim)
+
+for i in range(m):
+    B[i, i] = q                    # q*I_m
+for j in range(n):
+    for i in range(m):
+        B[m+j, i] = (-A[i][j]) % q # -A^T mod q
+    B[m+j, m+j] = 1                # I_n
+for i in range(m):
+    B[dim-1, i] = b[i]             # b
+B[dim-1, dim-1] = 1                # 1
+
+# 关键：delta=0.99！
+LLL.reduction(B, delta=0.99)
+
+for row in range(dim):
+    if abs(B[row, dim-1]) == 1:
+        sign = B[row, dim-1]
+        s = [B[row, m+j] * sign for j in range(n)]</code></pre>
+<h2 id="bonus-feedback">Bonus Feedback<a class="headerlink" href="#bonus-feedback" title="Permanent link">&para;</a></h2>
+<p>这节课我是到教室听的（其实因为没什么事情，基本每节专题课都去了），能感觉到选 Crypto 的人确实比较多。课上讲了 RSA 相关的内容以及椭圆曲线加密等，让我对密码学有了一个整体的认知，这也是推动我选择这个方向的原因（提一嘴，Crypto 的专题三也非常有意思）。比较遗憾的是，由于数理基础比较薄弱，加上专业不太对口，课的后半程渐渐跟不上了，写作业的时候又翻来覆去地看 PPT。</p>
+<p>作业方面我个人觉得还是比较友好的 —— 选另一个专题的时候被 Web 和 Reverse 的作业难度劝退了，其实我也真的很感兴趣来着，还去学了汇编语言 TwT。前面 RSA 的部分大部分可以靠自己完成，后面的 Bonus 难度确实很大，但借助 AI 之后至少能大概明白每道题涉及的知识点，不至于像其他专题那样两眼一抹黑。</p>
+<p>建议的话，希望课上的知识点密度可以稍微降一点，其他都很好！专题三的课我非常喜欢，可以发扬光大！</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="页脚" >
+        
+          
+          <a href="../rev%20lab%201/" class="md-footer__link md-footer__link--prev" aria-label="上一页: Reverse">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              <div class="md-ellipsis">
+                Reverse
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../Misc%20Lab%202/" class="md-footer__link md-footer__link--next" aria-label="下一页: Misc">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              <div class="md-ellipsis">
+                Misc
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 Jiucheng
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "navigation.indexes", "navigation.tracking", "navigation.footer", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.progress", "content.action.edit", "content.code.annotate", "content.code.copy", "content.code.select", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../../theme/js/theme-sync.js"></script>
+      
+        <script src="../../../theme/js/mathjax.js"></script>
+      
+        <script src="../../../theme/js/hljs/highlight.min.js"></script>
+      
+        <script src="../../../theme/js/hljs/x86asm.min.js"></script>
+      
+        <script src="../../../theme/js/hljs/cmake.min.js"></script>
+      
+        <script src="../../../theme/js/hljs/http.min.js"></script>
+      
+        <script src="../../../theme/js/highlight.js"></script>
+      
+        <script src="../../../theme/js/site.js"></script>
+      
+        <script src="../../../theme/js/site-home.js"></script>
+      
+        <script src="../../../theme/js/site-terminal.js"></script>
+      
+        <script src="../../../theme/js/site-images.js"></script>
+      
+        <script src="../../../theme/js/site-pdf.js"></script>
+      
+        <script src="../../../theme/js/site-friends.js"></script>
+      
+        <script src="../../../theme/js/site-github.js"></script>
+      
+    
+  </body>
+</html>
