@@ -103,20 +103,24 @@ nav:
   - 首页: index.md
   - 学习:
       - 学习: study/index.md
-      - CTF:
-          - Lab 0: Crypto Lab 0.md
+      # 每个课程一个子目录（docs/study/<课程名>/），后续新课程在此平级追加：
+      # - 课程名:
+      #     - 课程首页: study/<course>/index.md
+      - CTF 夺旗赛:
+          - CTF 目录: study/ctf/index.md
+          - Lab 0: study/ctf/Crypto Lab 0.md
           - "Lab 1":
-              - "Crypto": Crypto Lab 1.md
-              - "Web": "Lab 1：Web.md"
-              - "Web基础知识": Web_Lab1.md
-              - "Pwn": Pwn.md
-              - "Misc": "Lab 1 Misc.md"
-              - "Reverse": "rev lab 1.md"
+              - "Crypto": study/ctf/Crypto Lab 1.md
+              - "Web": study/ctf/Lab 1：Web.md
+              - "Web基础知识": study/ctf/Web_Lab1.md
+              - "Pwn": study/ctf/Pwn.md
+              - "Misc": study/ctf/Lab 1 Misc.md
+              - "Reverse": study/ctf/rev lab 1.md
           - "Lab 2":
-              - "Crypto": Crypto Lab 2.md
-              - "Misc": Misc Lab 2.md
+              - "Crypto": study/ctf/Crypto Lab 2.md
+              - "Misc": study/ctf/Misc Lab 2.md
           - "Lab 3":
-              - "Crypto": Crypto Lab 3.md
-              - "Misc": Misc Lab 3.md
+              - "Crypto": study/ctf/Crypto Lab 3.md
+              - "Misc": study/ctf/Misc Lab 3.md
   - 工具: tools/index.md
   - 随笔: diaries/index.md

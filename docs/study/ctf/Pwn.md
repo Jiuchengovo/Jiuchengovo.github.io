@@ -199,6 +199,19 @@ codes = [
 
 ![](image-33.png)
 
+![](image-47.png)
+
+![](image-48.png)
+
+![](image-49.png)
+
+![](image-50.png)
+
+![](image-51.png)
+
+![](image-52.png)
+
+
 ## Task 3 sbofsc
 
 1. 代码分析
