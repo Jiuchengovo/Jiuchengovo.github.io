@@ -1325,6 +1325,8 @@ body.rainbow-active .md-sidebar__inner {
 }
 
 /* Experience reuses the homepage panel, border, and spacing tokens. */
+.md-typeset #home-experience-title { font-size: 0.88rem; }
+
 .home-experience {
   padding: clamp(1rem, 3vw, 1.6rem);
   border: 1px solid var(--home-border);
@@ -1366,7 +1368,7 @@ body.rainbow-active .md-sidebar__inner {
 .home-experience__date {
   color: var(--home-muted);
   font-family: "JetBrains Mono", monospace;
-  font-size: 0.62rem;
+  font-size: 0.60rem;
   font-weight: 600;
   letter-spacing: 0.025em;
   text-transform: uppercase;
@@ -1381,7 +1383,7 @@ body.rainbow-active .md-sidebar__inner {
   padding: 0;
   border: 0;
   font-family: inherit;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 700;
   line-height: 1.5;
   overflow-wrap: anywhere;
@@ -1400,7 +1402,7 @@ body.rainbow-active .md-sidebar__inner {
 .md-typeset .home-experience__description {
   margin: 0.4rem 0 0;
   color: var(--home-muted);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   line-height: 1.7;
 }
 
