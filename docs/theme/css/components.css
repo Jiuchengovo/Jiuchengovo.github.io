@@ -1687,3 +1687,12 @@ body.rainbow-active .md-sidebar__inner {
   0% { transform: translate3d(-0.8rem, -0.2rem, 0) scale(0.96); opacity: 0.12; }
   100% { transform: translate3d(1.2rem, 1.2rem, 0) scale(1.08); opacity: 0.24; }
 }
+
+/* Comments sit below the page content on every page, including the homepage. */
+.site-comments {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--md-default-fg-color--lightest);
+}
+.site-comments > h2 { margin-top: 0; }
+.site-comments__status { color: var(--md-default-fg-color--light); }

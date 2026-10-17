@@ -65,6 +65,7 @@ extra_javascript:
   - theme/js/site-pdf.js
   - theme/js/site-friends.js
   - theme/js/site-github.js
+  - theme/js/site-comments.js
 
 markdown_extensions:
   - admonition
