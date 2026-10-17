@@ -38,11 +38,57 @@ rainbow: true
     </div>
 </section>
 
+<section class="home-section" aria-labelledby="home-experience-title">
+    <div class="home-section__head">
+      <h2 id="home-experience-title" class="home-section__title">Experience</h2>
+    </div>
+    <div class="home-experience">
+      <ol class="home-experience__timeline" role="list">
+        <li class="home-experience__item">
+          <div class="home-experience__date">Present</div>
+          <h3 class="home-experience__title">
+            <span>Zhang Zhikun's Research Group</span>
+            <span class="home-experience__role">Research Intern</span>
+          </h3>
+          <p class="home-experience__description">在 Zhang Zhikun 老师的科研组开展科研实习。</p>
+        </li>
+        <li class="home-experience__item">
+          <div class="home-experience__date"><time datetime="2026-10">2026.10</time> — Present</div>
+          <h3 class="home-experience__title">
+            <span>X-Lab</span>
+            <span class="home-experience__role">Member</span>
+          </h3>
+          <p class="home-experience__description">已转正，现为 X-Lab 正式成员。</p>
+        </li>
+        <li class="home-experience__item">
+          <div class="home-experience__date"><time datetime="2026-04">2026.4</time> — <time datetime="2026-10">2026.10</time></div>
+          <h3 class="home-experience__title">
+            <span>X-Lab</span>
+            <span class="home-experience__role">Intern</span>
+          </h3>
+          <p class="home-experience__description">X-Lab 实习经历。</p>
+        </li>
+        <li class="home-experience__item">
+          <div class="home-experience__date"><time datetime="2025-08">2025.8</time> — Present</div>
+          <h3 class="home-experience__title">
+            <span>Zhejiang University</span>
+            <span class="home-experience__role">SE Student</span>
+          </h3>
+          <p class="home-experience__description">浙江大学软件工程在读。</p>
+        </li>
+      </ol>
+    </div>
+</section>
+
 <section class="home-section" aria-labelledby="home-log-title">
     <div class="home-section__head">
       <h2 id="home-log-title" class="home-section__title">Changelog</h2>
     </div>
     <div class="home-log-list">
+      <div class="home-log">
+        <span class="home-log__date">2026.10.18</span>
+        <span>主页新增 Experience 时间线，更新 X-Lab 正式成员与科研组实习经历。</span>
+      </div>
       <div class="home-log">
         <span class="home-log__date">2026.10.18</span>
         <span>工具栏目新增<a href="tools/sports-check-in/">科技打卡</a>：记录模拟器兼容性排查、企业咕咚协议分析与步数累计修复。</span>

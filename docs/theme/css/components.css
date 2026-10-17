@@ -1324,6 +1324,86 @@ body.rainbow-active .md-sidebar__inner {
   text-underline-offset: 0.2rem;
 }
 
+/* Experience reuses the homepage panel, border, and spacing tokens. */
+.home-experience {
+  padding: clamp(1rem, 3vw, 1.6rem);
+  border: 1px solid var(--home-border);
+  border-radius: var(--radius-lg);
+  background: var(--home-panel);
+  backdrop-filter: blur(var(--blur-radius));
+  -webkit-backdrop-filter: blur(var(--blur-radius));
+}
+
+.md-typeset .home-experience__timeline {
+  margin: 0 0 0 0.3rem;
+  padding: 0;
+  list-style: none;
+  border-left: 1px solid var(--home-border);
+}
+
+.md-typeset .home-experience__item {
+  position: relative;
+  margin: 0;
+  padding: 0 0 1.5rem 1.2rem;
+  list-style: none;
+}
+
+.md-typeset .home-experience__item:last-child { padding-bottom: 0; }
+
+.home-experience__item::before {
+  position: absolute;
+  top: 0.25rem;
+  left: -0.225rem;
+  width: 0.4rem;
+  height: 0.4rem;
+  border: 2px solid var(--md-default-bg-color);
+  border-radius: 50%;
+  background: var(--md-accent-fg-color);
+  box-shadow: 0 0 0 1px var(--home-border);
+  content: "";
+}
+
+.home-experience__date {
+  color: var(--home-muted);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+}
+
+.md-typeset .home-experience__title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.15rem 0.45rem;
+  margin: 0.3rem 0 0;
+  padding: 0;
+  border: 0;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  counter-increment: none;
+}
+
+.md-content__inner .home-experience__title::before { content: none; }
+
+.home-experience__role {
+  color: var(--home-muted);
+  font-weight: 400;
+}
+
+.home-experience__role::before { content: "— "; }
+
+.md-typeset .home-experience__description {
+  margin: 0.4rem 0 0;
+  color: var(--home-muted);
+  font-size: 0.7rem;
+  line-height: 1.7;
+}
+
 .home-log-list {
   display: grid;
   border: 1px solid var(--home-border);
