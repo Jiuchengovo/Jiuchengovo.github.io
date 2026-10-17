@@ -44,6 +44,10 @@ rainbow: true
     </div>
     <div class="home-log-list">
       <div class="home-log">
+        <span class="home-log__date">2026.10.18</span>
+        <span>工具栏目新增<a href="tools/sports-check-in/">科技打卡</a>：记录模拟器兼容性排查、企业咕咚协议分析与步数累计修复。</span>
+      </div>
+      <div class="home-log">
         <span class="home-log__date">2026.10.17</span>
         <span>精简顶部导航标题；全站接入 giscus 评论并支持明暗主题同步；刷新 GitHub 贡献图。</span>
       </div>

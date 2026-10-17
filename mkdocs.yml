@@ -126,5 +126,7 @@ nav:
           - "Lab 3":
               - "Crypto": study/ctf/Crypto Lab 3.md
               - "Misc": study/ctf/Misc Lab 3.md
-  - 工具: tools/index.md
+  - 工具:
+      - 工具: tools/index.md
+      - 科技打卡: tools/sports-check-in.md
   - 随笔: diaries/index.md
