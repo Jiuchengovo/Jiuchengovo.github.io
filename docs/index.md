@@ -44,6 +44,10 @@ rainbow: true
     </div>
     <div class="home-log-list">
       <div class="home-log">
+        <span class="home-log__date">2026.10.17</span>
+        <span>精简顶部导航标题；全站接入 giscus 评论并支持明暗主题同步；刷新 GitHub 贡献图。</span>
+      </div>
+      <div class="home-log">
         <span class="home-log__date">2026.08.15</span>
         <span>主页重制：仿 GitHub 文档站观感，终端 hero 可交互（输入 1/2/3 或 cd 跳转）。</span>
       </div>
