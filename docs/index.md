@@ -87,6 +87,10 @@ rainbow: true
     <div class="home-log-list">
       <div class="home-log">
         <span class="home-log__date">2026.10.18</span>
+        <span>工具栏目加入<a href="tools/ads-visualization/">ADS 算法可视化</a>，辅助理解数据结构与算法。</span>
+      </div>
+      <div class="home-log">
+        <span class="home-log__date">2026.10.18</span>
         <span>主页新增 Experience 时间线，更新 X-Lab 正式成员与科研组实习经历。</span>
       </div>
       <div class="home-log">
