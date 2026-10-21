@@ -86,6 +86,10 @@ rainbow: true
     </div>
     <div class="home-log-list">
       <div class="home-log">
+        <span class="home-log__date">2026.10.21</span>
+        <span>浅色主题改为柔和米白配色，统一正文、卡片、导航与评论区的阅读对比度。</span>
+      </div>
+      <div class="home-log">
         <span class="home-log__date">2026.10.18</span>
         <span>工具栏目加入<a href="tools/ads-visualization/">ADS 算法可视化</a>，辅助理解数据结构与算法。</span>
       </div>

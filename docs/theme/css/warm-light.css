@@ -1,0 +1,108 @@
+/* Warm paper palette. All overrides are scoped to the light scheme. */
+[data-md-color-scheme="default"] {
+  color-scheme: light;
+  --md-default-bg-color: #f6f3ec;
+  --md-default-bg-color--light: #f6f3ece6;
+  --md-default-bg-color--lighter: #f6f3ecb3;
+  --md-default-bg-color--lightest: #f6f3ec66;
+  --md-default-fg-color: #35332f;
+  --md-default-fg-color--light: #656158;
+  --md-default-fg-color--lighter: #6e675c;
+  --md-default-fg-color--lightest: #d8d1c4;
+  --md-typeset-color: #35332f;
+  --md-primary-fg-color: #315f80;
+  --md-accent-fg-color: #315f80;
+  --md-typeset-a-color: #315f80;
+  --md-code-bg-color: #ede8dd;
+  --md-code-fg-color: #35332f;
+  --md-footer-bg-color: #eeeadf;
+  --md-footer-bg-color--dark: #e8e2d5;
+  --md-footer-fg-color: #35332f;
+  --md-footer-fg-color--light: #656158;
+  --md-footer-fg-color--lighter: #6e675c;
+  --header-bg: rgba(246, 243, 236, 0.95);
+  --panel-bg: rgba(252, 250, 245, 0.95);
+  --content-bg: #f6f3ec;
+  --home-panel: rgba(252, 250, 245, 0.94);
+  --home-border: #d8d1c4;
+  --active-nav-bg: #eae4d8;
+  --active-nav-border: #315f80;
+  --scrollbar-thumb: rgba(112, 105, 94, 0.38);
+  --scrollbar-thumb-hover: rgba(112, 105, 94, 0.58);
+  --terminal-host-color: #426348;
+  --terminal-prompt-color: #315f80;
+  --terminal-command-color: #35332f;
+  --terminal-cursor-color: #35332f;
+  --rainbow-red: rgba(201, 116, 110, 0.08);
+  --rainbow-orange: rgba(196, 157, 98, 0.10);
+  --rainbow-green: rgba(120, 151, 116, 0.07);
+  --rainbow-cyan: rgba(119, 157, 155, 0.07);
+  --rainbow-blue: rgba(130, 148, 177, 0.07);
+  --rainbow-violet: rgba(155, 134, 166, 0.07);
+}
+
+body[data-md-color-scheme="default"] {
+  background-color: var(--content-bg);
+  color: var(--md-default-fg-color);
+}
+
+[data-md-color-scheme="default"] .md-typeset {
+  --fgColor-default: #35332f;
+  --fgColor-muted: #656158;
+  --fgColor-accent: #315f80;
+  --bgColor-default: #f6f3ec;
+  --bgColor-muted: #ede8dd;
+  --bgColor-neutral-muted: #6e675c1f;
+  --borderColor-default: #d8d1c4;
+  --borderColor-muted: #d8d1c4b3;
+  --borderColor-neutral-muted: #6e675c33;
+  --borderColor-accent-emphasis: #315f80;
+}
+
+/* Material's header normally inherits white text from its primary palette. */
+[data-md-color-scheme="default"] .md-header,
+[data-md-color-scheme="default"] .md-tabs,
+[data-md-color-scheme="default"] .md-footer {
+  color: var(--md-default-fg-color);
+}
+
+[data-md-color-scheme="default"] .md-sidebar__inner,
+[data-md-color-scheme="default"] .md-nav__title {
+  background-color: var(--content-bg);
+}
+
+[data-md-color-scheme="default"] .md-search__form {
+  background-color: #ede8dd;
+  color: var(--md-default-fg-color);
+}
+
+[data-md-color-scheme="default"] .md-search__input,
+[data-md-color-scheme="default"] .md-search__icon {
+  color: var(--md-default-fg-color);
+}
+
+[data-md-color-scheme="default"] .md-search__input::placeholder {
+  color: var(--md-default-fg-color--light);
+}
+
+[data-md-color-scheme="default"] .md-footer-meta {
+  background-color: #e8e2d5;
+}
+
+[data-md-color-scheme="default"] .md-copyright {
+  color: var(--md-default-fg-color--light);
+}
+
+[data-md-color-scheme="default"] .md-typeset .md-button--primary {
+  color: #fcfaf5;
+}
+
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="0"] {
+  background-color: #eae5da;
+  border-color: #ded7ca;
+}
+
+[data-md-color-scheme="default"] ::selection {
+  background-color: #d6e1e2;
+  color: #35332f;
+}

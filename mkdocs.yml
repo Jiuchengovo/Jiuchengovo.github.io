@@ -47,6 +47,7 @@ extra_css:
   - theme/css/variables.css
   - theme/css/main.css
   - theme/css/components.css
+  - theme/css/warm-light.css
 
 extra_javascript:
   - theme/js/theme-sync.js

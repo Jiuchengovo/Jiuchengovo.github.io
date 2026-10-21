@@ -1,0 +1,21 @@
+/* Reuse giscus' maintained light theme, then match the site's warm paper. */
+@import url("https://giscus.app/themes/light.css");
+
+main {
+  --color-fg-default: #35332f;
+  --color-fg-muted: #656158;
+  --color-fg-subtle: #6e675c;
+  --color-canvas-default: #f6f3ec;
+  --color-canvas-overlay: #fcfaf5;
+  --color-canvas-inset: #ede8dd;
+  --color-canvas-subtle: #ede8dd;
+  --color-border-default: #d8d1c4;
+  --color-border-muted: #e3dccf;
+  --color-accent-fg: #315f80;
+  --color-accent-emphasis: #315f80;
+  --color-accent-subtle: #e2e9e8;
+  --color-btn-text: #35332f;
+  --color-btn-bg: #fcfaf5;
+  --color-btn-border: #d8d1c4;
+  --color-btn-hover-bg: #eae4d8;
+}

@@ -4,7 +4,9 @@
   var ORIGIN = "https://giscus.app";
 
   function theme() {
-    return window.site.theme.mode === "dark" ? "dark" : "light";
+    if (window.site.theme.mode === "dark") return "dark";
+    var container = document.querySelector(".giscus");
+    return (container && container.getAttribute("data-light-theme")) || "light";
   }
 
   function syncTheme() {
