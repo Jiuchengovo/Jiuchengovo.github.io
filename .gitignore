@@ -10,6 +10,7 @@ dist/
 
 # Virtual environment
 venv/
+.venv/
 .env
 
 # IDE
