@@ -1,56 +1,67 @@
-name: deploy
+name: site
+
 on:
   push:
-    branches:
-      - master
-      - main
+    branches: [master]
+  pull_request:
+    branches: [master]
+
 permissions:
-  contents: write
+  contents: read
+
+# A newer change supersedes an older build for the same branch or PR.
+concurrency:
+  group: site-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  deploy:
+  build:
+    name: Validate and build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
-      - run: pip install mkdocs mkdocs-material
-      # 刷新 GitHub 贡献图数据（失败不影响部署，沿用上一次的数据）
-      - run: python .github/scripts/fetch-contributions.py
-      - name: Build site
-        run: |
-          set +e
-          mkdocs build > /tmp/build-out.log 2>&1
-          code=$?
-          if [ $code -ne 0 ]; then
-            git config user.email "ci-bot@users.noreply.github.com"
-            git config user.name "CI Bot"
-            git checkout -b ci-debug 2>/dev/null || git checkout ci-debug
-            printf '%s\n' '## Build failed' > diag.md
-            tail -n 80 /tmp/build-out.log >> diag.md
-            git add diag.md
-            git commit -m "ci: diag build failure $(date -u +%H%M%S)"
-            git push origin ci-debug --force
-            exit $code
-          fi
-      - name: Deploy to GitHub Pages
-        run: |
-          cd site
-          git init -b gh-pages
-          git config user.email "ci-bot@users.noreply.github.com"
-          git config user.name "CI Bot"
-          git add -A
-          git commit -m "deploy $(date -u +%Y%m%d-%H%M%S)"
-          set +e
-          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/Jiuchengovo/Jiuchengovo.github.io.git" HEAD:gh-pages > /tmp/push.log 2>&1
-          code=$?
-          if [ $code -ne 0 ]; then
-            cd ..
-            git checkout -b ci-debug 2>/dev/null || git checkout ci-debug
-            printf '%s\n' '## Push failed' > diag.md
-            tail -n 60 /tmp/push.log >> diag.md
-            git add diag.md
-            git commit -m "ci: diag push failure $(date -u +%H%M%S)"
-            git push origin ci-debug --force
-            exit $code
-          fi
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - name: Install pinned dependencies
+        run: python -m pip install --requirement requirements.txt
+      - name: Refresh contribution data
+        if: github.event_name == 'push'
+        run: python .github/scripts/fetch-contributions.py
+      - name: Build with link and asset validation
+        run: python -m mkdocs build --strict
+      - name: Save built site
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-${{ github.sha }}
+          path: site/
+          if-no-files-found: error
+          retention-days: 7
+
+  deploy:
+    name: Publish validated master
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: site-${{ github.sha }}
+          path: site/
+      - name: Publish to GitHub Pages branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: site/
+          force_orphan: false
+          commit_message: 'deploy: ${{ github.sha }}'

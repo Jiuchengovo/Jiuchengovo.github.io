@@ -199,17 +199,10 @@ codes = [
 
 ![](image-33.png)
 
-![](image-47.png)
+!!! note "补充截图待补"
+    本节的六张补充截图暂缺，文字步骤与已有截图保留。
 
-![](image-48.png)
-
-![](image-49.png)
-
-![](image-50.png)
-
-![](image-51.png)
-
-![](image-52.png)
+<!-- 原图未随仓库提交；补齐正确截图后再恢复：image-47.png 至 image-52.png。 -->
 
 
 ## Task 3 sbofsc
